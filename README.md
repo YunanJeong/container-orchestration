@@ -1,20 +1,25 @@
 # docker-practice
 
-##. 도커 설치용어 및 라이센스 정리
+##. 도커 설치용어 및 라이센스 정리 (2022.08. 기록)
+
+- 라이센스에 관한 읽어보면 좋은 글
+	- https://forums.docker.com/t/license-to-use-docker-community-edition/114840/4
+
 - Docker Engine
 	- 도커 소프트웨어. "Daemon" 형태로 실행된다.
-	- 도커 엔진은 Apache 2.0 License를 따른다. 공식 출처: `https://docs.docker.com/engine/#licensing`
+	- 도커 엔진은 Apache 2.0 License를 따른다. 공식 출처: https://docs.docker.com/engine/#licensing
 
 - Docker CLI
 	- 도커 엔진 사용을 위한 인터페이스 "Client"이다.
 	- 도커 엔진, 도커 CLI, 도커 데스크탑이 그냥 도커라는 단어로 혼용되는데 구분할 필요가 있다.
 	- 도커 엔진과 도커 cli를 같이 설치하다보니 그런 경향이 있다.
+	- Docker CLI repo에서 Apache 2.0 License를 확인할 수 있다. https://github.com/docker/cli
 
-- Docker CE
-	- Community Edition
-	- Docker CE repository: `https://github.com/docker/docker-ce`
-		- Docker Engine은 CE(Community Edition)와 EE(Enterprise Edition)로 나눠졌으나 현재는 공식적인 분류 방법이 아니다.
-		- 위 저장소도 보관 용도일뿐 deprecated이다.
+- Docker CE(Community Edition) vs. Docker EE(Enterprise Edition)
+	- "도커 엔진"은 CE(Community Edition)와 EE(Enterprise Edition)로 나눠졌으나 현재는 공식적인 분류 방법이 아니다. 
+	- Docker CE 보관용 repository: https://github.com/docker/docker-ce	
+		- 위 저장소도 보관 용도일뿐 deprecated이다. 단, Docker CE가 deprecated된 건 아니고 저장소만 deprecated라는 말이다.
+		- 
 	
 - Docker Desktop
 	- 리눅스 기반이 아닌 OS(Windows, Mac)에서 도커를 사용할 수 있게하는 툴
