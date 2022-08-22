@@ -1,6 +1,11 @@
 # docker-practice
 
+
 ## 도커 설치용어 및 라이센스 정리 (2022.08. 기록)
+- 공식 홈페이지의 라이센스 설명이 불친절하다.
+- 정책이 자주 바뀌어서 웹서핑으로도 정확한 정보를 찾기 힘들다. 용어도 뒤죽박죽 혼용된다.
+- 가급적이면 공식출처를 기준으로, 여기에 설치용어 및 라이센스 관련 내용을 정리한다.
+
 - Docker Engine
 	- 도커 소프트웨어. "Daemon" 형태로 실행된다.
 	- 도커 엔진은 Apache 2.0 License를 따른다. 공식 출처: https://docs.docker.com/engine/#licensing
@@ -12,7 +17,7 @@
 	- Docker CLI repo에서 Apache 2.0 License를 확인할 수 있다. https://github.com/docker/cli
 
 
-- 도커 라이센스에 관한 읽어보면 좋은 글
+- 도커 라이센스에 관해 읽어보면 좋은 글
 	- https://forums.docker.com/t/license-to-use-docker-community-edition/114840/4
 	
 - docker.io vs. docker-ce 읽어보면 좋은 글 (라이센스, docker-ee와의 차이 등 포함)
