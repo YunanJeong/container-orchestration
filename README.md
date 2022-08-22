@@ -42,3 +42,4 @@
 	- WSL에 CLI 기반 도커엔진을 설치한다.
 
 - docker.io vs. docker-ce
+	- https://stackoverflow.com/questions/45023363/what-is-docker-io-in-relation-to-docker-ce-and-docker-ee-now-called-mirantis-k
