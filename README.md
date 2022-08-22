@@ -1,6 +1,6 @@
 # docker-practice
 
-##. 도커 설치용어 및 라이센스 정리 (2022.08. 기록)
+## 도커 설치용어 및 라이센스 정리 (2022.08. 기록)
 
 - 라이센스에 관한 읽어보면 좋은 글
 	- https://forums.docker.com/t/license-to-use-docker-community-edition/114840/4
