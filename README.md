@@ -6,6 +6,8 @@
 - 정책이 자주 바뀌어서 웹서핑으로도 정확한 정보를 찾기 힘들다. 용어도 뒤죽박죽 혼용된다.
 - 가급적이면 공식출처를 기준으로, 여기에 설치용어 및 라이센스 관련 내용을 정리한다.
 
+
+
 - Docker Engine
 	- 도커 소프트웨어. "Daemon" 형태로 실행된다.
 	- 도커 엔진은 Apache 2.0 License를 따른다. 공식 출처: https://docs.docker.com/engine/#licensing
@@ -44,7 +46,7 @@
 			- https://github.com/moby/moby
 			- 현재 'docker-ee'가 없기 때문에, 이것이 관례적으로 `docker-ce`라 칭해지는 `Docker Engine`의 소스코드라고 볼 수 있다.
 			- 그리고 이것은 Apache 2.0 License이다.
-	
+
 - Docker Desktop
 	- 리눅스 기반이 아닌 OS(Windows, Mac)에서 도커를 사용할 수 있게하는 툴
 	- Docker Engine + Docker CLI + Docker GUI가 포함된 올인원 패키지다.
@@ -55,6 +57,8 @@
 		- 유료화 대상은 Docker Desktop이지, Docker Engine과 Docker CLI는 아니다. (Apache 2.0)
 		- Linux에서 Docker Engine, CLI를 별도 설치하면 무료로 도커 이용가능하다.
 	
+
+
 - 구독 요금
 	- https://www.docker.com/pricing/
 	- Docker Personal, Pro, Team, Bussiness
