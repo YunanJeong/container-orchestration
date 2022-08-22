@@ -29,7 +29,7 @@
 	- Docker EE는 타사에 매각되었기 때문에, 이제 도커 회사에서 공식적으로 다루지 않는다.
 		- 웹서핑 중 등장하는 docker-ee는 관례적으로 남은 표현일 뿐이다.
 	- 도커 공홈에서 `Docker Engine`은 주로 `docker-ce`를 의미한다.
-		- `docker-ce`도 공식표기는 아니지만, 패키지 이름에 `docker-ce`가 남아있다.
+		- `docker-ce`도 공식표기는 아니지만, 사용하는 패키지 이름에 `docker-ce`가 남아있다.
 		
 	- Ubuntu에 `Docker Engine (docker-ce)` 설치하기 (공식)
 		- https://docs.docker.com/engine/install/ubuntu/
