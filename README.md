@@ -2,23 +2,13 @@
 
 
 ## 도커 설치용어 및 라이센스 정리 (2022.08. 기록)
+
+### 개요
 - 공식 홈페이지의 라이센스 설명이 불친절하다.
 - 정책이 자주 바뀌어서 웹서핑으로도 정확한 정보를 찾기 힘들다. 용어도 뒤죽박죽 혼용된다.
 - 가급적이면 공식출처를 기준으로, 여기에 설치용어 및 라이센스 관련 내용을 정리한다.
 
-
-
-- Docker Engine
-	- 도커 소프트웨어. "Daemon" 형태로 실행된다.
-	- 도커 엔진은 Apache 2.0 License를 따른다. 공식 출처: https://docs.docker.com/engine/#licensing
-
-- Docker CLI
-	- 도커 엔진 사용을 위한 인터페이스 "Client"이다.
-	- 도커 엔진, 도커 CLI, 도커 데스크탑이 그냥 도커라는 단어로 혼용되는데 구분할 필요가 있다.
-	- 도커 엔진과 도커 cli를 같이 설치하다보니 그런 경향이 있다.
-	- Docker CLI repo에서 Apache 2.0 License를 확인할 수 있다. https://github.com/docker/cli
-
-
+### 읽어보면 좋은 글
 - 도커 라이센스에 관해 읽어보면 좋은 글
 	- https://forums.docker.com/t/license-to-use-docker-community-edition/114840/4
 	
@@ -29,7 +19,17 @@
 		- `docker-ce`: docker.com 에서 직접 제공하는 인증 릴리스. 공식문서의 "Docker Engine"은 이것을 의미한다.
 	- 사람들이 주로 무엇을 쓰는가? => `docker-ce`
 	- 좋은 글이지만 옛날 자료임에 주의
+	
+### 본론
+- Docker Engine
+	- 도커 소프트웨어. "Daemon" 형태로 실행된다.
+	- 도커 엔진은 Apache 2.0 License를 따른다. 공식 출처: https://docs.docker.com/engine/#licensing
 
+- Docker CLI
+	- 도커 엔진 사용을 위한 인터페이스 "Client"이다.
+	- 도커 엔진, 도커 CLI, 도커 데스크탑이 그냥 도커라는 단어로 혼용되는데 구분할 필요가 있다.
+	- 도커 엔진과 도커 cli를 같이 설치하다보니 그런 경향이 있다.
+	- Docker CLI repo에서 Apache 2.0 License를 확인할 수 있다. https://github.com/docker/cli
 
 - Docker CE(Community Edition) vs. Docker EE(Enterprise Edition)
 	- `Docker Engine`은 CE(Community Edition)와 EE(Enterprise Edition)로 나눠졌으나 현재 공식 분류 방법이 아니다.
@@ -57,8 +57,6 @@
 		- 유료화 대상은 Docker Desktop이지, Docker Engine과 Docker CLI는 아니다. (Apache 2.0)
 		- Linux에서 Docker Engine, CLI를 별도 설치하면 무료로 도커 이용가능하다.
 	
-
-
 - 구독 요금
 	- https://www.docker.com/pricing/
 	- Docker Personal, Pro, Team, Bussiness
