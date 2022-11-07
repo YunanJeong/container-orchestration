@@ -27,4 +27,4 @@ $ sudo apt install docker.io`
 - 250명 미만 && 10 millon 달러 매출액 미만 기업은 무료
 - 개인사용, 교육목적, 비상업적 이용 무료
 
-### [도커 라이센스 및 관련 용어 디테일한 히스토리](https://github.com/YunanJeong/docker-practice/blob/main/docker_license_history.md)
+### [도커 라이센스 및 용어 히스토리](https://github.com/YunanJeong/docker-practice/blob/main/docker_license_history.md)
