@@ -24,7 +24,7 @@
 - 설치:
 ```
 $ sudo apt update
-$ sudo apt install docker.io`
+$ sudo apt install docker.io
 ```
 ### Docker Desktop
 - 도커 유료 버전
