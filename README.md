@@ -34,6 +34,7 @@
 	- [git(공식)](https://github.com/moby/moby/blob/master/LICENSE)
 - [설치방법(공식)](https://docs.docker.com/engine/install/ubuntu/)
 	- 레포지토리 등록 후 sudo apt install 하는 방식
+	- 또는 패키지파일을 직접 다운받아서 설치
 	- docker-ce는 현재 공식적인 명칭은 아니지만, Docker Engine을 관례적으로 가리키는 말이다. 위 공식 방법으로 설치해도 패키지명은 docker-ce로 표기된다.
 
 ### docker.io
