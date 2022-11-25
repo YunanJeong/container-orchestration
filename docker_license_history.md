@@ -2,20 +2,20 @@
 
 ## 개요
 - 공식 홈페이지의 라이센스 설명이 불친절하다.
-- 정책이 자주 바뀌어서 웹서핑으로도 정확한 정보를 찾기 힘들다. 용어도 뒤죽박죽 혼용된다.
-- 가급적이면 공식출처를 기준으로, 여기에 설치용어 및 라이센스 관련 내용을 정리한다.
+- 정책이 자주 바뀌어서 정확한 정보를 찾기 힘들다. 용어도 뒤죽박죽 혼용된다.
+- 가급적 공식출처 기준으로, 여기에 설치용어 및 라이센스 관련 내용을 정리한다.
 
 ## 읽어보면 좋은 글
-- 도커 라이센스에 관해 읽어보면 좋은 글
-	- https://forums.docker.com/t/license-to-use-docker-community-edition/114840/4
-
-- docker.io vs. docker-ce 읽어보면 좋은 글 (라이센스, docker-ee와의 차이 등 포함)
-	- https://stackoverflow.com/questions/45023363/what-is-docker-io-in-relation-to-docker-ce-and-docker-ee-now-called-mirantis-k
-	- 무슨 차이인가?
-		- docker.io: Debian/Ubuntu에서 공식 repos 에 제공된 docker 릴리스에 사용하는 이름. 좀 오래된 버전이다.
-		- `docker-ce`: docker.com 에서 직접 제공하는 인증 릴리스. 공식문서의 "Docker Engine"은 이것을 의미한다.
-	- 사람들이 주로 무엇을 쓰는가? => `docker-ce`
-	- 좋은 글이지만 옛날 자료임에 주의
+- [도커 라이센스에 관해 읽어보면 좋은 글](https://forums.docker.com/t/license-to-use-docker-community-edition/114840/4)
+- [docker.io vs. docker-ce(라이센스, docker-ee와의 차이 등 포함)](https://stackoverflow.com/questions/45023363/what-is-docker-io-in-relation-to-docker-ce-and-docker-ee-now-called-mirantis-k)
+- `docker.io`
+	- Debian/Ubuntu의 공식 repos에 제공된 docker 릴리스 이름
+	- 오래된 버전
+- `docker-ce`
+	- docker.com 에서 직접 제공하는 인증 릴리스
+	- 공식문서의 "Docker Engine"은 이것을 의미
+- docker.io vs. docker-ce 무엇이 주로 쓰이는가?
+	- `docker-ce`
 
 ## 본론
 - Docker Engine
