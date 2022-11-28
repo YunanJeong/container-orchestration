@@ -20,13 +20,13 @@
 ## 본론
 - Docker Engine
 	- 도커 소프트웨어. "Daemon" 형태로 실행된다.
-	- 도커 엔진은 Apache 2.0 License를 따른다. 공식 출처: https://docs.docker.com/engine/#licensing
+	- 도커 엔진은 `Apache 2.0 License`를 따른다. ([공식 출처](https://docs.docker.com/engine/#licensing))
 
 - Docker CLI
 	- 도커 엔진 사용을 위한 인터페이스 "Client"이다.
-	- 도커 엔진, 도커 CLI, 도커 데스크탑이 그냥 도커라는 단어로 혼용되는데 구분할 필요가 있다.
-	- 도커 엔진과 도커 cli를 같이 설치하다보니 그런 경향이 있다.
-	- Docker CLI repo에서 Apache 2.0 License를 확인할 수 있다. https://github.com/docker/cli
+	- 도커 엔진, 도커 CLI, 도커 데스크탑이 그냥 도커라는 단어로 혼용된다.
+	- 도커 엔진과 도커 cli는 거의 항상 같이 설치하다보니 그런 경향이 있다.
+	- [Docker CLI repo](https://github.com/docker/cli)에서 `Apache 2.0 License`를 확인할 수 있다.
 
 - Docker CE(Community Edition) vs. Docker EE(Enterprise Edition)
 	- `Docker Engine`은 CE(Community Edition)와 EE(Enterprise Edition)로 나눠졌으나 현재 공식 분류 방법이 아니다.
@@ -35,14 +35,13 @@
 	- 도커 공홈에서 `Docker Engine`은 주로 `docker-ce`를 의미한다.
 		- `docker-ce`도 공식표기는 아니지만, 사용하는 패키지 이름에 `docker-ce`가 남아있다.
 
-	- Ubuntu에 `Docker Engine (docker-ce)` 설치하기 (공식)
-		- https://docs.docker.com/engine/install/ubuntu/
-	- `docker-ce` 보관용 repository: https://github.com/docker/docker-ce
+	- Ubuntu에 `Docker Engine (docker-ce)` 설치하기 ([공식](https://docs.docker.com/engine/install/ubuntu/))
+	- `docker-ce` 레거시 보관용 repository: https://github.com/docker/docker-ce
 		- 위 저장소는 보관 용도일뿐 deprecated이다. 단, `Docker Engine(docker-ce)`가 deprecated된 건 아니고 저장소만 deprecated라는 말이다.
 		- 위 저장소에서는 다음 링크를 알려주고 있다.
 			- https://github.com/moby/moby
 			- 현재 'docker-ee'가 없기 때문에, 이것이 관례적으로 `docker-ce`라 칭해지는 `Docker Engine`의 소스코드라고 볼 수 있다.
-			- 그리고 이것은 Apache 2.0 License이다.
+			- 그리고 이것은 `Apache 2.0 License`이다.
 
 - Docker Desktop
 	- 리눅스 기반이 아닌 OS(Windows, Mac)에서 도커를 사용할 수 있게하는 툴
