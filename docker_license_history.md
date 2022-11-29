@@ -5,10 +5,15 @@
 - 정책이 자주 바뀌어서 정확한 정보를 찾기 힘들다. 용어도 뒤죽박죽 혼용된다.
 - 가급적 공식출처 기준으로, 여기에 설치용어 및 라이센스 관련 내용을 정리한다.
 
+## 결론
+- 회사에서 무료 사용 => docker-ce 설치
+- 회사에서 유료 사용 => Docker Desktop 설치
+- 개인목적, Windows, Mac에서 편하게, 무료 사용  => Docker Desktop 설치
+- 그런거 모르겠고 빨리 설치해서 무료 사용하고 싶다. => docker-ce 설치
+
 ## 읽어보면 좋은 글
 - [도커 라이센스에 관해 읽어보면 좋은 글](https://forums.docker.com/t/license-to-use-docker-community-edition/114840/4)
 - [docker.io vs. docker-ce(라이센스, docker-ee와의 차이 등 포함)](https://stackoverflow.com/questions/45023363/what-is-docker-io-in-relation-to-docker-ce-and-docker-ee-now-called-mirantis-k)
-
 
 ## 용어
 ### Docker Engine
