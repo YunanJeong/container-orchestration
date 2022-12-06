@@ -1,0 +1,25 @@
+version: '2'
+services:
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: kafka-ui:local
+    #extra_hosts:
+    #  - "host.docker.internal:host-gateway"
+    #ports:
+    #  - "8080:8080"
+    #depends_on:
+    #  -
+    # network모드가 host이면, 각 컨테이너에 사설 ip가 할당되지않고, localhost의 일반 앱으로 인식된다.
+    # 이 때는 포트포워딩이나 host.docker.internal 설정을 해도 동일한 정상작동하지만, 가급적 아래와 같이 localhost처럼 처리해주는 것이 좋다.
+    network_mode: host
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: localhost:9092
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://localhost:8083
+      KAFKA_CLUSTERS_0_KSQLDBSERVER: http://localhost:8088
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://localhost:8085
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
+      KAFKA_CLUSTERS_0_METRICS_TYPE: jmx
+      KAFKA_CLUSTERS_0_READONLY: true

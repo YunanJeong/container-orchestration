@@ -1,0 +1,29 @@
+version: '2'
+services:
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+
+    # 도커 network모드를 bridge(default)로 사용시, 컨테이너에서 localhost는 호스트가 아닌 컨테이너 자신을 가리킨다.
+    # 컨테이너->동일 호스트 패킷 전달시 다음 설정 필요
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    # 포트 포워딩. 호스트의 8080으로 들어온 메시지를 컨테이너의 8080포트로 연결
+    ports:
+      - 8080:8080
+
+    # 여러 컨테이너 관리시 서로간에 의존성이 있으면 사용
+    # depends_on:
+    #   -
+
+    # kafka-ui에서 사용하는 환경변수 설정
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: host.docker.internal:9092  # host.docker.internal은 호스트 OS를 가리킨다.
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
+      KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://host.docker.internal:8083
+      KAFKA_CLUSTERS_0_KSQLDBSERVER: http://host.docker.internal:8088
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://host.docker.internal:8085
+      KAFKA_CLUSTERS_0_METRICS_PORT: 9997
+      KAFKA_CLUSTERS_0_READONLY: true
