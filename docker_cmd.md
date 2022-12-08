@@ -26,3 +26,6 @@
     - 설정파일: `docker-compose.yml`
         - 보통 배포 프로젝트의 최상단 경로에 둔다.
         - 현재경로 or 상위경로를 조회한다.
+
+- `docker exec {container id} {command}`
+    - 컨테이너 내부에서 커맨드 실행
