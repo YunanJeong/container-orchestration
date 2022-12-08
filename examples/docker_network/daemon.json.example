@@ -1,0 +1,20 @@
+# 실제 사용시 주석을 지우고 json파일 형태로 쓴다.
+
+# 하나의 호스트에서 3개의 도커 network   (4-1)
+# 하나의 도커 network 당 61개 Container (64-3)
+{
+    "bip": "172.31.1.1/26",
+    "default-address-pools":[
+        {"base": "172.31.1.1/24", "size": 26}
+    ]
+}
+
+# 하나의 호스트에서 1개의 도커 network    (2-1)
+# 하나의 도커 network 당 125개 Container (128-3)
+{
+    "bip": "172.31.1.1/25",
+    "default-address-pools":[
+        {"base": "172.31.1.1/24", "size": 25}
+    ]
+}
+
