@@ -3,7 +3,7 @@ services:
 
   kafka-ui:
     container_name: kafka-ui
-    image: kafka-ui:local
+    image: provectuslabs/kafka-ui:latest
     #extra_hosts:
     #  - "host.docker.internal:host-gateway"
     #ports:
