@@ -1,8 +1,8 @@
 # 도커 자주 쓰는 명령어
 - `docker ps`: 현재 실행중인 컨테이너 정보 출력
 - `docker ps -a`: 모든 컨테이너 정보 출력
-- `docker start {container id}`: 컨테이너 시작
-- `docker stop {container id}`: 컨테이너 정지
+- `docker start {container id or NAME}`: 컨테이너 시작
+- `docker stop {container id or NAME}`: 컨테이너 정지
 - `docker export {컨테이너명or id} > {파일명}.tar`: 컨테이너 저장
 - `docker import {파일명or URL}`: export했던 파일로 이미지 생성
 - `docker container`

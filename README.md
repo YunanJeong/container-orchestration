@@ -1,7 +1,7 @@
 # container-practice
 
 ---
-# [도커 종류, 라이센스, 용어, 히스토리 정리](https://github.com/YunanJeong/docker-practice/blob/main/docker_license_history.md)
+# [도커 종류, 라이센스, 설치용어, 히스토리 정리](https://github.com/YunanJeong/docker-practice/blob/main/docker_license_history.md)
 
 ---
 # 도커 설치 방법 (Ubuntu)
@@ -28,7 +28,37 @@ $ sudo apt install docker.io
 ```
 
 ---
-# 오케스트레이션
+# 용어
+- Container(컨테이너)
+	- 앱 및 앱 실행 환경을 하나의 패키지로 격리하는 기술
+- Container Runtime(컨테이너 런타임)
+	- 컨테이너 관리도구
+	- 여러가지 있으나 Docker로 사실상 표준화
+	- Docker로 만든 Container는 표준이 지켜져 있기 때문에 다른 Container Runtime에서도 사용가능
+- Container Orchestration(컨테이너 오케스트레이션)
+	- 여러 호스트에 걸친 Container들을 관리하는 행위
+
+- Docker(도커)
+	- 사실상 표준 Container Runtime
+- Docker Compose(도커 컴포즈)
+	- (하나의 호스트에서) 여러 Container들을 관리하는 도구
+		- 한 호스트 내 한정이라는 점 때문에, Orchestration Tool로는 취급되지 않는 편
+	- Docker 프로젝트에 통합되어 있으며 `docker compose`라는 subcommand 형태로 사용 가능
+	- docker-compose라는 패키지가 별도로 존재하나, 구버전
+	- Docker Compose는 yaml파일에 모든 Container 설정들을 기술해두고, up&down 명령어만 사용하면 돼서 편하다.
+	- Docker만 사용시 개별 Container를 `docker run ...` 명령어로 관리해야해서, 관리할 Container 수가 조금만 늘어나도 불편하다. 이럴 때 Docker Compose가 용이하다.
+
+- Docker Swarm(도커 스웜)
+	- Docker 자체 제공 Container Orchestration Tool
+		- (Docker Engine-based Native Docker Orchestration Tool)
+		- `docker swarm` 이라는 subcommand로 사용
+	- 상대적으로 다루기 쉬운편이나, 잘 쓰이지 않음
+- Kubernetes(쿠버네티스)
+	- 약어: k8s(케이츠, 케이에이츠), kube(큐브)
+	- Container Orchestration Tool의 사실상 표준
+	- 구글에서 만듦
+
+
 
 
 
