@@ -40,6 +40,13 @@ $ sudo apt install docker.io
 
 - Docker(도커)
 	- 사실상 표준 Container Runtime
+	- vm처럼 image 개념을 사용
+	- DockerFile을 작성하여 image로 build 가능
+	- DockerFile이나 image가 여러 host, 여러 사람들 간에 공유되곤 한다.
+	- *Registry*: 도커 이미지 관리 공간. 기본적으로 Docker Hub로 설정되어 있어, 인터넷으로 편하게 공유가능
+	- *Repository*: Registry 내 도커 이미지 저장공간. 이미지 이름으로 여기는게 더 직관적이다.
+	- *Tag*: 동일한 repository(이름)의 이미지들을 구분하는 용도로 사용. 주로 버전이 표기되는 자리
+
 - Docker Compose(도커 컴포즈)
 	- (하나의 호스트에서) 여러 Container들을 관리하는 도구
 		- 한 호스트 내 한정이라는 점 때문에, Orchestration Tool로는 취급되지 않는 편
@@ -57,6 +64,7 @@ $ sudo apt install docker.io
 	- 약어: k8s(케이츠, 케이에이츠), kube(큐브)
 	- Container Orchestration Tool의 사실상 표준
 	- 구글에서 만듦
+
 
 
 
