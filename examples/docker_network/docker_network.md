@@ -72,7 +72,7 @@
     - `veth..xxx..`
         - virtual ethernet
         - Container 개수만큼 veth가 생성되었는지만 확인하면 된다.
-        - bridge모드에선 각 Container가 개별 host로 취급되니 Container 당 하나씩 MAC주소가 필요해서 도커가 알아서 처리해주는 부분이라고 생각하자. veth는 주로 블로그에서 도커 네트워크 설명시 등장하는데, 이번 이슈는 IP 관련이라 별 신경 쓸 필요는 없다.
+        - bridge모드에선 각 Container가 개별 host로 취급되니 Container 당 하나씩 MAC주소가 필요하다. 이를 도커가 알아서 처리해주는 부분이라고 생각하자. veth는 블로그에서 도커 네트워크 설명시 자주 등장하는데, 이번 이슈는 IP 관련이라 별 신경 쓸 필요는 없다.
 
 4. `sudo docker network inspect bridge`로 bridge network 정보 확인 가능
 
@@ -89,9 +89,10 @@
     ]
 }
 ```
-- *base(모든 Subnet)의 MaskBits*는 16이고, *size(Subnet의 Maskbits)* 는 24이므로 Subnet 분리용도로 8bits(base의 뒤에서부터 9~16번째 bit)를 사용하게된다. 즉, **10.10.[0-255].1/24 꼴로 총 256개의 하위 Subnet**이 활용될 수 있다.
-- 이 하위 Subnet이 도커 network로 사용되고, 직접적으로 Container에게 배정되는 IP 대역이다.
-- 각 하위 Subnet안에서 다음 IP를 제외하고 총 253개의 Container가 실행될 수 있다.
+- 앞서 언급했듯, Container는 base 영역(도커 network 전체 범위)에 직접 할당되는 것이 아니라, base가 개별 도커 network로 쪼개진 후 그 영역에 할당된다.
+- *base의 MaskBits*는 16이고, *size(개별 도커 network의 Maskbits)* 는 24이므로 base에서 network 분리용도로 8bits(base의 뒤에서부터 9~16번째 bit)를 사용하게 된다. 즉, **10.10.[0-255].1/24 꼴로 총 256개의 도커 network**를 만들 수 있다.
+
+- 각 network안에서 다음 IP를 제외하고 총 253개의 Container가 실행될 수 있다.
     - SubnetID(CIDR network ID)(10.10.X.0)
     - Gateway(10.10.X.1)
     - broadcast(10.10.X.255)
@@ -102,11 +103,11 @@
     - netMask(CIDR blocks): 255.255.255.0 (/24)
     - Gateway: 10.10.0.1
     ```
-- 위 예시에서 만약 bip 설정이 별도로 없었다면, 10.10.0.1이 bridge network의 Gateway, 즉, bridge IP로 사용된다. 이 때는 사용할 수 있는 하위 Subnet 중 첫번째 subnet을 bridge가 가져간게 되므로, 사용가능한 하위 Subnet 개수가 1개 줄어든 것이다. 처음 실행된 Container는 다음과 같은 자동생성 network에 소속된다.
+- 위 예시에서 만약 bip 설정이 별도로 없었다면, 10.10.0.1/24가 bridge network, 즉, bip로 사용된다. 가용 network(10.10.[0-255].1/24) 중 첫번째를 bridge network가 점유하므로, 가용 network 수가 1개 줄어든 것이다. 보통은 신경쓸 필요 없지만, 보안 사설망 등에서 네트워크 대역이 부족할 때 유의해야할 이슈다. 위 예시에서 bip를 없앤 채로 진행시, `docker compose`로 처음 실행된 Container는 다음과 같은 자동생성 network에 소속된다.
     ```
     - Name: ubuntu_default
     - Subnet ID(CIDR network): 10.10.1.0
     - netMask(CIDR blocks): 255.255.255.0 (/24)
     - Gateway: 10.10.1.1
     ```
-- 본 예시는 bip와 CIDR이 다른 Class이다. 내부적으로 포트포워딩되므로 기능상 문제는 없다. 그러나 Subnet 가용범위가 좁지 않다면, 관례적으로 같은 Class를 사용해준다.(10.x.x.x, 172.x.x.x, 192.x.x.x 맞춰서 쓰라는 말)
+- 본 예시는 bip와 CIDR이 다른 Class이다. 내부적으로 포트포워딩되므로 기능상 문제는 없다. 그러나 network 가용범위가 좁지 않다면, 관례적으로 같은 Class를 사용해준다.(10.x.x.x, 172.x.x.x, 192.x.x.x 맞춰서 쓰라는 말)
