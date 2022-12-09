@@ -20,6 +20,11 @@
 - host가 보안 사설망에 있는 경우, container끼리 혹은 container, host 간 통신에도 특정 IP,Port에 대한 보안인가가 필요할 수 있다.
 
 ## 해결방법: 도커 브릿지 및 컨테이너의 자동할당 IP 범위를 조정한다
+
+0. CIDR(Subnet) 사전지식 필요
+- IPv4 주소를 쪼개어 사용하는 방법에 있어서 Subnet과 CIDR은 사실상 같은 개념이다.
+- CIDR이 더 넓은 대역, 더 디테일한 네트워크 분할을 사용하는 최신 개념이다.
+
 1. `/etc/docker/daemon.json` 파일을 다음과 같이 생성
     ```
     {
@@ -63,25 +68,19 @@
         - 디폴트 도커 network (bridge network) 쪽 인터페이스
     - `br-xxxxx`
         - 자동생성된 도커network 쪽 인터페이스
-        - br은 네트워크 용어 bridge의 약자다.
+        - br은 네트워크 용어 bridge의 약자
     - `veth..xxx..`
         - virtual ethernet
         - Container 개수만큼 veth가 생성되었는지만 확인하면 된다.
-        - bridge모드에선 각 Container가 개별 host로 취급되니 각 Container마다 하나씩 MAC주소가 필요해서 도커가 알아서 처리해주는 부분이라고 생각하자. veth는 주로 블로그에서 도커 네트워크 설명시 등장하는데, 이번 이슈는 IP 관련내용이라 별 신경 쓸 필요는 없다.
+        - bridge모드에선 각 Container가 개별 host로 취급되니 Container 당 하나씩 MAC주소가 필요해서 도커가 알아서 처리해주는 부분이라고 생각하자. veth는 주로 블로그에서 도커 네트워크 설명시 등장하는데, 이번 이슈는 IP 관련이라 별 신경 쓸 필요는 없다.
 
-4. `sudo docker network inspect bridge`로도 bridge ip를 확인할 수 있다.
+4. `sudo docker network inspect bridge`로 bridge network 정보 확인 가능
 
 5. `sudo docker network insepct ubuntu_default`
-    - 별도로 network 모듈을 만들지 않았다면 ubuntu_default가 위 설정에 따라 자동생성되고, 컨테이너에 할당된다. 해당 하위 하위 subnet(cidr network)의 ID와 Gateway를 확인할 수 있다.
+    - `docker compose up`했을 때 `docker-compose.yml`에 network 설정이 없으면, `ubuntu_default` network가 위 설정에 따라 자동생성되고, 컨테이너에 할당된다. 해당 Subnet(cidr network)의 ID와 Gateway를 확인할 수 있다.
 
 ---
-# `/etc/docker/daemon.json` 예시
-## 개요
-- Subnet(CIDR) 사전지식 필요
-- IPv4 주소를 쪼개어 사용하는 방법에 있어서 Subnet과 CIDR은 사실상 같은 개념이다.
-- CIDR이 더 넓은 대역, 더 디테일한 네트워크 분할을 사용하는 최신 개념이다.
-
-## /etc/docker/daemon.json 예시 해석
+6. 예시 설명
 ```
 {
     "bip": "192.168.0.1/24",
