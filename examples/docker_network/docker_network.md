@@ -71,7 +71,7 @@
         - br은 네트워크 용어 bridge의 약자
     - `veth..xxx..`
         - virtual ethernet
-        - Container 개수만큼 veth가 생성되었는지만 확인하면 된다.
+        - 일반적으로 Container 개수만큼 veth가 생성되었는지만 확인하면 된다.
         - bridge모드에선 각 Container가 개별 host로 취급되니 Container 당 하나씩 MAC주소가 필요하다. 이를 도커가 알아서 처리해주는 부분이라고 생각하자. veth는 블로그에서 도커 네트워크 설명시 자주 등장하는데, 이번 이슈는 IP 관련이라 별 신경 쓸 필요는 없다.
 
 4. `sudo docker network inspect bridge`로 bridge network 정보 확인 가능
