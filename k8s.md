@@ -3,8 +3,8 @@
 # 종류
 - 공식 kubernetes(k8s)
     - Apache 2.0 License
-    - 최초개발: Google
     - 관리: CNCF(Cloud Native Computing Foundation, Google참여)
+    - Google이 개발 후 CNCF재단에 기부해서 오픈소스화 됨
 - Managed k8s Service
     - AWS(EKS), Azure(AKS), GCP(GKE)와 같은 클라우드 기반 서비스 (CaaS), (IaaS와 PaaS 사이)
 
@@ -20,6 +20,7 @@
         - 제공: SIG(Special Interest Group, **쿠버네티스 개발자들** 중 특정 주제에 관심있는 개발자모임)
         - **유일하게 k8s 공식문서에서도 언급**. 다른 배포판은 다른 기관에서 제공
     - k3s (by *Lancher Labs* 기업)
+    - k3d: Docker Container안에 k3s가 설치되어 배포되는 형태
     - MicroK8s (by *Canonical*, Ubuntu Publisher 기업)
 - Rancher (by *Lancher Labs* 기업)
     - 오픈소스버전, 상용버전 별도 존재
