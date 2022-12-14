@@ -18,7 +18,7 @@
     - minikube
         - is local Kubernetes, focusing on making it easy to learn and develop for Kubernetes.
         - 제공: SIG(Special Interest Group, **쿠버네티스 개발자들** 중 특정 주제에 관심있는 개발자모임)
-        - **유일하게 k8s 공식문서에서도 언급**. 다른 배포판은 다른 기관에서 제공
+        - **유일하게 k8s 공식문서에서도 다뤄짐**. 다른 배포판은 다른 기관에서 제공
     - k3s (by *Lancher Labs* 기업)
     - k3d: Docker Container안에 k3s가 설치되어 배포되는 형태
     - MicroK8s (by *Canonical*, Ubuntu Publisher 기업)
@@ -35,4 +35,4 @@
     - 공식지원: kubeadm
     - [배포도구로 쿠버네티스 설치하기(공식)](https://kubernetes.io/ko/docs/setup/production-environment/tools/)
 
-
+    - [쿠버네티스 기초학습(공식), 웹 기반 대화형 터미널+Minikube](https://kubernetes.io/ko/docs/tutorials/kubernetes-basics/)
