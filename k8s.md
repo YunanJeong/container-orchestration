@@ -36,3 +36,11 @@
     - [배포도구로 쿠버네티스 설치하기(공식)](https://kubernetes.io/ko/docs/setup/production-environment/tools/)
 
     - [쿠버네티스 기초학습(공식), 웹 기반 대화형 터미널+Minikube](https://kubernetes.io/ko/docs/tutorials/kubernetes-basics/)
+
+# 용어
+- kubeadm
+- kubelet
+- containerd
+- etcd
+- Control Plane
+- kubectl
