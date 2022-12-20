@@ -1,24 +1,25 @@
-# k8s
+# K8s
 
 # 종류
-- 공식 kubernetes(k8s)
+- 공식 kubernetes(K8s)
     - Apache 2.0 License
     - 관리: CNCF(Cloud Native Computing Foundation, Google참여)
     - Google이 개발 후 CNCF재단에 기부해서 오픈소스화 됨
-- Managed k8s Service
+- Managed K8s Service
     - AWS(EKS), Azure(AKS), GCP(GKE)와 같은 클라우드 기반 서비스 (CaaS), (IaaS와 PaaS 사이)
 
-- 경량 배포판
-    - [MicroK8s vs. K3s vs. minikube 비교표](https://microk8s.io/compare)
-    - [minikube, k3s, 오리지널k8s 특징 및 설치](https://www.samsungsds.com/kr/insights/kubernetes-2.html?moreCnt=0&backTypeId=&category=)
-    - k8s 설치 및 구성이 복잡해서, 편하게 사용하기 위한 배포판(or 관리도구)들이 있음
-    - 단, 오리지널 k8s만큼의 성능을 쓸 수는 없고, 목적에 맞게 사용하는 도구라고 봐야 함
+- 경량 배포판(distributions)
+    - 구현체(implemetations)라는 표현도 가끔 쓰지만, 보통은 K8s 배포판(distributions)이라고 불림
+    - [MicroK8s vs. K3s vs. minikube 비교표](https://microK8s.io/compare)
+    - [minikube, k3s, 오리지널K8s 특징 및 설치](https://www.samsungsds.com/kr/insights/kubernetes-2.html?moreCnt=0&backTypeId=&category=)
+    - K8s 설치 및 구성이 복잡해서, 편하게 사용하기 위한 배포판(or 관리도구)들이 있음
+    - 단, 오리지널 K8s만큼의 성능을 쓸 수는 없고, 목적에 맞게 사용하는 도구라고 봐야 함
     - 주요 목적: 학습용, 빠른 환경 구성, 가벼움
         - (e.g. IoT, 라즈베리파이 등에서도 가능)
-    - minikube
+    - minikube (미니큐브)
         - is local Kubernetes, focusing on making it easy to learn and develop for Kubernetes.
         - 제공: SIG(Special Interest Group, **쿠버네티스 개발자들** 중 특정 주제에 관심있는 개발자모임)
-        - **유일하게 k8s 공식문서에서도 다뤄짐**. 다른 배포판은 다른 기관에서 제공
+        - **유일하게 K8s 공식문서에서도 다뤄짐**. 다른 배포판은 다른 기관에서 제공
     - k3s (by *Lancher Labs* 기업)
     - k3d: Docker Container안에 k3s가 설치되어 배포되는 형태
     - MicroK8s (by *Canonical*, Ubuntu Publisher 기업)
@@ -28,7 +29,7 @@
     - 장점: 기본 포함된 기능이 많고 추가 도구 설치도 쉬움. 멀티 클라우드 관리 가능
     - 단점: 다른 도구에 비해 무거움
 
-# 설치 (공식 k8s)
+# 설치 (공식 K8s)
 - [설치하기 전 쿠버네티스 컴포넌트 관련 설명 참고](https://kubernetes.io/ko/docs/setup/)
 
 - 배포도구
@@ -38,9 +39,36 @@
     - [쿠버네티스 기초학습(공식), 웹 기반 대화형 터미널+Minikube](https://kubernetes.io/ko/docs/tutorials/kubernetes-basics/)
 
 # 용어
+- Kubernetes(쿠버네티스)
+	- 약어: K8s(케이츠, 케이에이츠), kube(큐브)
+	- Container Orchestration Tool의 사실상 표준
+	- 구글에서 만듦
+
 - kubeadm
 - kubelet
-- containerd
-- etcd
+- containerd(컨테이너-디=>d는 daemon을 의미)
+    - Container Runtime 중 하나
+    - Docker에서 Container 표준을 지키면서 만든 Container Runtime
+    - 일반적으로 Docker와 동의어다. 굳이 Docker상표, Docker Engine과 구분해서 Container Runtime을 정확히 지칭할 때 사용되는 단어
+    - [containerd는 무엇이고 왜 중요할까?](https://www.linkedin.com/pulse/containerd%EB%8A%94-%EB%AC%B4%EC%97%87%EC%9D%B4%EA%B3%A0-%EC%99%9C-%EC%A4%91%EC%9A%94%ED%95%A0%EA%B9%8C-sean-lee/?originalSubdomain=kr)
+- etcd(엣시디)
+    - K8s에서 사용하는 Storage
+    - 분산된 시스템 또는 클러스터의 설정 공유, 서비스 검색 및 스케줄러 조정을 위한 일관된 오픈소스, 분산형 키-값 Storage
+    - [etcd란?](https://www.redhat.com/ko/topics/containers/what-is-etcd)
+- Application
+    - K8s 공식 설명 중 자주 언급되는데, 각 Container를 지칭한다고 봐도 무방하다.
 - Control Plane
-- kubectl
+    - 클러스터를 내부 조율 및 관리하는 Server
+    - Application에 대해 각각 스케쥴링, 항상성 유지, 스케일링, Rolling Out(변경사항을 순서대로 반영) 등 처리
+    - Node는 컨트롤 플레인이 제공하는 쿠버네티스 API를 통해서 컨트롤 플레인과 통신
+    - 최종 사용자도 쿠버네티스 API를 사용해서 클러스터와 직접 상호작용(interact) 가능
+- Node
+    - Aplication을 구동하는 Worker
+    - K8s 클러스터 내 Worker 머신으로 작동하는 VM or 물리적인 컴퓨터
+- kubectl (kube-control)
+    - K8s 관리도구, Client CLI
+- Deployment
+    - Container가 어떻게 배포되고 관리될지에 대한 설정을 가진 오브젝트
+    - 컨트롤 플레인이 Deployoment 설정을 참조하여 App 및 Container를 배포&관리한다.
+    - 머신의 장애나 정비에 대응할 수 있는 자동 복구(self-healing) 메커니즘을 제공
+    - kubectl로 Deployment를 생성 및 관리할 수 있다.
