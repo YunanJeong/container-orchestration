@@ -59,16 +59,20 @@
     - K8s 공식 설명 중 자주 언급되는데, 각 Container를 지칭한다고 봐도 무방하다.
 - Control Plane
     - 클러스터를 내부 조율 및 관리하는 Server
-    - Application에 대해 각각 스케쥴링, 항상성 유지, 스케일링, Rolling Out(변경사항을 순서대로 반영) 등 처리
+    - App에 대해 각각 스케쥴링, 항상성 유지, 스케일링, Rolling Out(변경사항을 순서대로 반영) 등 처리
     - Node는 컨트롤 플레인이 제공하는 쿠버네티스 API를 통해서 컨트롤 플레인과 통신
     - 최종 사용자도 쿠버네티스 API를 사용해서 클러스터와 직접 상호작용(interact) 가능
 - Node
-    - Aplication을 구동하는 Worker
+    - App을 구동하는 Worker
     - K8s 클러스터 내 Worker 머신으로 작동하는 VM or 물리적인 컴퓨터
 - kubectl (kube-control)
     - K8s 관리도구, Client CLI
 - Deployment
     - Container가 어떻게 배포되고 관리될지에 대한 설정을 가진 오브젝트
-    - 컨트롤 플레인이 Deployoment 설정을 참조하여 App 및 Container를 배포&관리한다.
+    - 컨트롤 플레인이 Deployment 설정을 참조하여 App 및 Container를 배포&관리한다.
     - 머신의 장애나 정비에 대응할 수 있는 자동 복구(self-healing) 메커니즘을 제공
     - kubectl로 Deployment를 생성 및 관리할 수 있다.
+- Object
+- Pod
+    - Container 1개 이상의 묶음
+    - K8s App의 최소단위
