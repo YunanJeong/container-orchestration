@@ -43,7 +43,6 @@
 	- 약어: K8s(케이츠, 케이에이츠), kube(큐브)
 	- Container Orchestration Tool의 사실상 표준
 	- 구글에서 만듦
-
 - kubeadm
 - kubelet
 - containerd(컨테이너-디=>d는 daemon을 의미)
@@ -55,8 +54,6 @@
     - K8s에서 사용하는 Storage
     - 분산된 시스템 또는 클러스터의 설정 공유, 서비스 검색 및 스케줄러 조정을 위한 일관된 오픈소스, 분산형 키-값 Storage
     - [etcd란?](https://www.redhat.com/ko/topics/containers/what-is-etcd)
-- Application
-    - K8s 공식 설명 중 자주 언급되는데, 각 Container를 지칭한다고 봐도 무방하다.
 - Control Plane
     - 클러스터를 내부 조율 및 관리하는 Server
     - App에 대해 각각 스케쥴링, 항상성 유지, 스케일링, Rolling Out(변경사항을 순서대로 반영) 등 처리
@@ -73,6 +70,32 @@
     - 머신의 장애나 정비에 대응할 수 있는 자동 복구(self-healing) 메커니즘을 제공
     - kubectl로 Deployment를 생성 및 관리할 수 있다.
 - Object
+    - K8s 시스템에서 Entity(최소의 기능을 하는 단위)를 칭하는 단어. e.g.) Pod, Service Controller 등의 인스턴스들
+    - 오브젝트는 같은 네임스페이스에서 같은 종류 오브젝트가 다수 존재할 경우 이 오브젝트들은 각각 다른 이름을 가져야만 한다.
 - Pod
     - Container 1개 이상의 묶음
     - K8s App의 최소단위
+    - [Pod 정의 및 굳이 Pod 컨셉을 쓰는 이유](https://www.redhat.com/ko/topics/containers/what-is-kubernetes-pod)
+- Application
+    - K8s 공식 설명 중 자주 언급되는데, 각 Container를 지칭한다고 봐도 무방하다.
+
+- 쿠버네티스 컴포넌트
+    - Control Plane 컴포넌트
+        - kube-apiserver: 쿠버네티스 클러스터로 들어오는 요청을 가장 앞에서 접수하는 역할. 컨트롤 플레인의 프론트엔드
+        - etcd
+        - kube-scheduler: 스케줄링 담당 컴포넌트(새로 생성된 파드를 감지하여 어떤 노드로 배치할지 결정하는 작업)
+    - Node 컴포넌트
+        - kubelet: 노드에서 컨테이너가 동작하도록 관리해 주는 핵심 요소
+        - container runtime: 컨테이너 실행도구 e.g. Docker containerd
+        - kube-proxy: 쿠버네티스 클러스터 내부에서 네트워크 요청을 전달하는 역할
+# minikube
+## requirement
+- 2코어, 2GB 메모리 필요
+- [도커를 non-root 권한으로 사용하기](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+
+## Installation
+[minikube 시작하기(공식)](https://minikube.sigs.k8s.io/docs/start/)
+```
+curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+sudo dpkg -i minikube_latest_amd64.deb
+```

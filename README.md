@@ -17,6 +17,8 @@
 	- 위 공식 방법으로 설치해도 패키지명은 docker-ce로 표기된다.
 - [WSL에서 설치시 참고(init vs. systemd)](https://github.com/YunanJeong/linux-tips/blob/main/wsl-service-init-vs.systemd/README.md)
 	- Docker Engine은 백그라운드로 항상 실행되는 프로세스로, 현재 작동 유무 체크를 위해 서비스 관리자가 필요
+- [도커를 non-root 권한으로 사용하기](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
+	- 종종 필요하다.
 
 ## docker.io
 - 구버전
