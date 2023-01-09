@@ -16,3 +16,9 @@ echo \
 sudo apt-get update -y
 
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+
+# non-root settings
+# https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
+sudo groupadd docker
+sudo usermod -aG docker $USER
+newgrp docker
