@@ -33,12 +33,16 @@
 - `docker run {image}`
     - image를 container로 띄우기. image 없으면 레지스트리에서 자동 pull
 
-- 잡다한 테스트시 `docker run -it ubuntu` 사용
+- `docker run -it ubuntu`
+    - 잡다한 테스트시 사용 가능
     - 도커허브에 공식배포된 'ubuntu'이미지를 컨테이너로 띄우면서, 내부 쉘로 접속한다.
-    - ubuntu 이미지는 그냥 run하면 Fail된다. 우분투 명령어만 수행하고 종료되는 것을 목적으로 설계되었기 때문이다. (`docker ps -a`로 확인해보면 COMMAND가 'bash'로 설정되어 있다.)
-    - 대표적으로 ubuntu 이미지가 있지만 이런 사례들이 많다.
+    - `apt update`하면 net-tools 등 설치 가능 (경량화로 설치된게 별로 없음)
+    - `docker run ubuntu`로만 실행하면 Fail된다.
+        - `docker run ubuntu ls` 와 같이 일회성 명령어만 실행하고 종료하는 목적으로 설계되었다.
+        - `docker ps -a`로 확인해보면 COMMAND가 'bash'로 설정되어 있다.
+        - ubuntu 이미지 외에도 이런 사례들이 많다.
     - 이 때 다음 옵션을 써준다.
         - -i: interactive, 계속 상호작용할 수 있도록 stdin을 받게 열어둔다.
         - -t: tty. terminal cli 형태로 띄운다.
     - 특히, ubuntu 이미지의 경우 간단한 ping, apt, cat, ifconfig 등을 자유롭게 테스트해보기에 좋으므로 익숙해지도록 하자.
-    - 이미지가 매우 경량화 되어있어서 컨테이너 접속 후 처음에 설치된게 없다. 이 때, apt update 부터 해주도록 하자.
+
