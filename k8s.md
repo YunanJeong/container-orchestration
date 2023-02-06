@@ -20,7 +20,9 @@
     - is local Kubernetes, focusing on making it easy to learn and develop for Kubernetes.
     - 제공: SIG(Special Interest Group, **쿠버네티스 개발자들** 중 특정 주제에 관심있는 개발자모임)
     - **유일하게 K8s 공식문서에서도 다뤄짐**. 다른 배포판은 다른 기관에서 제공
+    - 테스트나 개발 용도에 적합
 - k3s (by *Lancher Labs* 기업)
+    - minikube와 마찬가지로 경량이나, minikube보다 production ready로 적합하다는 의견이 많음 
 - k3d: Docker Container안에 k3s가 설치되어 배포되는 형태
 - MicroK8s (by *Canonical*, Ubuntu Publisher 기업)
 - Rancher (by *Lancher Labs* 기업)
