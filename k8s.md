@@ -66,14 +66,15 @@
 - K8s 클러스터 내 Worker 머신으로 작동하는 VM or 물리적인 컴퓨터
 ## kubectl (kube-control)
 - K8s 관리도구, Client CLI
+## Object
+- K8s 시스템에서 Entity(최소의 기능을 하는 단위)를 칭하는 단어. e.g.) Pod, Service Controller 등의 인스턴스들
+- 오브젝트는 같은 네임스페이스에서 같은 종류 오브젝트가 다수 존재할 경우 이 오브젝트들은 각각 다른 이름을 가져야만 한다.
 ## Deployment
 - Container가 어떻게 배포되고 관리될지에 대한 설정을 가진 오브젝트
 - 컨트롤 플레인이 Deployment 설정을 참조하여 App 및 Container를 배포&관리한다.
 - 머신의 장애나 정비에 대응할 수 있는 자동 복구(self-healing) 메커니즘을 제공
 - kubectl로 Deployment를 생성 및 관리할 수 있다.
-## Object
-- K8s 시스템에서 Entity(최소의 기능을 하는 단위)를 칭하는 단어. e.g.) Pod, Service Controller 등의 인스턴스들
-- 오브젝트는 같은 네임스페이스에서 같은 종류 오브젝트가 다수 존재할 경우 이 오브젝트들은 각각 다른 이름을 가져야만 한다.
+
 ## Pod
 - Container 1개 이상의 묶음
 - K8s App의 최소단위
@@ -88,7 +89,7 @@
     - kube-scheduler: 스케줄링 담당 컴포넌트(새로 생성된 파드를 감지하여 어떤 노드로 배치할지 결정하는 작업)
 - Node 컴포넌트
     - kubelet: 노드에서 컨테이너가 동작하도록 관리해 주는 핵심 요소
-    - container runtime: 컨테이너 실행도구 e.g. Docker containerd
+    - container runtime: 컨테이너 실행도구 e.g. Docker, containerd
     - kube-proxy: 쿠버네티스 클러스터 내부에서 네트워크 요청을 전달하는 역할
 # minikube
 ## requirement
