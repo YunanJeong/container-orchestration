@@ -28,11 +28,45 @@ sudo dpkg -i minikube_latest_amd64.deb
 
 ### kubectl
 - [kubectl 명령어 참고자료](https://subicura.com/k8s/guide/kubectl.html#kubectl-%E1%84%86%E1%85%A7%E1%86%BC%E1%84%85%E1%85%A7%E1%86%BC%E1%84%8B%E1%85%A5)
-- kubectl get
-    - kubectl get all
-    - kubectl get pods (pod, po)
-        - kubectl get pods -A
-    - kubectl get services (service)
-    - kubectl get deployments (deployment, deploy)
-- kubectl apply -f {k8s설정파일명.yml or URL}
-- kubectl delete -f {k8s설정파일명.yml or URL}
+- kubectl
+    - apply
+    - delete
+    - get
+    - describe
+    - logs
+    - exec
+    - config 
+
+1. kubectl apply -f {k8s설정파일명.yml or URL}
+2. kubectl delete -f {k8s설정파일명.yml or URL}
+3. kubectl get
+    ```
+    # 모든 Object 조회 (pod, service, deployment, job, replicaset)
+    kubectl get all
+
+    # Type 별 Object 조회, 복수단수, 줄임말 혼용가능
+    kubectl get pods (pod, po)
+    kubectl get pods -A
+    kubectl get services (service)
+    kubectl get deployments (deployment, deploy)
+    kubectl get jobs (job)
+    kubectl get replicasets (replicaset)
+    ```
+4. kubectl describe {TYPE}/{NAME} or {TYPE} {NAME}
+    ```
+    # TYPE은 pod, service 등 Object Type을 의미
+    # Object 먼저 조회하여 Name을 확인하고 다음과 같이 사용
+    kubectl describe pods/podname-xxxxxxxxxxx-xxxx`
+    kubectl describe pods podname-xxxxxxxxxxx-xxxx`
+    ```
+5. kubectl logs {POD_NAME}
+    - pod의 로그 조회
+    - pod에 container가 여러 개면, -c옵션으로 특정 컨테이너 지정
+    - **여기서 보여주는 로그는 pod내에서 발생하는 stdout, stderr**다.
+    ```
+    kubectl logs podname-xxxxxxxxxxx-xxxx
+    ```
+6. exec
+7. config 
+
+
