@@ -46,7 +46,7 @@
 	- Container Orchestration Tool의 사실상 표준
 	- 구글에서 만듦
 ## kubeadm
-## kubelet
+
 ## containerd(컨테이너-디=>d는 daemon을 의미)
 - Container Runtime 중 하나
 - Docker에서 Container 표준을 지키면서 만든 Container Runtime
@@ -63,31 +63,47 @@
 - 최종 사용자도 쿠버네티스 API를 사용해서 클러스터와 직접 상호작용(interact) 가능
 ## Node
 - App을 구동하는 Worker
-- K8s 클러스터 내 Worker 머신으로 작동하는 VM or 물리적인 컴퓨터
+- K8s 클러스터 내 Worker 머신으로 작동하는 Host(VM or 물리적인 컴퓨터)
 ## kubectl (kube-control)
 - K8s 관리도구, Client CLI
+## kubelet
+- Control Plane과 Node들 간 bridge 역할을 수행하는 경량 프로세스
+- 각 Node Side에서 실행되는 agent
+- 클러스터 내 노드들의 상태를 유지, 관리(시작, 종료, 모니터링 등 역할 포함)
 ## Object
-- K8s 시스템에서 Entity(최소의 기능을 하는 단위)를 칭하는 단어. e.g.) Pod, Service Controller 등의 인스턴스들
-- 오브젝트는 같은 네임스페이스에서 같은 종류 오브젝트가 다수 존재할 경우 이 오브젝트들은 각각 다른 이름을 가져야만 한다.
-## Deployment
-- Container가 어떻게 배포되고 관리될지에 대한 설정을 가진 오브젝트
-- 컨트롤 플레인이 Deployment 설정을 참조하여 App 및 Container를 배포&관리한다.
-- 머신의 장애나 정비에 대응할 수 있는 자동 복구(self-healing) 메커니즘을 제공
-- kubectl로 Deployment를 생성 및 관리할 수 있다.
+- K8s 시스템에서 Entity(최소의 기능을 하는 단위)
+    - e.g.) Pod, Service Controller 등의 인스턴스들
+- 같은 네임스페이스에서 같은 타입의 Object가 다수 존재할 경우 각 Obejct들은 서로 다른 이름을 가져야만 한다.
+## Resource
+- K8s API(kubectl 등)으로 다루는 모든 대상
+- Resource는 Computing, Stroage, and Network Resource 등을 포괄한다.
+- Object vs. Resource
+    - 혼용돼서 자주 사용되나, 차이가 있는 용어이긴 하다.
+    - OOP의 Class-Object 관계와 거의 같다.
+    - Object:  e.g.) 1번 pod, 2번 pod 등 각각의 Instance들
+    - Resource: e.g.) pods, deployments, nodes, namespaces, services, persistent volumes 등
+
+## Application
+- K8s 공식 설명 중 자주 언급되는데, 각 Container 또는 Pod을 지칭한다고 봐도 무방하다.
 
 ## Pod
 - Container 1개 이상의 묶음
 - K8s App의 최소단위
-- [Pod 정의 및 굳이 Pod 컨셉을 쓰는 이유](https://www.redhat.com/ko/topics/containers/what-is-kubernetes-pod)
-## Application
-- K8s 공식 설명 중 자주 언급되는데, 각 Container를 지칭한다고 봐도 무방하다.
+- [Pod 정의, 굳이 Container 외에 Pod 컨셉을 쓰는 이유](https://www.redhat.com/ko/topics/containers/what-is-kubernetes-pod)
+- 보통은 Container 1개 = Pod 1개로 쓰는 경우가 많다.
+
+## Deployment
+- Container 배포&관리 방법에 대한 설정을 가진 Object
+- 컨트롤 플레인이 Deployment 설정을 참조하여 App 및 Container를 배포&관리한다.
+- 머신의 장애나 정비에 대응할 수 있는 자동 복구(self-healing) 메커니즘을 제공
+- kubectl로 Deployment를 생성 및 관리 가능
 
 ## 쿠버네티스 컴포넌트
 - Control Plane 컴포넌트
-    - kube-apiserver: 쿠버네티스 클러스터로 들어오는 요청을 가장 앞에서 접수하는 역할. 컨트롤 플레인의 프론트엔드
+    - K8s API server(kube-apiserver): 쿠버네티스 클러스터로 들어오는 요청을 가장 앞에서 접수. 컨트롤 플레인의 프론트엔드
     - etcd
     - kube-scheduler: 스케줄링 담당 컴포넌트(새로 생성된 파드를 감지하여 어떤 노드로 배치할지 결정하는 작업)
 - Node 컴포넌트
-    - kubelet: 노드에서 컨테이너가 동작하도록 관리해 주는 핵심 요소
+    - kubelet
     - container runtime: 컨테이너 실행도구 e.g. Docker, containerd
-    - kube-proxy: 쿠버네티스 클러스터 내부에서 네트워크 요청을 전달하는 역할
+    - kube-proxy: K8s 클러스터에서 네트워크 연결 관리, API server와 통신하면서 네트워크 관리 방법을 전달받음 (각 라우팅 책임)

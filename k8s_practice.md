@@ -13,7 +13,6 @@ sudo dpkg -i minikube_latest_amd64.deb
 [쿠버네티스 안내서(기초 학습 및 실습용으로 훌륭)](https://subicura.com/k8s)
 
 ## Command
-### minikube
 - `minikube kubectl -- `
     -  minikube의 서브커맨드로 일반적인 kubectl의 명령어를 실행 가능
     - `alias kubectl="minikube kubectl --"`를 `~/.bashrc`에 등록하여 편하게 쓰자
@@ -25,8 +24,8 @@ sudo dpkg -i minikube_latest_amd64.deb
 - `minikube dashboard`
     - k8s 대시보드 실행. 접속은 브라우저에서
     - 대시보드 자체는 minikube 전용이 아니라, 일반적인 k8s의 모니터링 대시보드
-
-### kubectl
+---
+# kubectl
 - [kubectl 명령어 참고자료](https://subicura.com/k8s/guide/kubectl.html#kubectl-%E1%84%86%E1%85%A7%E1%86%BC%E1%84%85%E1%85%A7%E1%86%BC%E1%84%8B%E1%85%A5)
 - kubectl
     - apply
@@ -61,12 +60,27 @@ sudo dpkg -i minikube_latest_amd64.deb
     ```
 5. kubectl logs {POD_NAME}
     - pod의 로그 조회
-    - pod에 container가 여러 개면, -c옵션으로 특정 컨테이너 지정
+    - pod에 container가 여러 개면, -c옵션으로 특정 container 지정
     - **여기서 보여주는 로그는 pod내에서 발생하는 stdout, stderr**다.
     ```
     kubectl logs podname-xxxxxxxxxxx-xxxx
     ```
-6. exec
-7. config 
+6. kubectl exec {POD_NAME} -- {COMMAND}
+    ```
+    # 1회성 커맨드
+    kubectl exec podname-xxxxxxxxxxx-xxxx -- ls
+
+    # 원격접속(-it 옵션, bash 커맨드 사용)
+    kubectl exec -it podname-xxxxxxxxxxx-xxxx -- bash
+    ```
+
+7. kubectl config {subcommand}
+    - k8s에서 context: 여러 개의 k8s cluster들을 다룰 때, kubectl이 어느 cluster에 연결되었는지, 어떻게 인증할지에 대한 정보
+    ```
+    # 현재 컨텍스트 조회
+    kubectl config current-context
+    ```
+---
+# Pod
 
 
