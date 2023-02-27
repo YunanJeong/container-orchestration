@@ -49,7 +49,10 @@ sudo dpkg -i minikube_latest_amd64.deb
     kubectl get services (service)
     kubectl get deployments (deployment, deploy)
     kubectl get jobs (job)
-    kubectl get replicasets (replicaset)
+    kubectl get replicasets (replicaset, rs)
+
+    # 여러 개 골라서 조회
+    kubectl get po,rs
     ```
 4. kubectl describe {TYPE}/{NAME} or {TYPE} {NAME}
     ```
