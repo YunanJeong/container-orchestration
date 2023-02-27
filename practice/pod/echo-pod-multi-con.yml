@@ -1,0 +1,17 @@
+# 1개의 Pod에 여러 Container가 있는 경우
+apiVersion: v1
+kind: Pod
+metadata:
+  name: counter
+  labels:
+    app: counter
+spec:
+  # 다음과 같이 기술된다.
+  containers:
+    - name: app
+      image: ghcr.io/subicura/counter:latest
+      env:  # 환경변수
+        - name: REDIS_HOST
+          value: "localhost"
+    - name: db
+      image: redis

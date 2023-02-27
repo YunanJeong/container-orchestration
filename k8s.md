@@ -91,6 +91,7 @@
 - K8s App의 최소단위
 - [Pod 정의, 굳이 Container 외에 Pod 컨셉을 쓰는 이유](https://www.redhat.com/ko/topics/containers/what-is-kubernetes-pod)
 - 보통은 Container 1개 = Pod 1개로 쓰는 경우가 많다.
+- 1 Pod에 여러 Container가 있는 경우, localhost 네트워크와 디렉토리를 공유한다.
 
 ## Deployment
 - Container 배포&관리 방법에 대한 설정을 가진 Object

@@ -1,0 +1,11 @@
+# 오브젝트 1개에 대한 정의 (apiVersion, kind, metadata, spec은 필수항목)
+apiVersion: v1 # 오브젝트 버전: K8s 버전마다 지원버전이 다를 수 있음
+kind: Pod      # 오브젝트 타입
+metadata:      # 메타데이터: name, labels는 K8s로 오브젝트관리할 때 이용됨
+  name: mongodb
+  labels:
+    app: mongo
+spec:          # 스펙(상세명세): 하위항목은 어떤 오브젝트를 쓰냐에 따라 다름
+  containers:
+    - name: mongodb
+      image: mongo:latest

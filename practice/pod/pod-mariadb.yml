@@ -1,0 +1,14 @@
+# 오브젝트 1개에 대한 정의 (apiVersion, kind, metadata, spec은 필수항목)
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mariadb
+  labels:
+    app: mariadb
+spec:
+  containers:
+    - name: mariadb
+      image: mariadb:latest
+      env:  # 환경변수로 db패스워드 설정
+        - name: MYSQL_ROOT_PASSWORD
+          value: "123456"

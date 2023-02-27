@@ -73,7 +73,6 @@ sudo dpkg -i minikube_latest_amd64.deb
     # 원격접속(-it 옵션, bash 커맨드 사용)
     kubectl exec -it podname-xxxxxxxxxxx-xxxx -- bash
     ```
-
 7. kubectl config {subcommand}
     - k8s에서 context: 여러 개의 k8s cluster들을 다룰 때, kubectl이 어느 cluster에 연결되었는지, 어떻게 인증할지에 대한 정보
     ```
@@ -82,5 +81,24 @@ sudo dpkg -i minikube_latest_amd64.deb
     ```
 ---
 # Pod
+- 빠른 Pod 실행
+```
+kubectl run echo --image ghcr.io/subicura/echo:v1
+```
+- docker run처럼 컨테이너를 일회성으로 띄운다.
+- K8s에서는 Pod을 delete해도, 일반적으로 ReplicaSet에 의해 복구되지만, run기반 Pod는 즉시 delete된다.
+- Pod은 보통 단독사용하지 않는다.
+    - 그럴거면 그냥 docker run을 쓰지.
+    - K8s에서는 일반적으로 Pod를 관리하기 위한 오브젝트를 함께 설정한다.
 
-
+# ReplicaSet(복제셋)
+- **지정된 수**의 **동일한 Pod들**이 **항상 실행**되도록 한다.
+- 동일한 Pod이 여러 개 필요할 때는 Pod를 일일이 정의하기보다 ReplicaSet을 쓰는 것이 적합
+- 지정된 수
+    - yaml로 Pod 개수를 간편히 설정가능
+    - 실행 중에도 apply 커맨드로 새로운 설정 반영가능(Scale Out), [ReplicaSet 동작과정](https://velog.io/@jee-9/Kubernetes-Replica-Set%EB%A0%88%ED%94%8C%EB%A6%AC%EC%B9%B4%EC%85%8B%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC#%EC%B0%B8%EA%B3%A0-%ED%8F%AC%EB%93%9C-%EA%B0%AF%EC%88%98-%EB%B0%94%EA%BE%B8%EB%8A%94-%EB%B0%A9%EB%B2%95)
+- 동일한 Pod들
+    - 동일한 Pod 여러 개를 관리하는 것이라서 ReplicaSet(복제본집합)이라고 부른다. (e.g. Cluster시스템의 Node들)
+    - ReplicaSet 오브젝트 1개가 서로 다른 Pod들 여러 개를 관리하는 것은 아니다.
+- 항상 실행
+    - ReplicaSet을 등록해놓으면, 오류로 인한 종료or 단순 delete해도 pod이 재실행된다.
