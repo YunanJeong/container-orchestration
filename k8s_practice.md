@@ -100,8 +100,44 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - 지정된 수
     - yaml로 Pod 개수를 간편히 설정가능
     - 실행 중에도 apply 커맨드로 새로운 설정 반영가능(Scale Out), [ReplicaSet 동작과정](https://velog.io/@jee-9/Kubernetes-Replica-Set%EB%A0%88%ED%94%8C%EB%A6%AC%EC%B9%B4%EC%85%8B%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC#%EC%B0%B8%EA%B3%A0-%ED%8F%AC%EB%93%9C-%EA%B0%AF%EC%88%98-%EB%B0%94%EA%BE%B8%EB%8A%94-%EB%B0%A9%EB%B2%95)
-- 동일한 Pod들
+- 동일한 Pod들 (Replicas of Pod)
     - 동일한 Pod 여러 개를 관리하는 것이라서 ReplicaSet(복제본집합)이라고 부른다. (e.g. Cluster시스템의 Node들)
     - ReplicaSet 오브젝트 1개가 서로 다른 Pod들 여러 개를 관리하는 것은 아니다.
 - 항상 실행
     - ReplicaSet을 등록해놓으면, 오류로 인한 종료or 단순 delete해도 pod이 재실행된다.
+
+# Deployment
+- 지정된 수의 Pod 복제본들이 **원하는 상태**로 실행되도록 한다.
+- ReplicaSet의 high-level object이며, 내부적으로 ReplicaSet을 사용 및 관리한다.
+## ReplicaSet과의 차이점
+- ReplicaSet과 유사하나, Deployment가 기능이 더 많음
+- K8s 개발/운영자는 보통 Deployment만으로 ReplicaSet을 관리 (필요에 따라선 ReplicaSet을 직접관리가능)
+- 특히, Pod의 **상태를 변경(배포)**할 때 Deployment가 유리
+- 업데이트 전략(Strategy)을 설정 가능
+    - Rolling updates
+        - 업데이트시, 새 ReplicaSet(v2)을 만들고 기존 ReplicaSet(v1)에서 Pod을 하나씩 점진적으로 이전한다.
+        - zero-downtime update 보장
+    - Recreate
+        - 업데이트 대상인 기존 Pod(v1)을 모두 제거한 후 새 Pod(v2) 생성
+        - downtime 발생
+    - Canary
+        - 업데이트 대상인 기존 ReplicaSet(v1)과 새로운 ReplicaSet(v2)가 공존한다.
+        - v1 트래픽을 점진적으로 v2로 라우팅시킨다.
+        - 에러 발생시 다시 롤백
+        - 100%의 트래픽을 v2로 처리했을 때 문제가 없다면 정상 배포 완료된 것으로 볼 수 있다.
+- Rollbacks
+    - 업데이트 내역이 자동으로 남아서, 이전버전or 특정버전으로 롤백이 쉽다.
+    ```
+    # 히스토리 확인
+    kubectl rollout history deploy/echo-deploy
+
+    # revision 1 히스토리 상세 확인
+    kubectl rollout history deploy/echo-deploy --revision=1
+
+    # 바로 전으로 롤백
+    kubectl rollout undo deploy/echo-deploy
+
+    # 특정 버전으로 롤백
+    kubectl rollout undo deploy/echo-deploy --to-revision=2
+    ```
+- 이 외에도 스케일링 정책, 헬스체크 등 추가기능이 있어 ReplicaSet만 사용하는 것보다 **배포(Deploy)에 유리**하다.

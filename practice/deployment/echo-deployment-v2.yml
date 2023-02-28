@@ -1,0 +1,21 @@
+# Deployment v2
+# container 생성시 사용되는 image만 교체했다.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo-deploy
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: echo
+      tier: app
+  template:
+    metadata:
+      labels:
+        app: echo
+        tier: app
+    spec:
+      containers:
+        - name: echo
+          image: ghcr.io/subicura/echo:v2  # 이미지 교체
