@@ -2,12 +2,12 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: mariadb
+  name: pod-mariadb
   labels:
     app: mariadb
 spec:
   containers:
-    - name: mariadb
+    - name: con-mariadb
       image: mariadb:latest
       env:  # 환경변수로 db패스워드 설정
         - name: MYSQL_ROOT_PASSWORD

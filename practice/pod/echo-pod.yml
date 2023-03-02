@@ -1,11 +1,17 @@
 # 오브젝트 1개에 대한 정의 (apiVersion, kind, metadata, spec은 필수항목)
 apiVersion: v1 # 오브젝트 버전: K8s 버전마다 지원버전이 다를 수 있음
 kind: Pod      # 오브젝트 타입
-metadata:      # 메타데이터: name, labels는 K8s로 오브젝트관리할 때 이용됨
-  name: echo
-  labels:
-    app: echo
+metadata:      # 개별 오브젝트 식별 용도
+  name: metadata-name  # 동일타입&&동일이름의 다른 오브젝트는 있을 수 없다.
+  labels:              # 원하는 key-value를 등록하여 추후 다른 오브젝트에서 이 Pod을 식별하는 데 사용가능
+    app: metadata-labels-app2 # key이름은 정해진 규격이 아님 
+    tier: frontendj           # key이름은 정해진 규격이 아님
+    kkk: kkkkjlkj             # key이름은 정해진 규격이 아님
+    yunan: mypod              # key이름은 정해진 규격이 아님
+    # 자주 사용되는 labels 예시
+    # app: 여러 Pod을 사용한 하나의 app을 구현할 경우, 이 Pod이 어느 app 소속인지 표기
+    # tier: frontend, backend, db 등 해당 Pod의 계층or 역할을 표기
 spec:          # 스펙(상세명세): 하위항목은 어떤 오브젝트를 쓰냐에 따라 다름
   containers:
-    - name: app
-      image: ghcr.io/subicura/echo:v1
+    - name: containers-name  # 1개의 Pod 안에서 Container를 식별하는 용도 
+      image: ghcr.io/subicura/echo:v1  # 이미지

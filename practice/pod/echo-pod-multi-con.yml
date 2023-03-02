@@ -2,16 +2,16 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: counter
+  name: counter  # 클러스터 내 Pod 식별을 위한 name
   labels:
-    app: counter
+    app: counter # 클러스터 내 Pod 식별위한 커스텀 Label
 spec:
   # 다음과 같이 기술된다.
   containers:
-    - name: app
+    - name: app  # Pod 내 Container 식별
       image: ghcr.io/subicura/counter:latest
       env:  # 환경변수
         - name: REDIS_HOST
           value: "localhost"
-    - name: db
+    - name: db  # Pod 내 Container 식별
       image: redis

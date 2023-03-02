@@ -114,7 +114,7 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - K8s 개발/운영자는 보통 Deployment만으로 ReplicaSet을 관리 (필요에 따라선 ReplicaSet을 직접관리가능)
 - 특히, Pod의 **상태를 변경(배포)**할 때 Deployment가 유리
 - 업데이트 전략(Strategy)을 설정 가능
-    - Rolling updates
+    - Rolling updates (default)
         - 업데이트시, 새 ReplicaSet(v2)을 만들고 기존 ReplicaSet(v1)에서 Pod을 하나씩 점진적으로 이전한다.
         - zero-downtime update 보장
     - Recreate
@@ -126,7 +126,7 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
         - 에러 발생시 다시 롤백
         - 100%의 트래픽을 v2로 처리했을 때 문제가 없다면 정상 배포 완료된 것으로 볼 수 있다.
 - Rollbacks
-    - 업데이트 내역이 자동으로 남아서, 이전버전or 특정버전으로 롤백이 쉽다.
+    - 업데이트 내역이 자동으로 남아서, 이전버전or 특정버전으로 롤백이 쉽다. (버전관리)
     ```
     # 히스토리 확인
     kubectl rollout history deploy/echo-deploy
@@ -141,3 +141,17 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
     kubectl rollout undo deploy/echo-deploy --to-revision=2
     ```
 - 이 외에도 스케일링 정책, 헬스체크 등 추가기능이 있어 ReplicaSet만 사용하는 것보다 **배포(Deploy)에 유리**하다.
+
+# Service
+- This component acts as an abstract layer that exposes a set of Pods to the network as a single endpoint.
+- Services provide load balancing, service discovery, and other features to the Pods.
+- They allow network communication between the Pods and other components in the cluster, and abstract the underlying network topology.
+- Pod에도 private IP가 할당되지만, 자주 꺼졌다 켜질 수 있기 때문에 직접통신은 비권장 사항이다.
+- Pod 내부의 container들 끼리는 localhost를 공유하지만, Pod끼리는 IP로 통신해야 한다.
+- Service는 **클러스터 외부 네트워크 노출**or **클러스터 내부 오브젝트간 통신**을 책임진다.
+
+## Service Type
+- `ClusterIP` is the default Service type and provides a virtual IP address inside the cluster to access the Pods.
+- `NodePort` opens a static port on each node's IP address, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
+- `LoadBalancer` allocates an external IP address to the Service to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
+- `ExternalName` is used to provide DNS aliases to external services.

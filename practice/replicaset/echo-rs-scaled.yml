@@ -6,8 +6,8 @@ metadata:
   name: echo-rs
 spec:
   replicas: 4
-  selector:
-    matchLabels:
+  selector:    # selector: label기반으로 다른 오브젝트를 식별하고 제어한다.
+    matchLabels: # 체크할 Label. 하위 key-value가 모두 같아야 한다. 
       app: echo
       tier: app
   template:

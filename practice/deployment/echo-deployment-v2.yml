@@ -3,19 +3,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: echo-deploy
+  name: deploy-echo
 spec:
   replicas: 4
-  selector:
-    matchLabels:
-      app: echo
+  selector:    # selector: label기반으로 다른 오브젝트를 식별하고 제어한다.
+    matchLabels: # 체크할 Label. 하위 key-value가 모두 같아야 한다. 
+      app: pod-echo
       tier: app
   template:
     metadata:
       labels:
-        app: echo
+        app: pod-echo
         tier: app
     spec:
       containers:
-        - name: echo
+        - name: con-echo
           image: ghcr.io/subicura/echo:v2  # 이미지 교체

@@ -6,8 +6,8 @@ metadata:
   name: echo-deploy-st
 spec:
   replicas: 4
-  selector:
-    matchLabels:
+  selector:    # selector: label기반으로 다른 오브젝트를 식별하고 제어한다.
+    matchLabels: # 체크할 Label. 하위 key-value가 모두 같아야 한다. 
       app: echo
       tier: app
   minReadySeconds: 5
@@ -15,9 +15,13 @@ spec:
   strategy:
     type: RollingUpdate  # RollingUpdate, Recreate, Canary 중 선택
     rollingUpdate:
-      maxSurge: 3        # 
-      maxUnavailable: 3  # 
-  
+      maxSurge: 3        # 업데이트 중 spec.replicas보다 초과가능한 최대 pod 수
+      maxUnavailable: 3  # 업데이트 중 spec.replicas기준 사용불가한 최대 pod 수
+    # spec.replicas 4, maxSurge 3, maxUnavailable 3인 경우
+    # 업데이트 중 정상동작하는 pod 수는 1~7 범위에서 변화한다.
+    # maxSurge와 maxUnavailable는 spec.replicas값의 '50%'와 같이 percentage로 표기가능하고, 
+    # maxSugre와 maxUnavailable의 default는 25%이고, 권장값이다.
+
   template:
     metadata:
       labels:

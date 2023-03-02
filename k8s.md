@@ -84,7 +84,9 @@
     - Resource: e.g.) pods, deployments, nodes, namespaces, services, persistent volumes 등
 
 ## Application
-- K8s 공식 설명 중 자주 언급되는데, 각 Container 또는 Pod을 지칭한다고 봐도 무방하다.
+- K8s 공식 설명 중 자주 언급되는데, 1개 이상의 Container 또는 Pod들의 집합을 지칭한다고 봐도 무방하다.
+- 다수 Pod들을 용도에 따라 구분하여 칭할 때 사용
+- Service 오브젝트 등 다른 리소스들을 포함하는 개념으로 사용될 수도 있다.
 
 ## Pod
 - Container 1개 이상의 묶음
