@@ -46,7 +46,7 @@ sudo dpkg -i minikube_latest_amd64.deb
     # Type 별 Object 조회, 복수단수, 줄임말 혼용가능
     kubectl get pods (pod, po)
     kubectl get pods -A
-    kubectl get services (service)
+    kubectl get services (service, svc)
     kubectl get deployments (deployment, deploy)
     kubectl get jobs (job)
     kubectl get replicasets (replicaset, rs)
