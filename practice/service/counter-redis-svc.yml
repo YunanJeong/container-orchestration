@@ -3,11 +3,11 @@ kind: Deployment
 metadata:
   name: redis
 spec:
-  selector:
+  selector:    # selector: label기반으로 다른 오브젝트를 식별하고 제어한다.
     matchLabels:
       app: counter
       tier: db
-  template:
+  template:    # template: pod의 구성 및 메타데이터
     metadata:
       labels:
         app: counter

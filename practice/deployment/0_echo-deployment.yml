@@ -1,0 +1,28 @@
+# Deployment
+# ReplicaSet과 설정은 거의 동일하다.
+# ReplicaSet은 spec.template을 변경해도 기존 Pod들을 업데이트하지 않는다. replica수에 카운트만 한다.
+# Deployment는 spec.template을 변경하면 기존 Pod들도 업데이트된다.
+# Deployment는 기존 Pod들을 업데이트할 때 유용하다.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-echo
+spec:
+  replicas: 4
+  selector:
+    # selector: label기반으로 다른 오브젝트를 식별하고 제어한다.
+    # 기실행중인 Pod가 여기 기술된 label key-value를 모두 가지고있으면 replica 구성원으로 취급한다.
+    matchLabels:
+      app: pod-echo
+      tier: app
+  template:
+    # template: 최신 Pod 명세
+    # selector와 매치되는 기실행중인 Pod이 있으면 아래 내용으로 업데이트(끄고 새로 실행)
+    metadata:
+      labels:
+        app: pod-echo
+        tier: app
+    spec:
+      containers:
+        - name: con-echo
+          image: ghcr.io/subicura/echo:v1

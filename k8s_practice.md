@@ -102,17 +102,16 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
     - 실행 중에도 apply 커맨드로 새로운 설정 반영가능(Scale Out), [ReplicaSet 동작과정](https://velog.io/@jee-9/Kubernetes-Replica-Set%EB%A0%88%ED%94%8C%EB%A6%AC%EC%B9%B4%EC%85%8B%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC#%EC%B0%B8%EA%B3%A0-%ED%8F%AC%EB%93%9C-%EA%B0%AF%EC%88%98-%EB%B0%94%EA%BE%B8%EB%8A%94-%EB%B0%A9%EB%B2%95)
 - 동일한 Pod들 (Replicas of Pod)
     - 동일한 Pod 여러 개를 관리하는 것이라서 ReplicaSet(복제본집합)이라고 부른다. (e.g. Cluster시스템의 Node들)
-    - ReplicaSet 오브젝트 1개가 서로 다른 Pod들 여러 개를 관리하는 것은 아니다.
+    - 오로지 Pod 메타데이터의 label만을 기준으로 동일한지 판단한다. Pod 내부의 container 구성은 상관없다.
 - 항상 실행
     - ReplicaSet을 등록해놓으면, 오류로 인한 종료or 단순 delete해도 pod이 재실행된다.
 
 # Deployment
 - 지정된 수의 Pod 복제본들이 **원하는 상태**로 실행되도록 한다.
-- ReplicaSet의 high-level object이며, 내부적으로 ReplicaSet을 사용 및 관리한다.
-## ReplicaSet과의 차이점
-- ReplicaSet과 유사하나, Deployment가 기능이 더 많음
-- K8s 개발/운영자는 보통 Deployment만으로 ReplicaSet을 관리 (필요에 따라선 ReplicaSet을 직접관리가능)
-- 특히, Pod의 **상태를 변경(배포)**할 때 Deployment가 유리
+- ReplicaSet의 high-level object이며, 내부적으로 ReplicaSet을 사용
+- 설정파일도 ReplicaSet과 유사하나, Deployment가 기능이 더 많음 
+- K8s 개발/운영자는 보통 Deployment만 사용
+- 특히, Pod의 **상태를 변경(배포)할 때 Deployment가 유리**
 - 업데이트 전략(Strategy)을 설정 가능
     - Rolling updates (default)
         - 업데이트시, 새 ReplicaSet(v2)을 만들고 기존 ReplicaSet(v1)에서 Pod을 하나씩 점진적으로 이전한다.
@@ -141,6 +140,15 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
     kubectl rollout undo deploy/echo-deploy --to-revision=2
     ```
 - 이 외에도 스케일링 정책, 헬스체크 등 추가기능이 있어 ReplicaSet만 사용하는 것보다 **배포(Deploy)에 유리**하다.
+
+# ReplicaSet vs. Deployment
+- 실사용시 핵심차이: **기존 실행중인 Pod의 업데이트 여부**
+- ReplicaSet은 Pod 개수만 신경쓴다. 
+    - ReplicaSet을 apply할 때, Selector와 매칭되는 Pod이 이미 실행중인 경우 해당 Pod은 업데이트되지 않음
+    - ReplicaSet의 template에 기술된 정보(image 등)는 Pod 개수가 모자라서 새로 생성되는 Pod에만 적용됨
+    - e.g.) config파일에서 template의 Pod 정보(container image 등)를 변경 후 apply하면, 해당 config 파일로 기존 실행중인 Pod들은 변경되지 않는다. 바꾸고 싶으면 기존 Pod들을 delete 후 새로 실행해야 한다.
+- Deployment는 ReplicaSet기능 + 이미지 변경 등 업데이트 적용
+    - e.g.) Pod 정보 변경 후 새로 apply하면, 기존 실행중인 Pod에 변경사항이 적용된다.
 
 # Service
 - This component acts as an abstract layer that exposes a set of Pods to the network as a single endpoint.

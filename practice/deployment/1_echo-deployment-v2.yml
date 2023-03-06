@@ -10,7 +10,7 @@ spec:
     matchLabels: # 체크할 Label. 하위 key-value가 모두 같아야 한다. 
       app: pod-echo
       tier: app
-  template:
+  template:    # template: pod의 구성 및 메타데이터
     metadata:
       labels:
         app: pod-echo

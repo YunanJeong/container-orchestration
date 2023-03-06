@@ -1,3 +1,6 @@
+# 일반적인 pod 관리는 상위Object(ReplicaSet, Deployment)로 한다.
+# 아래 옵션은 경우에 따라 필요할 수는 있으나, 당장 안중요하니 필요시 다시보면 된다.
+
 # readinessProbe
 # Pod이 응답이 없으면 대기한다.
 apiVersion: v1

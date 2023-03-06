@@ -1,0 +1,26 @@
+# 레플리카셋(복제셋) 예시
+# replicas 옵션을 1에서 4로 변경했다. 모자란 Pod 3개를 template대로 새로이 생성한다.
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: echo-rs
+spec:
+  replicas: 4  # Pod 개수 변경
+  selector:
+    # selector: label기반으로 다른 오브젝트를 식별하고 제어한다.
+    # 기실행중인 Pod가 여기 기술된 label key-value를 모두 가지고있으면 replica 구성원으로 취급한다.
+    matchLabels:
+      app: echo
+      tier: app
+  template:
+    # template: 생성할 Pod 명세
+    # replica 수가 모자라서 새로 생성될 때만 적용
+    # selector와 매치되는 기실행중인 Pod이 있으면 아래 설정은 무시됨(ReplicaSet 특성)
+    metadata:
+      labels:
+        app: echo
+        tier: app
+    spec:
+      containers:
+        - name: echo
+          image: ghcr.io/subicura/echo:v1

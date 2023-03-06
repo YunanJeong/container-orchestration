@@ -22,7 +22,7 @@ spec:
     # maxSurge와 maxUnavailable는 spec.replicas값의 '50%'와 같이 percentage로 표기가능하고, 
     # maxSugre와 maxUnavailable의 default는 25%이고, 권장값이다.
 
-  template:
+  template:    # template: pod의 구성 및 메타데이터
     metadata:
       labels:
         app: echo

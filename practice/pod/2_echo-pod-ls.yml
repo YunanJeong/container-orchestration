@@ -1,3 +1,6 @@
+# 일반적인 pod 관리는 상위Object(ReplicaSet, Deployment)로 한다.
+# 아래 옵션은 경우에 따라 필요할 수는 있으나, 당장 안중요하니 필요시 다시보면 된다.
+
 # livenessProbe
 # 해당 Pod이 정상인지 체크하고 자가복구(self-healing)한다.
 # Pod이 응답이 없으면 재실행시킨다.
