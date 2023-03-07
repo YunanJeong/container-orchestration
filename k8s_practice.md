@@ -159,7 +159,7 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - Service는 **클러스터 외부 네트워크 노출**or **클러스터 내부 오브젝트간 통신**을 책임진다.
 
 ## Service Type
-- `ClusterIP` is the default Service type and provides a virtual IP address inside the cluster to access the Pods.
-- `NodePort` opens a static port on each node's IP address, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
-- `LoadBalancer` allocates an external IP address to the Service to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
+- `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
+- `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
+- `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
 - `ExternalName` is used to provide DNS aliases to external services.
