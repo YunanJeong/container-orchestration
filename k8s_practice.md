@@ -166,7 +166,21 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
     - 설명: Service 생성시 기본할당 IP. K8s에서는 각 Pod에 사설IP가 할당되지만, 관리자는 이를 직접 사용하지는 않고, 항상 Service를 통해 개별 Pod에 접근하는 데 그 때 사용되는 IP를 의미한다.
 - `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
-    - 의미: 여러 호스트(노드)에 걸친 여러 APP들끼리 통신하려면, 한 호스트 내 pod들이 호스트 밖의 request를 받을 공통 port가 하나는 있어야 하니까
+    - 의미: 여러 Node(호스트)가 포함된 K8s클러스터에서 특정 Node를 식별하기 위한 Port
+    - NodePort타입의 Service에서는 nodePort->Port(Service)->TargetPort(Pod)로 이어지는 포트포워딩을 정의한다.
+    - 필요예시1: 클러스터 내 여러 Node에 걸친 여러 Pod들끼리 통신하려면, 한 Node 내 Pod들이 Node 밖의 request를 받을 인터페이스(공통 port)가 하나는 있어야 하니까
+    - 필요예시2: K8s 클러스터 외부에서 특정 Pod에 접근하려면 우선 Node를 먼저 찾은 후 포트포워딩을 타고 들어가야 하니까
+    
 - `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
     - 의미: 클러스터 내부가 아니라 외부 인터넷과 통신하려면 IP필요하니까. Service에 기본할당되는 IP는 10.x.x.x인데 그대로 사용할 수는 없다.
 - `ExternalName` is used to provide DNS aliases to external services.
+
+```
+# endpoint(ep): service로 포트포워딩된 대상 Pod(Container)의 IP와 port 출력
+kubectl get endpoint 
+
+# 특정 서비스의 대상 엔드포인트만 확인
+kubectl get ep/{Service_name}
+kubectl get ep {Service_name}
+kubectl describe ep {Service_name}
+```

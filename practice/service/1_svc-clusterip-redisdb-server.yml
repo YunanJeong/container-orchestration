@@ -1,0 +1,19 @@
+# Service 예제 - ClusterIP
+# 다른 Pod(0_deploy_client-access-to-redis.yml)를 실행시켜 여기서 정의한 Service에 접근해보자 (service-metadata-redis:3333)
+apiVersion: v1
+kind: Service
+metadata:
+  name: service-metadata-redis
+spec:
+  # type: ClusterIP # (default)
+
+  # 클러스터 내에서 open될(ClusterIP) Service Port와 포트포워딩 정보
+  ports:
+    - protocol: TCP
+      port: 3333       # service에서 open할 port
+      targetPort: 6379 # 대상 Pod(container)에 open된 port # default: 위 port와 동일
+  
+  # Service에 연동될 대상 Pod 지정 (0_deploy_serverdb-redis.yml)
+  selector:
+    app: sampleapp
+    tier: db
