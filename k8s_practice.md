@@ -154,13 +154,17 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - This component acts as an abstract layer that exposes a set of Pods to the network as a single endpoint.
 - Services provide load balancing, service discovery, and other features to the Pods.
 - They allow network communication between the Pods and other components in the cluster, and abstract the underlying network topology.
-- Pod에도 private IP가 할당되지만, 자주 꺼졌다 켜질 수 있기 때문에 직접통신은 비권장 사항이다.
-- Pod 내부의 container들 끼리는 localhost를 공유하지만, Pod끼리는 IP로 통신해야 한다.
+## Pod에 priviate IP가 할당되는데, 굳이 Service IP를 거쳐서 통신하는 이유
+- 여러모로 네트워크 관리시 편의성or 이점이 있다.
+- Pod은 자주 재실행되면서 IP가 변경될 수 있기에 직접통신은 비권장 사항
+- Pod 내부의 container들 끼리는 localhost를 공유하지만, Pod끼리는 IP로 통신 필요
+- 클러스터 내부 통신시 Service의 IP 대신 name을 DNS alias 처럼 사용 가능
+- 여러 Pod에 트래픽을 분산시키는 로드밸런싱 기능 구현 가능
 - Service는 **클러스터 외부 네트워크 노출**or **클러스터 내부 오브젝트간 통신**을 책임진다.
 
 ## Service Type
 - `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
-    - 설명: Service 생성시 기본할당 IP. K8s에서는 각 Pod에 사설IP(192.x.x.x)가 할당되지만, 관리자는 이를 직접 사용하지는 않고, 항상 Service(10.x.x.x)를 통해 한번 거쳐서 개별 Pod에 접근하게 되는 데 그 때 사용되는 IP다.
+    - 설명: Service 생성시 기본할당 IP. K8s에서는 각 Pod에 사설IP가 할당되지만, 관리자는 이를 직접 사용하지는 않고, 항상 Service를 통해 개별 Pod에 접근하는 데 그 때 사용되는 IP를 의미한다.
 - `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
     - 의미: 여러 호스트(노드)에 걸친 여러 APP들끼리 통신하려면, 한 호스트 내 pod들이 호스트 밖의 request를 받을 공통 port가 하나는 있어야 하니까
 - `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
