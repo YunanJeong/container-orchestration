@@ -7,11 +7,13 @@ metadata:
 spec:
   # type: ClusterIP # (default)
 
-  # 클러스터 내에서 open될(ClusterIP) Service Port와 포트포워딩 정보
+  # Service Port와 포트포워딩 정보
+  # Service의 IP는 클러스터 내에서 접근가능하고, port(ServicePort)는 대상 Pod를 가리킨다.
+  # Pod의 IP는 클러스터 내에서 접근가능하고, targetPort(PodPort)는 Pod 내 프로세스를 가리킨다.  
   ports:
     - protocol: TCP
-      port: 3333       # service에서 open할 port
-      targetPort: 6379 # 대상 Pod(container)에 open된 port # default: 위 port와 동일
+      port: 3333        # service에서 open할 port
+      targetPort: 6379  # 대상 Pod(container)에 open된 port # default: 위 port와 동일
   
   # Service에 연동될 대상 Pod 지정 (0_deploy_serverdb-redis.yml)
   selector:

@@ -10,15 +10,20 @@ metadata:
   name: service-metadata-redis
 spec:
   type: NodePort
-
-
-  # 포트포워딩 정보
+  # 포트 정보
   # Nodeport->Port(Service)->TargetPort(Pod)로 이어지는 포트포워딩이 수행된다.
+  # => Node의 IP는 클러스터 내에서 접근가능하고, nodePort는 특정 Service의 특정 port를 가리킨다.
+  # => Service의 IP는 노드 내에서 접근가능하고, port(ServicePort)는 특정 Pod의 특정 port를 가리킨다.
+  # => Pod의 IP는 노드 내에서 접근가능하고, targetPort(PodPort)는 Pod 내 프로세스를 가리킨다
+
+  # NodeIP, ServiceIP, PodIP 모두 클러스터 내에서 접근가능한데 왜 이렇게 계층화 되어 있는가?
+  # => port(Service port): Pod은 재실행이 잦아서 IP도 자주 변경되기 때문에 Service(alias)단위로 묶어서 관리
+  # => nodePort: Node 외부에서 오는 request를 받을 인터페이스가 필요하기 때문에 필요 
   ports:
     - protocol: TCP
-      nodePort: 31000  # K8s 클러스터 내 범위에서 노드(host)를 식별하기 위한 port  # default: 30000-32768 
-      port: 3333       # service에서 open할 port
-      targetPort: 6379 # 대상 Pod(container)에 open된 port                         # default: 위 port와 동일
+      nodePort: 31000  # Node(host)에서 open할 port         # default: 30000-32768 
+      port: 3333       # Service에서 open할 port
+      targetPort: 6379 # 대상 Pod(container)에 open된 port  # default: 위 port와 동일
       
 
   # Service에 연동될 대상 Pod 지정 (0_deploy_serverdb-redis.yml)

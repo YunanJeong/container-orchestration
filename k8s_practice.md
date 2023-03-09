@@ -154,25 +154,52 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - This component acts as an abstract layer that exposes a set of Pods to the network as a single endpoint.
 - Services provide load balancing, service discovery, and other features to the Pods.
 - They allow network communication between the Pods and other components in the cluster, and abstract the underlying network topology.
-## Pod에 priviate IP가 할당되는데, 굳이 Service IP를 거쳐서 통신하는 이유
-- 여러모로 네트워크 관리시 편의성or 이점이 있다.
+## Pod에 priviate IP가 할당되는데, 굳이 또 다른 private IP인 Service IP를 거쳐서 통신하는 이유
 - Pod은 자주 재실행되면서 IP가 변경될 수 있기에 직접통신은 비권장 사항
-- Pod 내부의 container들 끼리는 localhost를 공유하지만, Pod끼리는 IP로 통신 필요
-- 클러스터 내부 통신시 Service의 IP 대신 name을 DNS alias 처럼 사용 가능
-- 여러 Pod에 트래픽을 분산시키는 로드밸런싱 기능 구현 가능
+- 여러 Pod들을 묶어서 함께 관리하기 용이함
+    - 여러 Pod에 트래픽을 분산시키는 로드밸런싱 기능 구현 가능
+    - Pod 내부의 container들 끼리는 localhost를 공유하지만, Pod끼리는 IP로 통신 필요
+    - 클러스터 내부 Pod끼리 통신시 Service의 IP 대신 name을 DNS alias 처럼 사용 가능
+        - => Pod의 IP,name은 다양하고 변화해서 관리하기 번거롭다.
+        - => 대신, Service name과 개별 port는 고정해놓고 관리하기 쉽다.
 - Service는 **클러스터 외부 네트워크 노출**or **클러스터 내부 오브젝트간 통신**을 책임진다.
 
 ## Service Type
 - `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
-    - 설명: Service 생성시 기본할당 IP. K8s에서는 각 Pod에 사설IP가 할당되지만, 관리자는 이를 직접 사용하지는 않고, 항상 Service를 통해 개별 Pod에 접근하는 데 그 때 사용되는 IP를 의미한다.
+    - 주 사용목적: 동일 클러스터내 Pod들 간 통신을 관리
+    - 어떤 타입의 Service든 기본할당되는 IP를 의미
+    - Service IP는 클러스터 내에서만 노출되기 때문에 ClusterIP라고 칭한다.
+    - 동일 클러스터라면, 한 Node에 있는 Pod이 다른 Node에 있는 Service에 직접 접근가능
+    - Service name을 DNS alias처럼 사용가능
+    - Service name 및 ip는 클러스터 내에서 고유하기 때문에, 서로 다른 Node의 Pod들 간 통신에서 Node의 IP,port를 신경쓸 필요없음. 이 때 Node간 통신은 K8s 시스템 컴포넌트가 처리해준다.
+    
 - `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
-    - 의미: 여러 Node(호스트)가 포함된 K8s클러스터에서 특정 Node를 식별하기 위한 Port
-    - NodePort타입의 Service에서는 nodePort->Port(Service)->TargetPort(Pod)로 이어지는 포트포워딩을 정의한다.
-    - 필요예시1: 클러스터 내 여러 Node에 걸친 여러 Pod들끼리 통신하려면, 한 Node 내 Pod들이 Node 밖의 request를 받을 인터페이스(공통 port)가 하나는 있어야 하니까
-    - 필요예시2: K8s 클러스터 외부에서 특정 Pod에 접근하려면 우선 Node를 먼저 찾은 후 포트포워딩을 타고 들어가야 하니까
+    - 기능: Node(호스트) 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port(Service)->targetPort(Pod)로 이어지는 포트포워딩이 수행됨
+    - 주 사용목적: 클러스터 외부와의 통신을 관리
+    - NodePort는 동일 클러스터 내 Node간 통신에도 활용될 수 있지만, 위 목적이 메인이다. 동일 클러스터 내에서는 Service IP로 직접 접근하면 되기 때문이다.(동일 클러스터라면 다른 Node에 있어도 Pod끼리 직접접근도 가능하다. 다만 이건 비권장사항)
+    - 따라서 필요에 따라 계층화된 아키텍처를 구성할 수 있으며, **일반적으로 클러스터 외부에 노출시킬 Service는 nodePort타입을 쓰고, 클러스터 내부용 Service는 ClusterIP타입을 쓴다.** 
     
 - `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
-    - 의미: 클러스터 내부가 아니라 외부 인터넷과 통신하려면 IP필요하니까. Service에 기본할당되는 IP는 10.x.x.x인데 그대로 사용할 수는 없다.
+    - 주 사용목적: 클라우드(AWS, GCP)를 이용해서 Service를 클러스터 외부의 인터넷에 노출
+        - e.g.) 웹 서비스 배포
+    - Service IP(ClusterIP)와 nodePort는 자동 생성된다.
+        - 이 때 Service IP는 공인 IP다.
+        - nodePort는 디폴트 range인 30000-32767 외에 다른 port도 사용 가능해서 보안적으로 더 좋다. 
+    - Service를 통한 각 Pod의 트래픽 LoadBalancing은 K8s 시스템이 아닌 클라우드 제공자가 담당하게 된다.
+
+- NodePort vs. LoadBalancer
+    - 만약 클라우드가 아닌 가상환경 등 소규모 네트워크에서 LoadBalancer 타입을 쓴다면 NodePort 타입과 별 차이가 없다.
+    - NodePort와 LoadBalancer 타입 둘 다 Service를 클러스터 외부로 노출시키려는 목적이 있으나, 약간 차이가 있다. 
+        - LoadBalancer: 클라우드를 활용하여 서비스를 외부 노출 및 로드 밸런싱
+        - NodePort:
+            - 클러스터 외부 통신 (메인 목적)
+                - 단순 외부 네트워크와 연결
+                - 외부 "인터넷" 노출 시: 다음 설명할 ingress 사용
+            - 클러스터 내부 통신 (부차적인 목적)
+        - 즉, 일반적으로 k8s 서비스의 외부 인터넷 배포 방법
+            - 클라우드 쓸거면 LoadBalancer
+            - 그 외엔 nodePort+ingress
+    
 - `ExternalName` is used to provide DNS aliases to external services.
 
 ```
@@ -184,3 +211,5 @@ kubectl get ep/{Service_name}
 kubectl get ep {Service_name}
 kubectl describe ep {Service_name}
 ```
+# Ingress
+- 외부 연결
