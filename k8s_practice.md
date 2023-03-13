@@ -99,7 +99,7 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - 동일한 Pod이 여러 개 필요할 때는 Pod를 일일이 정의하기보다 ReplicaSet을 쓰는 것이 적합
 - 지정된 수
     - yaml로 Pod 개수를 간편히 설정가능
-    - 실행 중에도 apply 커맨드로 새로운 설정 반영가능(Scale Out), [ReplicaSet 동작과정](https://velog.io/@jee-9/Kubernetes-Replica-Set%EB%A0%88%ED%94%8C%EB%A6%AC%EC%B9%B4%EC%85%8B%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC#%EC%B0%B8%EA%B3%A0-%ED%8F%AC%EB%93%9C-%EA%B0%AF%EC%88%98-%EB%B0%94%EA%BE%B8%EB%8A%94-%EB%B0%A9%EB%B2%95)
+    - 실행 중에도 apply 커맨드로 Pod추가 가능(Scale Out), [ReplicaSet 동작과정](https://velog.io/@jee-9/Kubernetes-Replica-Set%EB%A0%88%ED%94%8C%EB%A6%AC%EC%B9%B4%EC%85%8B%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC#%EC%B0%B8%EA%B3%A0-%ED%8F%AC%EB%93%9C-%EA%B0%AF%EC%88%98-%EB%B0%94%EA%BE%B8%EB%8A%94-%EB%B0%A9%EB%B2%95)
 - 동일한 Pod들 (Replicas of Pod)
     - 동일한 Pod 여러 개를 관리하는 것이라서 ReplicaSet(복제본집합)이라고 부른다. (e.g. Cluster시스템의 Node들)
     - 오로지 Pod 메타데이터의 label만을 기준으로 동일한지 판단한다. Pod 내부의 container 구성은 상관없다.
@@ -113,7 +113,7 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - K8s 개발/운영자는 보통 Deployment만 사용
 - 특히, Pod의 **상태를 변경(배포)할 때 Deployment가 유리**
 - 업데이트 전략(Strategy)을 설정 가능
-    - Rolling updates (default)
+    - Rolling updates (default) 
         - 업데이트시, 새 ReplicaSet(v2)을 만들고 기존 ReplicaSet(v1)에서 Pod을 하나씩 점진적으로 이전한다.
         - zero-downtime update 보장
     - Recreate
