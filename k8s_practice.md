@@ -128,16 +128,16 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
     - 업데이트 내역이 자동으로 남아서, 이전버전or 특정버전으로 롤백이 쉽다. (버전관리)
     ```
     # 히스토리 확인
-    kubectl rollout history deploy/echo-deploy
+    kubectl rollout history deploy/{deployment-name}
 
     # revision 1 히스토리 상세 확인
-    kubectl rollout history deploy/echo-deploy --revision=1
+    kubectl rollout history deploy/{deployment-name} --revision=1
 
     # 바로 전으로 롤백
-    kubectl rollout undo deploy/echo-deploy
+    kubectl rollout undo deploy/{deployment-name}
 
     # 특정 버전으로 롤백
-    kubectl rollout undo deploy/echo-deploy --to-revision=2
+    kubectl rollout undo deploy/{deployment-name} --to-revision=2
     ```
 - 이 외에도 스케일링 정책, 헬스체크 등 추가기능이 있어 ReplicaSet만 사용하는 것보다 **배포(Deploy)에 유리**하다.
 
