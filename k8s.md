@@ -5,15 +5,15 @@
     - Apache 2.0 License
     - 관리: CNCF(Cloud Native Computing Foundation, Google참여)
     - Google이 개발 후 CNCF재단에 기부해서 오픈소스화 됨
-## Managed K8s Service
-    - AWS(EKS), Azure(AKS), GCP(GKE)와 같은 클라우드 기반 서비스 (CaaS), (IaaS와 PaaS 사이)
 
-## 경량 배포판(distributions)
-- 구현체(implemetations)라는 표현도 가끔 쓰지만, 보통은 K8s 배포판(distributions)이라고 불림
+## 배포판(distributions)
+- 구현체(implementations)라는 표현도 가끔 쓰지만, 보통은 K8s 배포판(distributions)이라고 불림
 - [MicroK8s vs. K3s vs. minikube 비교표](https://microK8s.io/compare)
 - [minikube, k3s, 오리지널K8s 특징 및 설치](https://www.samsungsds.com/kr/insights/kubernetes-2.html?moreCnt=0&backTypeId=&category=)
 - K8s 설치 및 구성이 복잡해서, 편하게 사용하기 위한 배포판(or 관리도구)들이 있음
 - 단, 오리지널 K8s만큼의 성능을 쓸 수는 없고, 목적에 맞게 사용하는 도구라고 봐야 함
+
+### 경량 배포판
 - 주요 목적: 학습용, 빠른 환경 구성, 가벼움
     - (e.g. IoT, 라즈베리파이 등에서도 가능)
 - minikube (미니큐브)
@@ -21,15 +21,26 @@
     - 제공: SIG(Special Interest Group, **쿠버네티스 개발자들** 중 특정 주제에 관심있는 개발자모임)
     - **유일하게 K8s 공식문서에서도 다뤄짐**. 다른 배포판은 다른 기관에서 제공
     - 테스트나 개발 용도에 적합
-- k3s (by *Lancher Labs* 기업)
+- k3s (by *Rancher Labs(SUSE)* 기업)
     - minikube와 마찬가지로 경량이나, minikube보다 production ready로 적합하다는 의견이 많음 
-- k3d: Docker Container안에 k3s가 설치되어 배포되는 형태
+- k3d
+    - Docker Container안에 k3s가 설치되어 배포되는 형태
+    - 한 PC에서 다수 클러스터, 다수 서버 상황을 시뮬레이션하고 싶을 때 사용
 - MicroK8s (by *Canonical*, Ubuntu Publisher 기업)
-- Rancher (by *Lancher Labs* 기업)
+### 대규모
+- Rancher (by *Rancher Labs(SUSE)* 기업)
     - 오픈소스버전, 상용버전 별도 존재
     - 용도: 대규모 및 기업용 환경에서도 활용 가능한 다목적 쿠버네티스 관리 플랫폼
     - 장점: 기본 포함된 기능이 많고 추가 도구 설치도 쉬움. 멀티 클라우드 관리 가능
     - 단점: 다른 도구에 비해 무거움
+- kubeadm (업스트림 쿠버네티스)
+    - 쿠버네티스 공식
+    - 마스터노드에 접근할 kubectl
+    - 워커노드에 kubelet 함께 설치 필요
+
+### Managed K8s Service
+    - AWS(EKS), Azure(AKS), GCP(GKE)와 같은 클라우드 기반 서비스 (CaaS), (IaaS와 PaaS 사이)
+
 
 # 설치 (공식 K8s)
 - [설치하기 전 쿠버네티스 컴포넌트 관련 설명 참고](https://kubernetes.io/ko/docs/setup/)
