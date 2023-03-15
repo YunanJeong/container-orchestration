@@ -4,11 +4,26 @@
 - [도커를 non-root 권한으로 사용하기](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
 
 ## Installation
-[minikube 시작하기(공식)](https://minikube.sigs.k8s.io/docs/start/)
+- [minikube 시작하기(공식)](https://minikube.sigs.k8s.io/docs/start/)
 ```
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
 sudo dpkg -i minikube_latest_amd64.deb
 ```
+
+# K3s
+## requirement
+- [요구사항(포트, 메모리 등)](https://docs.k3s.io/installation/requirements)
+
+## Intallation
+- [k3s 시작, 설치](https://docs.k3s.io/quick-start)
+```
+# k3s 설치
+curl -sfL https://get.k3s.io | sh -
+
+# 새 노드 추가시 설치(환경 변수 설정 및 클러스터 참여)
+curl -sfL https://get.k3s.io | K3S_URL=https://{myserver}:6443 K3S_TOKEN=mynodetoken sh -
+```
+
 ## 참고 Guide
 [쿠버네티스 안내서(기초 학습 및 실습용으로 훌륭)](https://subicura.com/k8s)
 
