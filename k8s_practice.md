@@ -1,44 +1,69 @@
 # minikube
-## requirement
-- 2코어, 2GB 메모리 필요
-- [도커를 non-root 권한으로 사용하기](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
-
 ## Installation
-- [minikube 시작하기(공식)](https://minikube.sigs.k8s.io/docs/start/)
-```
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
-sudo dpkg -i minikube_latest_amd64.deb
-```
-
-# K3s
-## requirement
-- [요구사항(포트, 메모리 등)](https://docs.k3s.io/installation/requirements)
-
-## Intallation
-- [k3s 시작, 설치](https://docs.k3s.io/quick-start)
-```
-# k3s 설치
-curl -sfL https://get.k3s.io | sh -
-
-# 새 노드 추가시 설치(환경 변수 설정 및 클러스터 참여)
-curl -sfL https://get.k3s.io | K3S_URL=https://{myserver}:6443 K3S_TOKEN=mynodetoken sh -
-```
-
-## 참고 Guide
-[쿠버네티스 안내서(기초 학습 및 실습용으로 훌륭)](https://subicura.com/k8s)
-
+- 참고: [minikube 시작하기(공식)](https://minikube.sigs.k8s.io/docs/start/)
+- 2코어, 2GB 메모리 필요
+- Container Runtime 필요
+    - 도커 사용시 [도커를 non-root 권한으로 사용](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user) 필요
+    ```
+    # 다운로드 및 설치
+    curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
+    sudo dpkg -i minikube_latest_amd64.deb
+    ```
 ## Command
+- `minikube start`
+    - 시작하기. **minikube는 Container로 실행**된다.
 - `minikube kubectl -- `
     -  minikube의 서브커맨드로 일반적인 kubectl의 명령어를 실행 가능
     - `alias kubectl="minikube kubectl --"`를 `~/.bashrc`에 등록하여 편하게 쓰자
 - `minikube ip`
     - 현재 작업중인 host 내에서 minikube가 점유한 private ip
+    - K8s 클러스터의 노드 ip를 의미
 - `minikube service {service_name}`
-    - k8s에서 service마다 ip가 할당되는데, minikube 등을 사용 중이라면 **minikube 내부에서 private ip**가 할당된 것이므로, localhost에서 바로 접근이 안될 수 있다.
+    - K8s에서 service마다 ip가 할당되는데, 이는 K8s 클러스터 환경 내 private ip이다. 따라서 localhost에서 직접 접근이 불가하다.
     - 이 때 이 명령어를 이용하면 한단계 더 포트포워딩하여 localhost에서 접속가능한 포트가 제공된다.
 - `minikube dashboard`
     - k8s 대시보드 실행. 접속은 브라우저에서
     - 대시보드 자체는 minikube 전용이 아니라, 일반적인 k8s의 모니터링 대시보드
+---
+# K3s
+## Intallation
+- [요구사항(포트, 메모리 등)](https://docs.k3s.io/installation/requirements)
+- [K3s 시작, 설치](https://docs.k3s.io/quick-start)
+```
+# K3s 설치
+curl -sfL https://get.k3s.io | sh -
+
+# 새 노드 추가시 설치(환경 변수 설정 및 클러스터 참여)
+curl -sfL https://get.k3s.io | K3S_URL=https://{myserver}:6443 K3S_TOKEN={mynodetoken} sh -
+```
+## 참고
+- K3s 프로세스는 daemon으로 실행된다.
+- 클러스터 내 container는 containerd로 실행된다. (별도 설치 필요없음.default)
+
+## Command
+```
+# k3s subcommand로 kubectl 사용가능
+sudo k3s kubectl
+
+# 직접 kubectl도 가능
+# (kubectl->k3s로 bin파일 link됨, k3s 설치시 default)
+sudo kubectl
+
+# sudo 없이 쓰기 (sudo 필수 서브커맨드들은 여전히 존재)
+$ sudo chmod -R 777 /etc/rancher/k3s/k3s.yaml
+```
+
+```
+# k3s는 daemon으로 실행된다.
+sudo k3s server
+
+# node
+sudo k3s agent
+```
+---
+# 참고 Guide
+[쿠버네티스 안내서(기초 학습 및 실습용으로 훌륭)](https://subicura.com/k8s)
+
 ---
 # kubectl
 - [kubectl 명령어 참고자료](https://subicura.com/k8s/guide/kubectl.html#kubectl-%E1%84%86%E1%85%A7%E1%86%BC%E1%84%85%E1%85%A7%E1%86%BC%E1%84%8B%E1%85%A5)
@@ -98,18 +123,19 @@ curl -sfL https://get.k3s.io | K3S_URL=https://{myserver}:6443 K3S_TOKEN=mynodet
     kubectl config current-context
     ```
 ---
-# Pod
-- 빠른 Pod 실행
-```
-kubectl run echo --image ghcr.io/subicura/echo:v1
-```
+# K8s의 Object(Resource)
+## Pod
 - docker run처럼 컨테이너를 일회성으로 띄운다.
+    ```
+    # 빠른 Pod 실행
+    kubectl run echo --image ghcr.io/subicura/echo:v1
+    ```
 - K8s에서는 Pod을 delete해도, 일반적으로 ReplicaSet에 의해 복구되지만, run기반 Pod는 즉시 delete된다.
 - Pod은 보통 단독사용하지 않는다.
     - 그럴거면 그냥 docker run을 쓰지.
     - K8s에서는 일반적으로 Pod를 관리하기 위한 오브젝트를 함께 설정한다.
 
-# ReplicaSet(복제셋)
+## ReplicaSet(복제셋)
 - **지정된 수**의 **동일한 Pod들**이 **항상 실행**되도록 한다.
 - 동일한 Pod이 여러 개 필요할 때는 Pod를 일일이 정의하기보다 ReplicaSet을 쓰는 것이 적합
 - 지정된 수
@@ -121,7 +147,7 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - 항상 실행
     - ReplicaSet을 등록해놓으면, 오류로 인한 종료or 단순 delete해도 pod이 재실행된다.
 
-# Deployment
+## Deployment(배포)
 - 지정된 수의 Pod 복제본들이 **원하는 상태**로 실행되도록 한다.
 - ReplicaSet의 high-level object이며, 내부적으로 ReplicaSet을 사용
 - 설정파일도 ReplicaSet과 유사하나, Deployment가 기능이 더 많음 
@@ -156,7 +182,7 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
     ```
 - 이 외에도 스케일링 정책, 헬스체크 등 추가기능이 있어 ReplicaSet만 사용하는 것보다 **배포(Deploy)에 유리**하다.
 
-# ReplicaSet vs. Deployment
+## ReplicaSet vs. Deployment
 - 실사용시 핵심차이: **기존 실행중인 Pod의 업데이트 여부**
 - ReplicaSet은 Pod 개수만 신경쓴다. 
     - ReplicaSet을 apply할 때, Selector와 매칭되는 Pod이 이미 실행중인 경우 해당 Pod은 업데이트되지 않음
@@ -165,11 +191,12 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
 - Deployment는 ReplicaSet기능 + 이미지 변경 등 업데이트 적용
     - e.g.) Pod 정보 변경 후 새로 apply하면, 기존 실행중인 Pod에 변경사항이 적용된다.
 
-# Service
+## Service
 - This component acts as an abstract layer that exposes a set of Pods to the network as a single endpoint.
 - Services provide load balancing, service discovery, and other features to the Pods.
 - They allow network communication between the Pods and other components in the cluster, and abstract the underlying network topology.
-## Pod에 priviate IP가 할당되는데, 굳이 또 다른 private IP인 Service IP를 거쳐서 통신하는 이유
+
+### Pod에 priviate IP가 할당되는데, 굳이 또 다른 private IP인 Service IP를 거쳐서 통신하는 이유
 - Pod은 자주 재실행되면서 IP가 변경될 수 있기에 직접통신은 비권장 사항
 - 여러 Pod들을 묶어서 함께 관리하기 용이함
     - 여러 Pod에 트래픽을 분산시키는 로드밸런싱 기능 구현 가능
@@ -179,8 +206,8 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
         - => 대신, Service name과 개별 port는 고정해놓고 관리하기 쉽다.
 - Service는 **클러스터 외부 네트워크 노출**or **클러스터 내부 오브젝트간 통신**을 책임진다.
 
-## Service Type
-- `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
+### Service Type
+1. `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
     - 주 사용목적: 동일 클러스터내 Pod들 간 통신을 관리
     - 어떤 타입의 Service든 기본할당되는 IP를 의미
     - Service IP는 클러스터 내에서만 노출되기 때문에 ClusterIP라고 칭한다.
@@ -188,13 +215,13 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
     - Service name을 DNS alias처럼 사용가능
     - Service name 및 ip는 클러스터 내에서 고유하기 때문에, 서로 다른 Node의 Pod들 간 통신에서 Node의 IP,port를 신경쓸 필요없음. 이 때 Node간 통신은 K8s 시스템 컴포넌트가 처리해준다.
     
-- `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
+2. `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
     - 기능: Node(호스트) 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port(Service)->targetPort(Pod)로 이어지는 포트포워딩이 수행됨
     - 주 사용목적: 클러스터 외부와의 통신을 관리
     - NodePort는 동일 클러스터 내 Node간 통신에도 활용될 수 있지만, 위 목적이 메인이다. 동일 클러스터 내에서는 Service IP로 직접 접근하면 되기 때문이다.(동일 클러스터라면 다른 Node에 있어도 Pod끼리 직접접근도 가능하다. 다만 이건 비권장사항)
     - 따라서 필요에 따라 계층화된 아키텍처를 구성할 수 있으며, **일반적으로 클러스터 외부에 노출시킬 Service는 nodePort타입을 쓰고, 클러스터 내부용 Service는 ClusterIP타입을 쓴다.** 
     
-- `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
+3. `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
     - 주 사용목적: 클라우드(AWS, GCP)를 이용해서 Service를 클러스터 외부의 인터넷에 노출
         - e.g.) 웹 서비스 배포
     - Service IP(ClusterIP)와 nodePort는 자동 생성된다.
@@ -215,7 +242,7 @@ kubectl run echo --image ghcr.io/subicura/echo:v1
             - 클라우드 쓸거면 LoadBalancer
             - 그 외엔 nodePort+ingress
     
-- `ExternalName` is used to provide DNS aliases to external services.
+4. `ExternalName` is used to provide DNS aliases to external services.
 
 ```
 # endpoint(ep): service로 포트포워딩된 대상 Pod(Container)의 IP와 port 출력
