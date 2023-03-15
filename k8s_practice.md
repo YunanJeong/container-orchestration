@@ -42,14 +42,14 @@ curl -sfL https://get.k3s.io | K3S_URL=https://{myserver}:6443 K3S_TOKEN={mynode
 
 ## Command
 ```
-# k3s subcommand로 kubectl 사용가능
+# k3s 서브커맨드로 kubectl
 sudo k3s kubectl
 
-# 직접 kubectl도 가능
+# 직접 kubectl도 사용가능
 # (kubectl->k3s로 bin파일 link됨, k3s 설치시 default)
 sudo kubectl
 
-# sudo 없이 쓰기 (sudo 필수 서브커맨드들은 여전히 존재)
+# sudo 없이 쓰기 (sudo 필수 서브커맨드들은 여전히 있음)
 $ sudo chmod -R 777 /etc/rancher/k3s/k3s.yaml
 ```
 
