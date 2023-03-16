@@ -39,7 +39,7 @@
     - 워커노드에 kubelet 함께 설치 필요
 
 ### Managed K8s Service
-    - AWS(EKS), Azure(AKS), GCP(GKE)와 같은 클라우드 기반 서비스 (CaaS), (IaaS와 PaaS 사이)
+- AWS(EKS), Azure(AKS), GCP(GKE)와 같은 클라우드 기반 서비스 (CaaS), (IaaS와 PaaS 사이)
 
 
 # 설치 (공식 K8s)
