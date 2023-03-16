@@ -50,7 +50,7 @@ sudo k3s kubectl
 sudo kubectl
 
 # sudo 없이 쓰기 (sudo 필수 서브커맨드들은 여전히 있음)
-$ sudo chmod -R 777 /etc/rancher/k3s/k3s.yaml
+sudo chmod -R 777 /etc/rancher/k3s/k3s.yaml
 ```
 
 ```
