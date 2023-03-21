@@ -218,16 +218,24 @@ sudo k3s agent
 2. `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
     - 기능: Node(호스트) 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port(Service)->targetPort(Pod)로 이어지는 포트포워딩이 수행됨
     - 주 사용목적: 클러스터 외부와의 통신을 관리
-    - NodePort는 동일 클러스터 내 Node간 통신에도 활용될 수 있지만, 위 목적이 메인이다. 동일 클러스터 내에서는 Service IP로 직접 접근하면 되기 때문이다.(동일 클러스터라면 다른 Node에 있어도 Pod끼리 직접접근도 가능하다. 다만 이건 비권장사항)
+        - NodePort는 동일 클러스터 내 Node간 통신에도 활용될 수 있으나, 이는 주 사용목적이 아니다.
+        - 클러스터 내부라면 ClusterIP로 직접 접근하면 되기 때문이다.
+        - 클러스터 내 여러 Node에 걸친 Pod들끼리도 직접접근이 가능한데 이건 비효율적이라 비권장인 것이고, 클러스터 내부 Service끼리는 직접 접근하는 것이 K8s의 장점이고 권장사항이다.
     - 따라서 필요에 따라 계층화된 아키텍처를 구성할 수 있으며, **일반적으로 클러스터 외부에 노출시킬 Service는 nodePort타입을 쓰고, 클러스터 내부용 Service는 ClusterIP타입을 쓴다.** 
-    
+    - nodePort의 range(default): 30000-32767
+        - nodePort 1개는 Service 1개에 대응
+        - 한 클러스터에서 2768개의 Service를 실행가능
+        - 클러스터 외부에서 접근시, 아무 NodeIP로 접근해도 nodePort만 맞으면 지정된 Service->Pod으로 접근된다.
+        - **Service가 실제 실행중인 Node를 알 필요없다.**
 3. `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
     - 주 사용목적: 클라우드(AWS, GCP)를 이용해서 Service를 클러스터 외부의 인터넷에 노출
         - e.g.) 웹 서비스 배포
+    - 목적2: 로드밸런싱
+        - Service를 통한 각 Pod의 트래픽 LoadBalancing은 K8s 시스템이 아닌 클라우드 제공자가 담당하게 된다.
     - Service IP(ClusterIP)와 nodePort는 자동 생성된다.
         - 이 때 Service IP는 공인 IP다.
         - nodePort는 디폴트 range인 30000-32767 외에 다른 port도 사용 가능해서 보안적으로 더 좋다. 
-    - Service를 통한 각 Pod의 트래픽 LoadBalancing은 K8s 시스템이 아닌 클라우드 제공자가 담당하게 된다.
+
 
 - NodePort vs. LoadBalancer
     - 만약 클라우드가 아닌 가상환경 등 소규모 네트워크에서 LoadBalancer 타입을 쓴다면 NodePort 타입과 별 차이가 없다.
