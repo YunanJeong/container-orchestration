@@ -232,6 +232,7 @@ sudo k3s agent
     - 문제점:
         - 외부에서 단일 Node IP를 지정하여 Service에 접근하고 있는 경우, 해당 Node에 문제발생시, Service는 다른 Node에 살아있어도 접근이 불가능해질 수 있다.
         - 상용 Service 배포시, 클라이언트는 안정적인 단일 엔드포인트(공인IP)로 접속하되, 이 트래픽이 여러 Node로 분산될 필요가 있다. 이를 해결해주는 것이 다음 나오는 LoadBalancer 타입 Service이다.
+        
 3. `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
     - 주 사용목적: 클라우드(AWS, GCP)를 이용해서 Service를 클러스터 외부의 인터넷에 노출
         - e.g.) 웹 서비스 배포
@@ -244,6 +245,7 @@ sudo k3s agent
     - nodePort는 K8s관리자가 지정하지 않는다.
         - nodePort가 내부적으로 사용되는건 맞지만, 클라우드 공급자의 Load Balancer가 자동 할당 
         - 디폴트 range인 30000-32767 외에 다른 port도 사용 가능해서 보안적으로 더 좋다. 
+    - [Service 개념, 그림(특히 배포방법 및 LoadBalancer에 대한 설명이 좋음)](https://blog.eunsukim.me/posts/kubernetes-service-overview)
 
 - NodePort vs. LoadBalancer
     - 만약 클라우드가 아닌 가상환경 등 소규모 네트워크에서 LoadBalancer 타입을 쓴다면 NodePort 타입과 별 차이가 없다.
@@ -269,6 +271,11 @@ kubectl get ep/{Service_name}
 kubectl get ep {Service_name}
 kubectl describe ep {Service_name}
 ```
-# Ingress
-- 외부 연결
-- [Service 개념, 그림(특히 배포방법 및 LoadBalancer에 대한 설명이 좋음)](https://blog.eunsukim.me/posts/kubernetes-service-overview)
+# Ingress (입구, 인바운드)
+- Service에 대한 클러스터 외부접근을 관리하는 API Object
+- 클러스터 외부에서 들어오는 트래픽을 정확히 해당 Service로 라우팅해주는 역할
+- 다른 프로토콜도 가능하지만 주로 클러스터 외부에 http/https를 열어주기 위해 쓰임
+- nodePort 타입의 Service를 외부망에 배포하기 위해 사용됨
+    - e.g.) 한 클러스터에 여러 Service를 운용중인 경우, 각 Service에 연동된 모든 nodePort를 사용자에게 알려주기는 힘듦
+    - 따라서 외부접근시 http/https(80/443)와 같은 일반포트를 공용으로 쓰게하고, 사용된 URL에 따라 각기 다른 Service(nodePort)로 라우팅되도록 설정할 필요가 있음
+    - 이를 구현한 것이 Ingress
