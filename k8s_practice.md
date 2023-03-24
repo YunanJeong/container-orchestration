@@ -250,7 +250,7 @@ sudo k3s agent
 - NodePort vs. LoadBalancer
     - 만약 클라우드가 아닌 가상환경 등 소규모 네트워크에서 LoadBalancer 타입을 쓴다면 NodePort 타입과 별 차이가 없다.
     - NodePort와 LoadBalancer 타입 둘 다 Service를 클러스터 외부로 노출시키려는 목적이 있으나, 약간 차이가 있다. 
-        - LoadBalancer: 클라우드를 활용하여 서비스를 외부 노출 및 로드 밸런싱
+        - LoadBalancer: 클라우드를 활용하여 서비스를 외부 노출 및 로드 밸런싱(공인IP<=>각 노드들 사이 트래픽 분산)
         - NodePort:
             - 클러스터 외부 통신 (메인 목적)
                 - 단순 외부 네트워크와 연결
@@ -279,3 +279,23 @@ kubectl describe ep {Service_name}
     - e.g.) 한 클러스터에 여러 Service를 운용중인 경우, 각 Service에 연동된 모든 nodePort를 사용자에게 알려주기는 힘듦
     - 따라서 외부접근시 http/https(80/443)와 같은 일반포트를 공용으로 쓰게하고, 사용된 URL에 따라 각기 다른 Service(nodePort)로 라우팅되도록 설정할 필요가 있음
     - 이를 구현한 것이 Ingress
+## Ingress Controller
+- Ingress는 다른 Object와 달리 별도 Controller 설치 필요
+- Ingress Controller가 외부 트래픽을 클러스터 내 Service로 라우팅하는 Proxy 역할
+- 컨트롤플레인, 워커에 포함되는 개념이 아니며, 실제사용시 클러스터 내 개별 Pod로서 워커 노드 측에서 실행된다.
+- Nginx, Traefik, and Istio 등 여러가지 있음
+- 배포방법은 K8s 배포판이나 Ingress Contoller 종류에 따라 다르다. 대부분 Yaml이 제공된다.
+
+```
+# minikube에서 ingress 활성화
+minikube addons enable ingress
+
+# minikube에서 docker 사용시 nginx ingress controller로 개방된 포트 확인
+minikube service ingress-nginx-controller -n ingress-nginx --url
+
+# 일반적인 nginx ingress controller 배포 (Yaml로 배포)
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/cloud/deploy.yaml
+
+# 실행 확인
+kubectl get pods -n ingress-nginx
+```
