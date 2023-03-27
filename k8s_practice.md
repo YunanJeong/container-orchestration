@@ -290,7 +290,7 @@ kubectl describe ep {Service_name}
 # minikube에서 ingress 활성화
 minikube addons enable ingress
 
-# minikube에서 docker 사용시 nginx ingress controller로 개방된 포트 확인
+# (minikube에서 docker 사용시) nginx 포트 개방
 minikube service ingress-nginx-controller -n ingress-nginx --url
 
 # 일반적인 nginx ingress controller 배포 (Yaml로 배포)

@@ -1,0 +1,12 @@
+* 
+* ==> Audit <==
+* |---------|----------------|----------|------|---------|---------------------|----------|
+| Command |      Args      | Profile  | User | Version |     Start Time      | End Time |
+|---------|----------------|----------|------|---------|---------------------|----------|
+| addons  | enable ingress | minikube | root | v1.29.0 | 24 Mar 23 19:00 KST |          |
+|---------|----------------|----------|------|---------|---------------------|----------|
+
+* 
+* ==> Last Start <==
+* Last start log file not found at /root/.minikube/logs/lastStart.txt
+* 
