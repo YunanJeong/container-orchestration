@@ -3,7 +3,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: service-metadata-redis
+  name: svc-clusterip
 spec:
   # type: ClusterIP # (default)
 
@@ -15,7 +15,7 @@ spec:
       port: 3333        # service에서 open할 port
       targetPort: 6379  # 대상 Pod(container)에 open된 port # default: 위 port와 동일
   
-  # Service에 연동될 대상 Pod 지정 (0_deploy_serverdb-redis.yml)
+  # Service에 연동될 대상 Pod 지정 (0_deploy_server-client-example.yml)
   selector:
     app: sampleapp
     tier: db
