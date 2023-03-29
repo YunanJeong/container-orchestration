@@ -21,3 +21,6 @@ spec:
   selector:
     app: sampleapp
     tier: db
+
+---
+# MetalLB: 온프레미스환경에서 

@@ -20,6 +20,9 @@
 
     # minikube 종료
     minikube stop
+
+    # 클러스터 삭제(초기화)
+    minikube delete
     ```
 - [minikube의 멀티노드 클러스터(1.10.1 버전 이상)](https://minikube.sigs.k8s.io/docs/tutorials/multi_node/)
     - 다수 노드로 구성된 K8s 클러스터를 **1개의 머신에서** 시뮬레이션
@@ -47,8 +50,8 @@
         - `--node={대상노드NAME}`: 대상 노드 IP 반환 
 - `minikube service {service_name}`
     - K8s에서 service마다 ip가 할당되는데, 이는 K8s 클러스터 환경 내 private ip이다. 따라서 포트포워딩이 없으면 클러스터 외부에 해당하는 localhost에서는 직접 접근이 불가하다.
-    - 이 때 이 명령어를 이용하면 한단계 더 포트포워딩하여 localhost에서 접속가능한 포트가 제공된다.
-    - 특히, minikube+도커 채택시 자주 사용됨
+    - 이 명령어를 이용하면 한단계 더 포트포워딩하여 localhost에서 접속가능한 포트가 제공된다.
+    - minikube+도커 채택시 자주 사용됨
        - 원래 후술할 nodePort타입 Service설정으로 포트포워딩하는 것이 정석이다.
        - 하지만, minikube에서는 도커 브릿지 네트워크를 건너가기 위해 이 명령어가 필요한 경우가 많다.
 - `minikube dashboard`
