@@ -50,6 +50,6 @@ spec:
             # 여기서 redis Pod의 IP와 Port를 기술해도 연결은 되지만,
             # Pod은 계속해서 IP가 변할 수 있기 때문에 Service를 활용하는 것이 적합하다.
             - name: REDIS_HOST
-              value: "service-metadata-redis" # Service IP 또는 Service Name을 이용할 수 있다.
+              value: "svc-clusterip" # Service IP 또는 Service Name을 이용할 수 있다.
             - name: REDIS_PORT
               value: "3333"                   # Service Port

@@ -1,5 +1,14 @@
 # Service 예제 - ClusterIP
-# 다른 Pod(0_deploy_client-access-to-redis.yml)를 실행시켜 여기서 정의한 Service에 접근해보자 (service-metadata-redis:3333)
+
+# 정상동작 테스트 방법
+# 대상 Pod(0_deploy_server-client-example.yml)를 미리 켜둔다
+# Client Pod에 접속
+  # kubectl get po
+  # kubectl exec -it counter-<xxxxx> -- sh
+# Client Pod에서 Server Pod에 접속되는지 확인
+  # telnet svc-clusterip 3333
+  # dbsize, GET count 등 명령어를 전송해서 결과가 얻어지는지 확인해보자
+
 apiVersion: v1
 kind: Service
 metadata:

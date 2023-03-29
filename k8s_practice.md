@@ -48,17 +48,17 @@
     - 멀티노드
         - default: Control Plane이 포함된 노드 IP를 반환
         - `--node={대상노드NAME}`: 대상 노드 IP 반환 
-- `minikube service {service_name}`
-    - K8s에서 service마다 ip가 할당되는데, 이는 K8s 클러스터 환경 내 private ip이다. 따라서 포트포워딩이 없으면 클러스터 외부에 해당하는 localhost에서는 직접 접근이 불가하다.
-    - 이 명령어를 이용하면 한단계 더 포트포워딩하여 localhost에서 접속가능한 포트가 제공된다.
+- `minikube service {service name}`
+- `minikube service --all`
+    - K8s에서 service마다 ip가 할당되는데, 이는 K8s 클러스터 환경 내 private ip이다.
+    - minikube 사용시 localhost는 클러스터 외부이므로, 클러스터 내부 서비스에 접근하기 위한 tunnel을 생성해주는 명령어
     - minikube+도커 채택시 자주 사용됨
-       - 원래 후술할 nodePort타입 Service설정으로 포트포워딩하는 것이 정석이다.
-       - 하지만, minikube에서는 도커 브릿지 네트워크를 건너가기 위해 이 명령어가 필요한 경우가 많다.
+       - 가상 클러스터를 생성하기 위한 도구가 도커라면, 도커 브릿지 네트워크를 건너가기 위해 필요한 경우가 많다.
 - `minikube dashboard`
     - k8s 대시보드 실행. 접속은 브라우저에서
     - 대시보드 자체는 minikube 전용이 아니라, 일반적인 k8s의 모니터링 대시보드
 - `minikube addons`
-    - minikube로 각종 K8s 애드온 추가하기 위해 사용. (dashboard, ingress controller 등)
+    - minikube로 각종 K8s 애드온 활성화 용도 (dashboard, ingress controller 등)
     - 이 기능말고, kubectl로 K8s 자체기능으로 추가해도 된다.
 ---
 # K3s
@@ -335,3 +335,21 @@ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/cont
 # 실행 확인
 kubectl get pods -n ingress-nginx
 ```
+## namespace
+- 한 클러스터 내에서 Resource들을 묶고 환경을 격리하는 방법
+- 네임스페이스가 다르면 Object 이름이 중복돼도 괜찮다.
+- 용도1: 사용자환경 분리
+    - 여러 사용자나 팀이 한 클러스터에서 작업할 때 환경 분리
+    - 차등적인 권한부여 가능
+- 용도2: 개발환경 분리
+    - dev/test/production 등으로 나누어서 작업 가능
+- 용도3: 리소스 제어
+    - namespace로 묶은 리소스들에 대해서 CPU/GPU 허용량을 할당 가능
+```
+# namespace 목록 조회
+kubectl get ns
+
+# namespace에 속한 Object 조회
+kubectl get all -n {namespace_name}
+```
+
