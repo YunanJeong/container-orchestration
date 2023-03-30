@@ -1,0 +1,44 @@
+# 로드밸런서 로컬 테스트
+
+# 0. 사전 준비- 다른 Service 끄기
+# 로컬환경이라 LB타입Service의 ExternalIP에는 NodeIP가 할당된다.
+# 충돌가능성으로 비정상테스트가 될 수 있으므로, 기존 다른 Service는 종료해주도록 하자.
+
+# 0. 사전 준비- 대상 Pod 실행(Deployment)
+# kubectl apply -f 0_deploy_server-client-example.yml
+
+# 1. metallb 활성화
+# minikube addons enable metallb
+
+# 2. metallb 적용
+# kubectl apply -f metallb-for-minikube.yml 실행
+
+# 3. Service(LB 타입) 실행
+# kubectl apply -f 3_svc-loadbalancer-redisdb-server.yml
+
+# 4. 서비스에 할당된 nodePort 확인
+# kubectl get svc
+# => Extenral IP가 pending으로 표기된다.(비정상상태이고, 관련버그가 많다.)
+# => 그러나, 아래 data.config의 addresses 범위에 Node IP가 소속되어있다면, Node IP로 External IP가 정상할당된 상태이다.
+# => minikube에서는 minikube ip가 Node IP다.
+# => Node IP를 쓰기때문에 기존 nodePort 타입의 서비스(2_svc-nodeport-redisdb-server.yml)는 확실하게 종료하고 테스트하도록 하자.
+
+# 5. 접속 확인
+# telnet {IP} {nodePort}
+# => 안될 경우 새 터미널 or `minikube service --all` 실행 후 재시도
+# => dbsize, GET count 등 명령어를 전송해서 결과가 얻어지는지 확인해보자
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  namespace: metallb-system
+  name: config
+data:
+  # addresses자리는 로드밸런서가 할당할 <START_IP>-<END_IP> 범위를 의미
+  # 클라우드기반이 아니므로, 실제 존재하는 Node의 IP 범위를 기술해야한다. (minikube ip)
+  config: |
+    address-pools:
+    - name: default
+      protocol: layer2
+      addresses:
+      - 192.168.49.1-192.168.49.10

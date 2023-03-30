@@ -1,18 +1,15 @@
 # Service 예제 - LoadBalancer
-# 대상 Pod(0_deploy_server-client-example.yml)를 미리 켜두고, 
-  
-# 정상동작 테스트 방법
-# 대상 Pod(0_deploy_server-client-example.yml)를 미리 켜둔다.
-# 로컬호스트(클러스터 외부)에서 External IP와 nodePort로접근되는지 확인
-  # ExternalIP와 nodePort는 LoadBalancer타입 서비스 사용시 자동할당 되는 것으로 kubectl get svc 에서 확인가능
+
+# 실행 후 ExternalIP와 nodePort는 LB타입 Service 실행시 자동할당되는 것으로 kubectl get svc 에서 확인가능
   # nodePort가 랜덤배정된 것을 확인해보자.
   # External IP는 클라우드 미사용시 로드밸런서가 없어서 할당되지 않고 pending이라고 표기됨
+  # 따라서 접속불가 상태
 
-  # MetalLB라는 서드파티 가상 로드밸런서로 클라우드없이 LoadBalancer 타입의 서비스를 배포가능하다.
-    # MetalLB 쓸 때 External IP가 자동배정되지 않는 이슈가 있는데, 버전or K8s배포판마다 문제원인이 너무 다양하다...
-    # 온프레미스에서 실사용 및 테스트시 버전관리 및 별도 검색 필요할듯
-    # telnet {External IP} {nodePort}
-    # dbsize, GET count 등 명령어를 전송해서 결과가 얻어지는지 확인해보자
+  # MetalLB라는 서드파티 가상 로드밸런서로 클라우드없이 LB타입 Service 배포가능
+    # 이를 이용해 로컬에서도 LB타입을 테스트해볼 수 있다.
+    # (metallb-for-minikube.yml) 참고!!
+    # MetalLB에서 External IP 미할당 이슈가 있는데, 버전or K8s배포판마다 문제원인이 너무 다양해서 별도 설정필요
+    
 
 apiVersion: v1
 kind: Service
@@ -27,9 +24,9 @@ spec:
       port: 3333       # Service에서 open할 port
       targetPort: 6379 # 대상 Pod(container)에 open된 port  # default: 위 port와 동일
   #externalIPs:
-  #  - 192.168.49.15  # MetalLB는 가끔 이렇게 명시해줘야하는 이슈가 있다. 실제 클라우드라면 publicIP로 자동배정
+  #  - 192.168.49.2  # MetalLB는 가끔 이렇게 명시해줘야하는 이슈가 있다. 실제 클라우드라면 publicIP로 자동배정
   # Service에 연동될 대상 Pod 지정 (0_deploy_server-client-example.yml)
+  # loadBalancerIP: 192.168.49.2
   selector:
     app: sampleapp
     tier: db
-

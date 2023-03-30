@@ -71,6 +71,11 @@ curl -sfL https://get.k3s.io | sh -
 
 # 새 노드 추가시 설치(환경 변수 설정 및 클러스터 참여)
 curl -sfL https://get.k3s.io | K3S_URL=https://{myserver}:6443 K3S_TOKEN={mynodetoken} sh -
+
+# 리셋
+sudo systemctl stop k3s
+sudo rm -rf /var/lib/rancher/k3s/
+sudo systemctl start k3s
 ```
 ## 참고
 - K3s 프로세스는 daemon으로 실행된다.
