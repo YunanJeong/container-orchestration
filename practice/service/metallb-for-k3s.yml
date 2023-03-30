@@ -1,79 +1,25 @@
-apiVersion: v1
-kind: Namespace
+
+# 1. MetalLB 공홈에서 메니페스트 링크 확인 후 적용(metallb-system namespace 생성)
+# kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.13.9/config/manifests/metallb-native.yaml
+
+# 2. 아래 메니페스트로 로드밸런서가 할당할 IP범위 설정
+# 이미 생성된 metallb-system을 수정하는 것이다.
+# kubectl apply -f metallb-for-k3s.yml
+
+# 3. LB타입 Service 실행
+# External IP가 의도대로 할당된 것을 확인할 수 있다.
+# 다만 왜인지 telnet 연결은 잘 되지 않는다. 보안망이라 그런가?
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
 metadata:
-  name: metallb-system
-  labels:
-    app.kubernetes.io/name: metallb
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
+  name: nat
   namespace: metallb-system
-  name: config
-data:
-  # addresses자리는 로드밸런서가 할당할 <START_IP>-<END_IP> 범위를 의미
-  # 클라우드기반이 아니므로, 실제 존재하는 Node들의 IP 범위를 기술
-  config: |
-    address-pools:
-    - name: default
-      protocol: layer2
-      addresses:
-      - <START_IP>-<END_IP>
----
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  namespace: metallb-system
-  name: controller
 spec:
-  selector:
-    matchLabels:
-      app: controller
-  replicas: 1
-  template:
-    metadata:
-      labels:
-        app: controller
-    spec:
-      containers:
-      - name: controller
-        image: metallb/controller:v0.10.0
-        ports:
-        - name: api
-          containerPort: 7472
-          protocol: TCP
-        - name: controller
-          containerPort: 7471
-          protocol: TCP
-        args:
-        - --port=7472
-        - --config= /config/config
-        volumeMounts:
-        - name: config-volume
-          mountPath: /config
-      volumes:
-      - name: config-volume
-        configMap:
-          name: config
-          items:
-          - key: config
-            path: config
+  addresses:
+    - 10.0.0.2-10.0.0.5
 ---
-apiVersion: v1
-kind: Service
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
 metadata:
+  name: empty
   namespace: metallb-system
-  name: controller
-  labels:
-    app: controller
-spec:
-  type: ClusterIP
-  selector:
-    app: controller
-  ports:
-  - name: api
-    port: 7472
-    protocol: TCP
-  - name: controller
-    port: 7471
-    protocol: TCP
