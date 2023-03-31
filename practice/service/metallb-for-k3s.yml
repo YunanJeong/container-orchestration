@@ -7,8 +7,11 @@
 # kubectl apply -f metallb-for-k3s.yml
 
 # 3. LB타입 Service 실행
-# External IP가 의도대로 할당된 것을 확인할 수 있다.
-# 다만 왜인지 telnet 연결은 잘 되지 않는다. 보안망이라 그런가?
+
+# 4. IP 할당 확인
+# 
+# kubectl get svc
+# kubectl describe svc {서비스명}
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
@@ -16,7 +19,10 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-    - 10.0.0.2-10.0.0.5
+    - 172.19.0.1-172.19.15.255
+    # 현재 네트워크 대역과 맞춰준다.
+    # 로컬 1노드 환경에서 테스트하는것이라면 결국 NodeIP를 쓰게된다.
+    # 다른 걸로 강제할당하면 External IP 등으로 등록은 되지만, 실제 네트워크 설정이 되어있지 않으므로 접속안된다.
 ---
 apiVersion: metallb.io/v1beta1
 kind: L2Advertisement
