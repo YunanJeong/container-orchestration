@@ -295,11 +295,12 @@ sudo k3s agent
         - NodePort:
             - 클러스터 외부 통신 (메인 목적)
                 - 단순 외부 네트워크와 연결
-                - 외부 "인터넷" 노출 시: 다음 설명할 ingress 사용
+                - 외부망 "인터넷" 노출 시: 다음 설명할 ingress 사용
             - 클러스터 내부 통신 (부차적인 목적)
-        - 즉, 일반적으로 k8s 서비스의 외부 인터넷 배포 방법
+        - 즉, k8s 서비스의 외부 노출 방법 3가지
             - 클라우드 쓸거면 LoadBalancer
-            - 그 외엔 nodePort+ingress
+            - 간단히 배포할거면 nodePort
+            - 실제 80/443포트로 노출 ingress
     
 4. `ExternalName` is used to provide DNS aliases to external services.
 
@@ -314,45 +315,46 @@ kubectl describe ep {Service_name}
 ```
 ## Ingress (입구, 인바운드)
 - Service에 대한 클러스터 외부접근을 관리하는 API Object
-- 클러스터 외부에서 들어오는 트래픽을 정확히 해당 Service로 라우팅해주는 역할
+- 클러스터 외부 트래픽을 정확히 원하는 Service로 라우팅해주는 역할
 - 다른 프로토콜도 가능하지만 주로 클러스터 외부에 http/https를 열어주기 위해 쓰임
-- *nodePort 타입의 Service를 외부망에 배포*하기 위해 사용됨
+- *Service를 외부망에 배포*하기 위해 사용
     - e.g.) 한 클러스터에 여러 Service를 운용중인 경우, 각 Service에 연동된 모든 nodePort를 사용자에게 알려주기는 힘듦
-    - 따라서 외부접근시 *http/https(80/443)와 같은 일반포트를 공용*으로 쓰게하고, *사용된 URL에 따라 각기 다른 Service(nodePort)로 라우팅*되도록 설정할 필요가 있음
+    - 따라서 외부접근시 *http/https(80/443)와 같은 일반포트를 공용*으로 쓰게하고, *사용된 URL에 따라 각기 다른 Service로 라우팅*되도록 설정할 필요있음
     - 이를 구현한 것이 Ingress
-```
-# 인그레스 정보 확인
-kubectl get ingress
-
-```
-```
-
-# 윈도우
-C:\Windows\System32\drivers\etc\hosts
-
-# 리눅스
-/etc/hosts
-```
-
-
 ### Ingress Controller
 - Ingress는 다른 Object와 달리 별도 Controller 설치 필요
 - Ingress Controller가 외부 트래픽을 클러스터 내 Service로 라우팅하는 Proxy 역할
-- 컨트롤플레인, 워커에 포함되는 개념이 아니며, 실제사용시 클러스터 내 개별 Pod로서 워커 노드 측에서 실행된다.
+- 실사용시 클러스터(namespace 'ingress-nginx') 내 개별 Pod로서 워커 노드 측에서 실행된다.
 - Nginx, Traefik, and Istio 등 여러가지 있음
 - 배포방법은 K8s 배포판이나 Ingress Contoller 종류에 따라 다르다. 대부분 Yaml이 제공된다.
 
-```
-# minikube에서 ingress 활성화
-minikube addons enable ingress
-minikube service ingress-nginx-controller -n ingress-nginx --url # (minikube에서 docker 사용시) nginx 포트 개방
+### Ingress 설정 순서
+1. ingress controller 설치
+    ```
+    # minikube에서 ingress 활성화
+    minikube addons enable ingress
+    minikube service ingress-nginx-controller -n ingress-nginx --url # (minikube에서 docker 사용시) nginx 포트 개방
 
-# 일반적인 nginx ingress controller 배포 (Yaml 메니페스트로 배포)
-kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/cloud/deploy.yaml
+    # 일반적인 nginx ingress controller 배포 (Yaml 메니페스트로 배포)
+    kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/cloud/deploy.yaml
 
-# 실행 확인
-kubectl get pods -n ingress-nginx
-```
+    # 실행 확인
+    kubectl get pods -n ingress-nginx
+    ```
+2. ingress 메니페스트 apply
+    ```
+    # 인그레스 정보 확인
+    kubectl get ingress
+    ```
+3. 접속할 클라이언트에서 hosts 파일 수정
+    - 윈도우(`C:\Windows\System32\drivers\etc\hosts`)
+    - 리눅스(`/etc/hosts`)
+    ```
+    # IP대신 도메인 네임을 사용할 경우 다음과 같은 내용을 추가
+    # X.X.X.X는 실제 사용될 IP
+    X.X.X.X example1.mydomain.com
+    X.X.X.X example2.mydomain.com
+    ```
 
 
 ## namespace

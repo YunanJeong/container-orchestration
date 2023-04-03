@@ -1,0 +1,44 @@
+##################
+# ingress example
+# 리다이렉션 문제로 정상작동하지 않음
+# 다만, grafana와 kafka-ui가 아니라 다른 예제일 때는 아래 처럼 subpath로 도메인을 나눌 수 있으니 포맷만 참고 
+
+  # 여러 subpath를 기술하고 리다이렉트 가능 (e.g. monitor.com/grafana, monitor.com/kafka-ui)
+    # 단, ingress controller종류마다 이슈가 있음
+      # 목적지 container에 path와 동일한 디렉토리가 있어야 하거나, (개별 nginx 설정)
+      # 더 subpath로 접근할 때 url리다이렉트 설정이슈 등
+    # 참고: https://www.jacobbaek.com/1175
+      # grafana와 같이 여러 앱들은 자체적으로 redirection이 들어가기 떄문에, 여기서 설정해봤자 무시된다.
+      # 결국 subpath로 하려면 container를 뜯어고쳐야 한다는 얘기. 굳이 subpath로 하고싶으면 helm 등으로 설정하는게 낫겠다.
+      
+##################
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-monitor
+  annotations:
+    # kubernetes.io/ingress.class: "nginx"
+    # Ingress-nginx에서 '/'로 리다이렉트
+    nginx.ingress.kubernetes.io/rewrite-target: /$2  # 아래 (.*)의 내용으로 리다이렉션
+
+spec:
+  rules:
+  - host: "monitor.com" 
+    http:
+      paths:
+      - path: "/grafana(/|$)(.*)"   # /grafana/ 뒤 내용을 저장
+        pathType: Prefix
+        backend:
+          service:
+            name: my-service
+            port: 
+              number: 3000
+      - path: "/kafka-ui(/|$)(.*)"  # /kafka-ui/ 뒤 내용을 저장
+        pathType: Prefix
+        backend:
+          service:
+            name: my-service2
+            port: 
+              number: 8080
+

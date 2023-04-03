@@ -7,9 +7,9 @@ kind: Ingress
 metadata:
   name: ingress-monitor
   annotations:
+    # kubernetes.io/ingress.class: "nginx"
     # Ingress-nginx에서 '/'로 리다이렉트
     # nginx.ingress.kubernetes.io/rewrite-target: /
-
 spec:
   rules:
   - host: "grafana.monitor.com" 
