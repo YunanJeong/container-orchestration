@@ -10,15 +10,16 @@ metadata:
     # Ingress-nginx에서 '/'로 리다이렉트
     # nginx.ingress.kubernetes.io/rewrite-target: /
 
-
 spec:
   rules:
   - host: "grafana.monitor.com" 
     http:
       paths:
-      # 여러 path를 기술하고 리다이렉트 가능 (e.g. monitor.com/grafana, monitor.com/kafka-ui)
-      # 단, 목적지 container에 실제로 해당 디렉토리가 있어야 한다.
-      - path: "/"        # url 하위경로를 사용하지 않는다면 "/"만 적는다.
+      # 여러 subpath를 기술하고 리다이렉트 가능 (e.g. monitor.com/grafana, monitor.com/kafka-ui)
+      # 단, ingress controller종류마다 이슈가 있음
+        # 목적지 container에 path와 동일한 디렉토리가 있어야 하거나, (개별 nginx 설정)
+        # 더 subpath로 접근할 때 url리다이렉트 설정이슈 등
+      - path: "/"        # subpath를 사용하지 않는다면 "/"만 적는다.
         pathType: Prefix # Prefix, Exact, ImplementationsSpecific. 보통은 Prefix.
         backend:
           service:
@@ -34,7 +35,6 @@ spec:
         pathType: Prefix
         backend:
           service:
-            # URL_path에 대한 Request를 특정서비스의 특정포트로 전송
             name: my-service2
             port: 
               number: 8080
