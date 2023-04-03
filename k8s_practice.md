@@ -312,15 +312,30 @@ kubectl get ep/{Service_name}
 kubectl get ep {Service_name}
 kubectl describe ep {Service_name}
 ```
-# Ingress (입구, 인바운드)
+## Ingress (입구, 인바운드)
 - Service에 대한 클러스터 외부접근을 관리하는 API Object
 - 클러스터 외부에서 들어오는 트래픽을 정확히 해당 Service로 라우팅해주는 역할
 - 다른 프로토콜도 가능하지만 주로 클러스터 외부에 http/https를 열어주기 위해 쓰임
-- nodePort 타입의 Service를 외부망에 배포하기 위해 사용됨
+- *nodePort 타입의 Service를 외부망에 배포*하기 위해 사용됨
     - e.g.) 한 클러스터에 여러 Service를 운용중인 경우, 각 Service에 연동된 모든 nodePort를 사용자에게 알려주기는 힘듦
-    - 따라서 외부접근시 http/https(80/443)와 같은 일반포트를 공용으로 쓰게하고, 사용된 URL에 따라 각기 다른 Service(nodePort)로 라우팅되도록 설정할 필요가 있음
+    - 따라서 외부접근시 *http/https(80/443)와 같은 일반포트를 공용*으로 쓰게하고, *사용된 URL에 따라 각기 다른 Service(nodePort)로 라우팅*되도록 설정할 필요가 있음
     - 이를 구현한 것이 Ingress
-## Ingress Controller
+```
+# 인그레스 정보 확인
+kubectl get ingress
+
+```
+```
+
+# 윈도우
+C:\Windows\System32\drivers\etc\hosts
+
+# 리눅스
+/etc/hosts
+```
+
+
+### Ingress Controller
 - Ingress는 다른 Object와 달리 별도 Controller 설치 필요
 - Ingress Controller가 외부 트래픽을 클러스터 내 Service로 라우팅하는 Proxy 역할
 - 컨트롤플레인, 워커에 포함되는 개념이 아니며, 실제사용시 클러스터 내 개별 Pod로서 워커 노드 측에서 실행된다.
@@ -330,16 +345,16 @@ kubectl describe ep {Service_name}
 ```
 # minikube에서 ingress 활성화
 minikube addons enable ingress
+minikube service ingress-nginx-controller -n ingress-nginx --url # (minikube에서 docker 사용시) nginx 포트 개방
 
-# (minikube에서 docker 사용시) nginx 포트 개방
-minikube service ingress-nginx-controller -n ingress-nginx --url
-
-# 일반적인 nginx ingress controller 배포 (Yaml로 배포)
+# 일반적인 nginx ingress controller 배포 (Yaml 메니페스트로 배포)
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/cloud/deploy.yaml
 
 # 실행 확인
 kubectl get pods -n ingress-nginx
 ```
+
+
 ## namespace
 - 한 클러스터 내에서 Resource들을 묶고 환경을 격리하는 방법
 - 네임스페이스가 다르면 Object 이름이 중복돼도 괜찮다.
