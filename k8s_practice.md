@@ -236,40 +236,55 @@ sudo k3s agent
 - This component acts as an abstract layer that exposes a set of Pods to the network as a single endpoint.
 - Services provide load balancing, service discovery, and other features to the Pods.
 - They allow network communication between the Pods and other components in the cluster, and abstract the underlying network topology.
+- 구성한 App.(Pods)을 어떻게 네트워크에 노출시킬지 결정하는 Object
+- Pod들의 클러스터 내외부 통신을 책임지는 Object
+- Deployment와는 별개로, 네트워크 측면에서 Pods의 상위 layer라고 볼 수 있다.
 
-### Pod에 priviate IP가 할당되는데, 굳이 또 다른 private IP인 Service IP를 거쳐서 통신하는 이유
-- Pod은 자주 재실행되면서 IP가 변경될 수 있기에 직접통신은 비권장 사항
-- 여러 Pod들을 묶어서 함께 관리하기 용이함
-    - 여러 Pod에 트래픽을 분산시키는 로드밸런싱 기능 구현 가능
-    - Pod 내부의 container들 끼리는 localhost를 공유하지만, Pod끼리는 IP로 통신 필요
-    - 클러스터 내부 Pod끼리 통신시 Service의 IP 대신 name을 DNS alias 처럼 사용 가능
-        - => Pod의 IP,name은 다양하고 변화해서 관리하기 번거롭다.
-        - => 대신, Service name과 개별 port는 고정해놓고 관리하기 쉽다.
-- Service는 **클러스터 외부 네트워크 노출**or **클러스터 내부 오브젝트간 통신**을 책임진다.
+
 
 ### Service Type
 1. `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
-    - 주 사용목적: 동일 클러스터내 Pod들 간 통신을 관리
-    - 어떤 타입의 Service든 기본할당되는 IP를 의미
-    - Service IP는 클러스터 내에서만 노출되기 때문에 ClusterIP라고 칭한다.
-    - 동일 클러스터라면, 한 Node에 있는 Pod이 다른 Node에 있는 Service에 직접 접근가능
-    - Service name을 DNS alias처럼 사용가능
-    - Service name 및 ip는 클러스터 내에서 고유하기 때문에, 서로 다른 Node의 Pod들 간 통신에서 Node의 IP,port를 신경쓸 필요없음. 이 때 Node간 통신은 K8s 시스템 컴포넌트가 처리해준다.
-    - ClusterIP는 Service의 타입명이면서 동시에, Service에 할당되는 클러스터 내부용 Private IP를 의미하기도 한다.
-        - **모든 타입의 Service는 Cluster IP(Private IP)를 가진다.** 헷갈리지 말자.
+    - 사용목적
+        - Pod들 간 클러스터 내부 통신 관리
+    - Cluster IP
+        - 모든 타입의 Service에 default로 할당되는 IP
+        - 클러스터 내에서만 접근가능한 Private IP
+        - `kubectl get svc`으로 확인가능
     
+    - 용례
+        - 클러스터 내부라면 어느 Node에서든 원하는 Service에 ClusterIP로 직접 접근가능
+            - 여러 Node에 걸친 Pod들끼리 통신할 때 Node의 IP,port를 신경쓸 필요없음
+            - 이 때 Node간 통신은 K8s시스템이 내부처리하며, 정해진 포트에 대해 사전 보안인가는 필요
+        - Cluster IP 대신, Service name을 DNS alias처럼 사용가능
+            - Cluster IP 및 Service name은 클러스터 내에서 고유
+
+    - 참고
+        - ClusterIP는 Service의 타입명이면서 동시에, 모든 Service에 할당되는 클러스터 내부용 Private IP를 의미하기도 한다.
+        - 후술할 `다른 타입의 Service들도 ClusterIP가 할당되며, ClusterIP기능도 포함`한다.
+        - Pod에 private IP가 할당되는데, 굳이 또 다른 private IP인 Cluster IP로 내부통신하는 이유
+            - Pod은 자주 재실행되면서 IP가 변경되기에, 직접통신은 비권장 사항
+            - 관리할 Pod 개수가 너무 많기 때문에, 묶어서 편하게 관리하기 위함
+            - 로드밸런싱 등 효율적인 네트워크 자원 관리 가능
+        
 2. `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
-    - 기능: Node(호스트) 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port(Service)->targetPort(Pod)로 이어지는 포트포워딩이 수행됨
-    - 주 사용목적: 클러스터 외부와의 통신 관리
+    - 사용목적
+        - 클러스터 외부와의 통신 관리
+    
+    - 기능
+        - Node(호스트) 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port(Service)->targetPort(Pod)로 이어지는 포트포워딩이 수행됨
+    
     - 부가목적: 클러스터 내부 Node 간 통신 관리
         - 클러스터 내부라면 Service IP(ClusterIP)로 직접 접근하면 되기 때문에, 이는 nodePort타입의 주 사용목적은 아니다.
         - 클러스터 내 여러 Node에 걸친 Pod들끼리도 직접접근이 가능한데 이건 비효율적이라 비권장인 것이고, 클러스터 내부 Service끼리는 직접 접근하는 것이 K8s의 장점이고 권장사항이다.
+    
     - 따라서 필요에 따라 계층화된 아키텍처를 구성할 수 있으며, **일반적으로 클러스터 외부에 노출시킬 Service는 nodePort타입을 쓰고, 클러스터 내부용 Service는 ClusterIP타입을 쓴다.** 
+    
     - nodePort의 range(default): 30000-32767
         - nodePort 1개는 Service 1개에 대응
         - 한 클러스터에서 2768개의 Service를 실행가능
         - 클러스터 외부에서 접근시, 아무 NodeIP로 접근해도 nodePort만 맞으면 지정된 Service->Pod으로 접근된다.
         - **Service가 실제 실행중인 Node를 알 필요없다.**
+    
     - 문제점:
         - 외부에서 단일 Node IP를 지정하여 Service에 접근하고 있는 경우, 해당 Node에 문제발생시, Service는 다른 Node에 살아있어도 접근이 불가능해질 수 있다.
         - 상용 Service 배포시, 클라이언트는 안정적인 단일 엔드포인트(공인IP)로 접속하되, 이 트래픽이 여러 Node로 분산될 필요가 있다. 이를 해결해주는 것이 다음 나오는 LoadBalancer 타입 Service이다.
@@ -317,6 +332,7 @@ kubectl describe ep {Service_name}
 - Service에 대한 클러스터 외부접근을 관리하는 API Object
 - 클러스터 외부 트래픽을 정확히 원하는 Service로 라우팅해주는 역할
 - 다른 프로토콜도 가능하지만 주로 클러스터 외부에 http/https를 열어주기 위해 쓰임
+- Ingress Controller가 실제 기능을 수행하는 주체이고, Ingress는 수행 규칙을 정의&선언하는 Object 
 - *Service를 외부망에 배포*하기 위해 사용
     - e.g.) 한 클러스터에 여러 Service를 운용중인 경우, 각 Service에 연동된 모든 nodePort를 사용자에게 알려주기는 힘듦
     - 따라서 외부접근시 *http/https(80/443)와 같은 일반포트를 공용*으로 쓰게하고, *사용된 URL에 따라 각기 다른 Service로 라우팅*되도록 설정할 필요있음
@@ -324,25 +340,28 @@ kubectl describe ep {Service_name}
 ### Ingress Controller
 - Ingress는 다른 Object와 달리 별도 Controller 설치 필요
 - Ingress Controller가 외부 트래픽을 클러스터 내 Service로 라우팅하는 Proxy 역할
-- 실사용시 클러스터(namespace 'ingress-nginx') 내 개별 Pod로서 워커 노드 측에서 실행된다.
+- 실사용시 클러스터(namespace 'ingress-nginx') 내 개별 Pod 및 Service(LoadBalancer)로서 워커 노드 측에서 실행된다.
 - Nginx, Traefik, and Istio 등 여러가지 있음
-- 배포방법은 K8s 배포판이나 Ingress Contoller 종류에 따라 다르다. 대부분 Yaml이 제공된다.
+- 설치방법은 K8s 배포판이나 Ingress Controller 종류에 따라 다르다. 대부분 Yaml이 제공된다.
 
 ### Ingress 설정 순서
 1. ingress controller 설치
     ```
-    # minikube에서 ingress 활성화
-    minikube addons enable ingress
-    minikube service ingress-nginx-controller -n ingress-nginx --url # (minikube에서 docker 사용시) nginx 포트 개방
-
     # 일반적인 nginx ingress controller 배포 (Yaml 메니페스트로 배포)
     kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.0.0/deploy/static/provider/cloud/deploy.yaml
 
     # 실행 확인
-    kubectl get pods -n ingress-nginx
+    kubectl get all -n ingress-nginx
+    ```
+    ```
+    # minikube 한정 ingress 활성화
+    minikube addons enable ingress
+    minikube service ingress-nginx-controller -n ingress-nginx --url # (minikube에서 docker 사용시) nginx 포트 개방
     ```
 2. ingress 메니페스트 apply
     ```
+    kubectl apply -f {ingress파일명.yml}
+
     # 인그레스 정보 확인
     kubectl get ingress
     ```
