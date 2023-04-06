@@ -12,7 +12,7 @@ metadata:
     # nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: "grafana.monitor.com" 
+  - host: "grafana.monitor.com" # 클라우드 사용시 제공받은 공인IP or URL을 여기 입력하면 된다.
     http:
       paths:
       # 여러 subpath를 기술하고 리다이렉트 가능 (e.g. monitor.com/grafana, monitor.com/kafka-ui)

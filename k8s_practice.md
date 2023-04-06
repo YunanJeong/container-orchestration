@@ -352,10 +352,12 @@ kubectl get all -n {namespace_name}
             - LoadBalancer 타입 Service
             - LoadBalacer: 로드밸런싱을 수행하는 Entity
         - LoadBlancer 타입은 원래 로드밸런싱이 주 목적이었으나, 클라우드 전용 기능처럼 사용되고 있다.
-            - 베어메탈 환경에서도 LoadBalancer서버를 구축하면, LoadBalancer 타입을 사용가능
+        - 베어메탈 환경에서도 LoadBalancer서버를 구축하면, LoadBalancer Service를 사용가능
             - LoadBlancer로 가장 많이 사용되는 서드파티 앱(MetalLB)이 있으나 호환성이 좋지 않음
-            - 베어메탈 환경에서 LoadBalancer 타입 Service를 써봤자, 소규모 환경에선 NodePort 타입 사용과 별반 차이 없음. 대규모면 차라리 클라우드 쓰거나, K8s 관리자의 영역을 넘어선다.
+            - 베어메탈 환경에서 LoadBalancer 타입 Service를 써봤자, 소규모 환경에선 NodePort타입 사용과 별반 차이 없음. 대규모면 차라리 클라우드 쓰거나, K8s 관리자의 영역을 넘어선다.
                 - External IP를 Service에서 설정해도 실제 사용하려면 네트워크 인프라 작업이 되어 있어야 된다.
+                - 소규모: 
+                - 대규모: 차라리 클라우드 쓴다. 네트워크 인프라 작업 필요.  
 
 
         - [Service 개념, 그림(특히 배포방법 및 LoadBalancer에 대한 설명이 좋음)](https://blog.eunsukim.me/posts/kubernetes-service-overview)
