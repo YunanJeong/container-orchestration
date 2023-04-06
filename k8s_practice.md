@@ -232,6 +232,24 @@ sudo k3s agent
 - Deployment는 ReplicaSet기능 + 이미지 변경 등 업데이트 적용
     - e.g.) Pod 정보 변경 후 새로 apply하면, 기존 실행중인 Pod에 변경사항이 적용된다.
 
+## namespace
+- 한 클러스터 내에서 Resource들을 묶고 환경을 격리하는 방법
+- 네임스페이스가 다르면 Object 이름이 중복돼도 괜찮다.
+- 용도1: 사용자환경 분리
+    - 여러 사용자나 팀이 한 클러스터에서 작업할 때 환경 분리
+    - 차등적인 권한부여 가능
+- 용도2: 개발환경 분리
+    - dev/test/production 등으로 나누어서 작업 가능
+- 용도3: 리소스 제어
+    - namespace로 묶은 리소스들에 대해서 CPU/GPU 허용량을 할당 가능
+```
+# namespace 목록 조회
+kubectl get ns
+
+# namespace에 속한 Object 조회
+kubectl get all -n {namespace_name}
+```
+
 ## Service
 - This component acts as an abstract layer that exposes a set of Pods to the network as a single endpoint.
 - Services provide load balancing, service discovery, and other features to the Pods.
@@ -239,8 +257,6 @@ sudo k3s agent
 - 구성한 App.(Pods)을 어떻게 네트워크에 노출시킬지 결정하는 Object
 - Pod들의 클러스터 내외부 통신을 책임지는 Object
 - Deployment와는 별개로, 네트워크 측면에서 Pods의 상위 layer라고 볼 수 있다.
-
-
 
 ### Service Type
 1. `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
@@ -264,7 +280,10 @@ sudo k3s agent
             - NodePort, LoadBalancer 타입 및 Ingress에서 언급되는 외부트래픽 로드밸런싱과는 다름
 
     - 참고
-        - ClusterIP는 Service의 타입명이면서 동시에, 모든 Service에 할당되는 클러스터 내부용 Private IP를 의미하기도 한다.
+        - ClusterIP 의미는 문맥따라 다름
+            - ClusterIP 타입 Service
+            - Service에 할당되는 클러스터 내부용 Private IP
+
         - 후술할 `다른 타입의 Service들도 ClusterIP가 할당되며, ClusterIP Service 기능도 포함`한다.
         - Pod에 private IP가 할당되는데, 굳이 또 다른 private IP인 Cluster IP로 내부통신하는 이유
             - Pod끼리 직접통신은 비권장 사항
@@ -272,13 +291,14 @@ sudo k3s agent
             - 관리할 Pod 개수가 너무 많기 때문에, 묶어서 편하게 관리하기 위함
             - 로드밸런싱 등 효율적인 네트워크 자원 관리 가능
         
-2. `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
+2. `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. 
     - 사용목적
         - 클러스터 외부와의 통신 관리
-        - Service를 Node의 port로 외부 노출
+        - Node의 port로 Service를 외부 노출
     
     - 기능
         - Node 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port(Service)->targetPort(Pod)로 이어지는 포트포워딩이 수행됨
+        - ClusterIP 기능 포함
     
     - NodePort
         - Node(호스트)의 port
@@ -291,8 +311,8 @@ sudo k3s agent
             - Client는 Service 프로세스가 실제 실행중인 Node를 알 필요없다.
 
     - 참고
-        - NodePort 의미는 문맥따라 파악 필요(가끔 블로그에 이상한 설명, 그림이 있음)
-            - Service의 타입 NodePort
+        - NodePort 의미는 문맥따라 다름(가끔 블로그에 이상한 설명, 그림이 있음)
+            - NodePort 타입 Service
             - Node의 Port
         - {NodeIP}:{NodePort}로 클러스터 내부통신도 가능, But, 주목적은 아님
             - 내부통신에는 ClusterIP 활용이 K8s 권장사항
@@ -302,33 +322,44 @@ sudo k3s agent
         - 외부에서 단일 Node IP를 지정하여 Service에 접근하고 있는 경우, 해당 Node에 문제발생시, 다른 Node에 해당 Service가 살아있어도 접근이 불가능해질 수 있다.
         - 상용 Service 배포시, 클라이언트는 안정적인 단일 엔드포인트(공인IP)로 접속하되, 이 트래픽이 여러 Node로 분산될 필요가 있다. 이를 해결해주는 것이 후술할 LoadBalancer 타입 Service이다.
         
-3. `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
-    - 주 사용목적: 클라우드(AWS, GCP)를 이용해서 Service를 클러스터 외부의 인터넷에 노출
-        - e.g.) 웹 서비스 배포
+3. `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.
+    - 사용목적
+        - 클라우드(AWS, GCP)를 이용해서 Service를 클러스터 외부 노출 (e.g. 웹 서비스 배포)
+    
+    - 기능
+        - 클러스터 외부 클라이언트에게 안정적인 단일 엔드포인트(External IP) 제공
+        - 로드 밸런싱: 엔드포인트로 들어오는 트래픽을 각 Node 또는 Pod로 분산
+        - ClusterIP, NodePort 기능 포함
+
+    - LoadBalancer
+        - 외부 트래픽에 대해 로드밸런싱을 수행하는 주체, 서버
+        - 일반적으로 클라우드 공급자가 제공하는 것을 활용
+           
+
+
     - 왜 LoadBalancer인가?
         - 상용 Service배포시 nodePort 타입 Service의 문제점을 극복하기 위함
-            - nodePort 타입 Service는 nodePort만 맞으면, 아무 Node나 하나 골라서 원하는 Service에 접근가능
-            - 하지만 해당 Node가 죽어버리면, Service가 살아있어도 접근불가
+
         - 따라서, 클라이언트는 안정적인 단일 엔드포인트(공인IP)로 접속하되, 이를 통한 트래픽은 클러스터 내 여러 Node로 분산될 필요가 있다.
         - 이 때, 각 Node로 향하는 트래픽의 Load Balancing은 K8s로컬시스템이 아닌 클라우드 공급자가 담당
     - nodePort는 K8s관리자가 지정하지 않는다.
         - nodePort가 내부적으로 사용되는건 맞지만, 클라우드 공급자의 Load Balancer가 자동 할당 
         - 디폴트 range인 30000-32767 외에 다른 port도 사용 가능해서 보안적으로 더 좋다. 
-    - [Service 개념, 그림(특히 배포방법 및 LoadBalancer에 대한 설명이 좋음)](https://blog.eunsukim.me/posts/kubernetes-service-overview)
+    
+    
+    - 참고
+        - LoadBalancer 의미는 문맥따라 파악
+            - LoadBalancer 타입 Service
+            - LoadBalacer: 로드밸런싱을 수행하는 Entity
+        - LoadBlancer 타입은 원래 로드밸런싱이 주 목적이었으나, 클라우드 전용 기능처럼 사용되고 있다.
+            - 베어메탈 환경에서도 LoadBalancer서버를 구축하면, LoadBalancer 타입을 사용가능
+            - LoadBlancer로 가장 많이 사용되는 서드파티 앱(MetalLB)이 있으나 호환성이 좋지 않음
+            - 베어메탈 환경에서 LoadBalancer 타입 Service를 써봤자, 소규모 환경에선 NodePort 타입 사용과 별반 차이 없음. 대규모면 차라리 클라우드 쓰거나, K8s 관리자의 영역을 넘어선다.
+                - External IP를 Service에서 설정해도 실제 사용하려면 네트워크 인프라 작업이 되어 있어야 된다.
 
-- NodePort vs. LoadBalancer
-    - 만약 클라우드가 아닌 가상환경 등 소규모 네트워크에서 LoadBalancer 타입을 쓴다면 NodePort 타입과 별 차이가 없다.
-    - NodePort와 LoadBalancer 타입 둘 다 Service를 클러스터 외부로 노출시키려는 목적이 있으나, 약간 차이가 있다. 
-        - LoadBalancer: 클라우드를 활용하여 서비스를 외부 노출 및 로드 밸런싱(공인IP<=>각 노드들 사이 트래픽 분산)
-        - NodePort:
-            - 클러스터 외부 통신 (메인 목적)
-                - 단순 외부 네트워크와 연결
-                - 외부망 "인터넷" 노출 시: 다음 설명할 ingress 사용
-            - 클러스터 내부 통신 (부차적인 목적)
-        - 즉, k8s 서비스의 외부 노출 방법 3가지
-            - 클라우드 쓸거면 LoadBalancer
-            - 간단히 배포할거면 nodePort
-            - 실제 80/443포트로 노출 ingress
+
+        - [Service 개념, 그림(특히 배포방법 및 LoadBalancer에 대한 설명이 좋음)](https://blog.eunsukim.me/posts/kubernetes-service-overview)
+
     
 4. `ExternalName` is used to provide DNS aliases to external services.
 
@@ -389,21 +420,19 @@ kubectl describe ep {Service_name}
     ```
 
 
-## namespace
-- 한 클러스터 내에서 Resource들을 묶고 환경을 격리하는 방법
-- 네임스페이스가 다르면 Object 이름이 중복돼도 괜찮다.
-- 용도1: 사용자환경 분리
-    - 여러 사용자나 팀이 한 클러스터에서 작업할 때 환경 분리
-    - 차등적인 권한부여 가능
-- 용도2: 개발환경 분리
-    - dev/test/production 등으로 나누어서 작업 가능
-- 용도3: 리소스 제어
-    - namespace로 묶은 리소스들에 대해서 CPU/GPU 허용량을 할당 가능
-```
-# namespace 목록 조회
-kubectl get ns
+## 쿠버네티스의 서비스 배포 방법
+- NodePort vs. LoadBalancer
+    - 만약 클라우드가 아닌 가상환경 등 소규모 네트워크에서 LoadBalancer 타입을 쓴다면 NodePort 타입과 별 차이가 없다.
+    - NodePort와 LoadBalancer 타입 둘 다 Service를 클러스터 외부로 노출시키려는 목적이 있으나, 약간 차이가 있다. 
+        - LoadBalancer: 클라우드를 활용하여 서비스를 외부 노출 및 로드 밸런싱(공인IP<=>각 노드들 사이 트래픽 분산)
+        - NodePort:
+            - 클러스터 외부 통신 (메인 목적)
+                - 단순 외부 네트워크와 연결
+                - 외부망 "인터넷" 노출 시: 다음 설명할 ingress 사용
+            - 클러스터 내부 통신 (부차적인 목적)
+        - 즉, k8s 서비스의 외부 노출 방법 3가지
+            - 클라우드 쓸거면 LoadBalancer
+            - 간단히 배포할거면 nodePort
+            - 실제 80/443포트로 노출 ingress
 
-# namespace에 속한 Object 조회
-kubectl get all -n {namespace_name}
-```
 
