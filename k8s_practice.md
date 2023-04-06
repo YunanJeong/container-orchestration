@@ -246,48 +246,61 @@ sudo k3s agent
 1. `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
     - 사용목적
         - Pod들 간 클러스터 내부 통신 관리
+        - Service를 클러스터 내부 노출
+        
     - Cluster IP
         - 모든 타입의 Service에 default로 할당되는 IP
         - 클러스터 내에서만 접근가능한 Private IP
         - `kubectl get svc`으로 확인가능
     
-    - 용례
+    - 기능&용례
         - 클러스터 내부라면 어느 Node에서든 원하는 Service에 ClusterIP로 직접 접근가능
             - 여러 Node에 걸친 Pod들끼리 통신할 때 Node의 IP,port를 신경쓸 필요없음
             - 이 때 Node간 통신은 K8s시스템이 내부처리하며, 정해진 포트에 대해 사전 보안인가는 필요
         - Cluster IP 대신, Service name을 DNS alias처럼 사용가능
             - Cluster IP 및 Service name은 클러스터 내에서 고유
+        - Service에 소속된 백엔드 Pods들 간 수신 트래픽을 분배하는 로드밸런싱이 기본 적용됨
+            - kube-proxy에 의한 라운드로빈
+            - NodePort, LoadBalancer 타입 및 Ingress에서 언급되는 외부트래픽 로드밸런싱과는 다름
 
     - 참고
         - ClusterIP는 Service의 타입명이면서 동시에, 모든 Service에 할당되는 클러스터 내부용 Private IP를 의미하기도 한다.
-        - 후술할 `다른 타입의 Service들도 ClusterIP가 할당되며, ClusterIP기능도 포함`한다.
+        - 후술할 `다른 타입의 Service들도 ClusterIP가 할당되며, ClusterIP Service 기능도 포함`한다.
         - Pod에 private IP가 할당되는데, 굳이 또 다른 private IP인 Cluster IP로 내부통신하는 이유
-            - Pod은 자주 재실행되면서 IP가 변경되기에, 직접통신은 비권장 사항
+            - Pod끼리 직접통신은 비권장 사항
+            - Pod은 자주 재실행되므로 IP도 변경될 수 있음
             - 관리할 Pod 개수가 너무 많기 때문에, 묶어서 편하게 관리하기 위함
             - 로드밸런싱 등 효율적인 네트워크 자원 관리 가능
         
 2. `NodePort` opens **a static port on each node's IP address**, routing traffic to the Service to the corresponding Pod. (ClusterIP 기능 포함)
     - 사용목적
         - 클러스터 외부와의 통신 관리
+        - Service를 Node의 port로 외부 노출
     
     - 기능
-        - Node(호스트) 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port(Service)->targetPort(Pod)로 이어지는 포트포워딩이 수행됨
+        - Node 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port(Service)->targetPort(Pod)로 이어지는 포트포워딩이 수행됨
     
-    - 부가목적: 클러스터 내부 Node 간 통신 관리
-        - 클러스터 내부라면 Service IP(ClusterIP)로 직접 접근하면 되기 때문에, 이는 nodePort타입의 주 사용목적은 아니다.
-        - 클러스터 내 여러 Node에 걸친 Pod들끼리도 직접접근이 가능한데 이건 비효율적이라 비권장인 것이고, 클러스터 내부 Service끼리는 직접 접근하는 것이 K8s의 장점이고 권장사항이다.
-    
-    - 따라서 필요에 따라 계층화된 아키텍처를 구성할 수 있으며, **일반적으로 클러스터 외부에 노출시킬 Service는 nodePort타입을 쓰고, 클러스터 내부용 Service는 ClusterIP타입을 쓴다.** 
-    
-    - nodePort의 range(default): 30000-32767
-        - nodePort 1개는 Service 1개에 대응
-        - 한 클러스터에서 2768개의 Service를 실행가능
-        - 클러스터 외부에서 접근시, 아무 NodeIP로 접근해도 nodePort만 맞으면 지정된 Service->Pod으로 접근된다.
-        - **Service가 실제 실행중인 Node를 알 필요없다.**
-    
+    - NodePort
+        - Node(호스트)의 port
+        - range(default): 30000-32767
+        - Service 1개를 특정 NodePort로 개방하면, **클러스터 내 모든 Node에서도 해당 Port를 점유**
+            - 한 클러스터에서 NodePort 1개는 Service 1개에 대응
+            - 한 클러스터에서 2768개의 NodePort Service 실행가능
+        - 클러스터 외부에서 접근시
+            - 아무 NodeIP를 써도 NodePort만 맞으면 지정된 백엔드으로 라우팅됨 (NodePort->Service->Pod)
+            - Client는 Service 프로세스가 실제 실행중인 Node를 알 필요없다.
+
+    - 참고
+        - NodePort 의미는 문맥따라 파악 필요(가끔 블로그에 이상한 설명, 그림이 있음)
+            - Service의 타입 NodePort
+            - Node의 Port
+        - {NodeIP}:{NodePort}로 클러스터 내부통신도 가능, But, 주목적은 아님
+            - 내부통신에는 ClusterIP 활용이 K8s 권장사항
+        - 필요에 따라 계층화된 아키텍처를 구성할 수 있으며, **일반적으로 클러스터 외부에 노출시킬 Service는 nodePort타입을 쓰고, 클러스터 내부용 Service는 ClusterIP타입을 쓴다.** 
+        
     - 문제점:
-        - 외부에서 단일 Node IP를 지정하여 Service에 접근하고 있는 경우, 해당 Node에 문제발생시, Service는 다른 Node에 살아있어도 접근이 불가능해질 수 있다.
-        - 상용 Service 배포시, 클라이언트는 안정적인 단일 엔드포인트(공인IP)로 접속하되, 이 트래픽이 여러 Node로 분산될 필요가 있다. 이를 해결해주는 것이 다음 나오는 LoadBalancer 타입 Service이다.
+        - 외부에서 단일 Node IP를 지정하여 Service에 접근하고 있는 경우, 해당 Node에 문제발생시, 다른 Node에 해당 Service가 살아있어도 접근이 불가능해질 수 있다.
+        - 상용 Service 배포시, 클라이언트는 안정적인 단일 엔드포인트(공인IP)로 접속하되, 이 트래픽이 여러 Node로 분산될 필요가 있다. 이를 해결해주는 것이 후술할 LoadBalancer 타입 Service이다.
         
 3. `LoadBalancer` allocates an **external IP address to the Service** to route traffic to the Pod, typically by using a cloud provider's load balancer.(NodePort 기능 포함)
     - 주 사용목적: 클라우드(AWS, GCP)를 이용해서 Service를 클러스터 외부의 인터넷에 노출
