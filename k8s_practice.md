@@ -330,36 +330,27 @@ kubectl get all -n {namespace_name}
         - 클러스터 외부 클라이언트에게 안정적인 단일 엔드포인트(External IP) 제공
         - 로드 밸런싱: 엔드포인트로 들어오는 트래픽을 각 Node 또는 Pod로 분산
         - ClusterIP, NodePort 기능 포함
+            - LoadBalancer가 NodePort를 자동할당
+            - 디폴트 range(30000-32767) 외 다른 Port도 사용해서 보안상 더 좋음
 
     - LoadBalancer
-        - 외부 트래픽에 대해 로드밸런싱을 수행하는 주체, 서버
+        - 외부 트래픽에 대해 로드밸런싱을 수행하는 주체, Proxy 서버
         - 일반적으로 클라우드 공급자가 제공하는 것을 활용
-           
-
-
-    - 왜 LoadBalancer인가?
-        - 상용 Service배포시 nodePort 타입 Service의 문제점을 극복하기 위함
-
-        - 따라서, 클라이언트는 안정적인 단일 엔드포인트(공인IP)로 접속하되, 이를 통한 트래픽은 클러스터 내 여러 Node로 분산될 필요가 있다.
-        - 이 때, 각 Node로 향하는 트래픽의 Load Balancing은 K8s로컬시스템이 아닌 클라우드 공급자가 담당
-    - nodePort는 K8s관리자가 지정하지 않는다.
-        - nodePort가 내부적으로 사용되는건 맞지만, 클라우드 공급자의 Load Balancer가 자동 할당 
-        - 디폴트 range인 30000-32767 외에 다른 port도 사용 가능해서 보안적으로 더 좋다. 
-    
+        - LoadBalancer Service와는 별도로 있다고 보는 것이 맞다.
     
     - 참고
         - LoadBalancer 의미는 문맥따라 파악
             - LoadBalancer 타입 Service
-            - LoadBalacer: 로드밸런싱을 수행하는 Entity
-        - LoadBlancer 타입은 원래 로드밸런싱이 주 목적이었으나, 클라우드 전용 기능처럼 사용되고 있다.
-        - 베어메탈 환경에서도 LoadBalancer서버를 구축하면, LoadBalancer Service를 사용가능
-            - LoadBlancer로 가장 많이 사용되는 서드파티 앱(MetalLB)이 있으나 호환성이 좋지 않음
-            - 베어메탈 환경에서 LoadBalancer 타입 Service를 써봤자, 소규모 환경에선 NodePort타입 사용과 별반 차이 없음. 대규모면 차라리 클라우드 쓰거나, K8s 관리자의 영역을 넘어선다.
-                - External IP를 Service에서 설정해도 실제 사용하려면 네트워크 인프라 작업이 되어 있어야 된다.
-                - 소규모: 
-                - 대규모: 차라리 클라우드 쓴다. 네트워크 인프라 작업 필요.  
-
-
+            - LoadBalacer(로드밸런싱을 수행하는 Entity)
+        - `LoadBlancer 타입은 원래 로드밸런싱을 목적으로 만들어졌으나, 클라우드 전용 기능처럼 사용되고 있음`
+        - `베어메탈 환경에서 LoadBalancer Service를 사용가능하지만 의미없거나 비효율적`인 경우가 많음
+            - Service는 App단의 설정이므로, 별도 네트워크 인프라 작업 필요
+                - e.g. External IP를 Service에 설정하더라도, 이를 실제 사용하려면 해당 IP를 공인 IP로 준비하거나, 엔드포인트 IP로서 통신가능한 환경을 구축해야 함
+                - e.g. LoadBlancer (Proxy) 서버 필요
+                - e.g. 베어메탈용 LoadBlancer로 대표적인 서드파티 앱(MetalLB)이 있으나 호환성이 좋지 않음
+            - 이에 따라 관리&운영이 복잡해지고, 확장성&가용성 떨어짐
+            - 소규모 환경에선 노드가 적으므로 NodePort타입 사용과 별반 차이 없음
+            - 대규모 환경에서 인프라 작업하느니 차라리 클라우드 쓴다. K8s 관리자(container orchestration)의 영역을 넘어선다.
         - [Service 개념, 그림(특히 배포방법 및 LoadBalancer에 대한 설명이 좋음)](https://blog.eunsukim.me/posts/kubernetes-service-overview)
 
     
