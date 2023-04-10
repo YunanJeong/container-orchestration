@@ -477,11 +477,11 @@ kubectl describe ep {Service_name}
 - 그렇다고 이것이 K8s 관리자가 배포하려는 App Service를 NodePort or LoadBalancer 타입으로 만들어한다는 말은 아니다.
 
 #### - 가장 널리 쓰이는 Nginx Ingress Controller의 사례
-- 실행시 별도 namespace에 Service(LoadBalancer 타입)가 생성된다.
-- 이는 Nginx에서 Controller 자체 기능구현을 위해 다음과 같이 K8s의 Service(LoadBalancer)기능을 활용하려는 것이다.
-    - App을 외부노출하는 기능을 구현하기 위해 NodePort or LoadBalancer 타입의 Service 설정
-    - ingress 설정만으로 클라우드 공급자의 LoadBalancer를 활용하기 위해 K8s LoadBalancer 타입의 Service 설정
-- 이를 두고 각종 설명글, 그림에서는 'LoadBalancer 타입의 Service를 활용해야한다'라고 표현하고 있으나 이는 Ingress Controller 내부구조에 한정된 것이지,
+- Nginx Ingress Controller 구성시 자동으로 별도 namespace에 'LoadBalancer 타입의 Service'가 생성된다.
+- 이는 Nginx에서 Controller 자체 기능구현을 위해 다음과 같이 K8s의 Service(LoadBalancer)기능을 활용하는 것이다.
+    - App 외부노출 기능을 구현하기 위해 NodePort or LoadBalancer 타입의 Service 설정
+    - K8s 관리자로 하여금 ingress 설정만으로 클라우드 공급자의 LoadBalancer를 활용할 수 있도록 하기 위해 LoadBalancer 타입의 Service 설정
+- 이를 두고 각종 설명글, 그림에서는 'LoadBalancer 타입의 Service를 활용해야만 한다'라고 표현하고 있으나 이는 Ingress Controller 내부구조에 한정된 것이지,
 - K8s 관리자가 배포하고자 하는 App Service를 LoadBalancer 타입으로 설정해야하는 것은 아니다. App Service는 ClusterIP 타입이어도 상관없다!!
 - 작업 환경이나 Ingress Controller 종류에 따라 더 세밀한 네트워크 제어를 위해, K8s 관리자가 직접적으로 LoadBalancer 타입의 Service를 추가하여 Controller의 일부기능을 구현할 수는 있으나, 그 Service가 백엔드 App Service를 의미하는 것은 아니다.
 
