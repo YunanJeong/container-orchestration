@@ -20,17 +20,24 @@ sudo apt-get install helm
     export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
     ```
 
-## Helm Charts
-Helm으로 관리되는 K8s App.의 배포 단위
+## Helm Charts (헬름 차트, 차트)
+- Helms에서의 패키지를 의미
+- Helm으로 관리되는 K8s App.의 배포 단위
 - '템플릿', '변수', '값', '구성파일' 등의 리소스로 구성됨
-    - 템플릿은 K8s Object를 생성하는 데 사용
-    - 변수, 값은 템플릿에서 사용되는 파라미터들을 정의하고 설정
-    - 구성파일은 템플릿과 변수를 결합하여 실제로 배포될 K8s 리소스 생성시 사용
+    - 템플릿: K8s Object를 생성하는 데 사용
+    - 변수, 값: 템플릿에서 사용되는 파라미터들을 정의하고 설정
+    - 구성파일: 템플릿과 변수를 결합하여 실제로 배포될 K8s 리소스 생성시 사용
+- Release
+    - Chart를 설치하여 생성된 인스턴스
+    - Helm으로 배포하는 것을 "설치한다(install)"고 표현
+
+
 ## Helm (Chart) Repository
-[공식 헬름 차트 저장소](https://hub.helm.sh/)
 - Helm Chart를 저장 및 공유하는 공간
 - Helm에선 개별 패키지를 Chart, Chart들이 모인 곳을 Repository라고 칭함(Hub, Registry는 덜 쓰이는 표현)
 - 공식 외에도 사용자, 조직이 개별 생성하여 관리 가능
+- [Official Helm Repository](https://hub.helm.sh/)
+- [bitnami에서 제공하는 Helm Repository](https://charts.bitnami.com/bitnami)
 ```
 # 외부 저장소(bitnami) 가져오기 예시
 helm repo add bitnami https://charts.bitnami.com/bitnami
