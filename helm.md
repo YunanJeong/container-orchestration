@@ -29,33 +29,59 @@ sudo apt-get install helm
     - 구성파일: 템플릿과 변수를 결합하여 실제로 배포될 K8s 리소스 생성시 사용
 - Release
     - Chart를 설치하여 생성된 인스턴스
-    - Helm으로 배포하는 것을 "설치한다(install)"고 표현
+    - Helm으로 클러스터를 배포하는 것을 "설치한다(install)"고 표현
 
 
 ## Helm (Chart) Repository
 - Helm Chart를 저장 및 공유하는 공간
 - Helm에선 개별 패키지를 Chart, Chart들이 모인 곳을 Repository라고 칭함(Hub, Registry는 덜 쓰이는 표현)
 - 공식 외에도 사용자, 조직이 개별 생성하여 관리 가능
-- [Official Helm Repository](https://hub.helm.sh/)
+- [Helm Hub: Official Helm Repository](https://hub.helm.sh/)
 - [bitnami에서 제공하는 Helm Repository](https://charts.bitnami.com/bitnami)
-```
-# 외부 저장소(bitnami) 가져오기 예시
-helm repo add bitnami https://charts.bitnami.com/bitnami
 
-# 외부 저장소(bitnami) 설치가능 Chart 목록 확인
-helm search repo bitnami
+## 커맨드
+### helm repo (저장소 관리)
+- helm repo add {저장소 이름 지정} {Helm Repository URL}
+    ```
+    # 외부 저장소를 로컬 저장소로 추가
+    helm repo add bitnami https://charts.bitnami.com/bitnami
+    ```
+- helm repo list
+    ```
+    # 추가한 로컬 저장소 목록 조회
+    ```
+- helm repo update
+    ```
+    # 로컬 저장소의 차트 버전을 최신화(인터넷 연결)
+    ```
 
-# 로컬 저장소 업데이트
-helm repo update
+### helm search (Chart 검색)
+- helm search repo
+    ```
+    # 로컬 저장소로부터 설치가능한 차트 조회
+    ```
+- helm search repo {로컬 저장소 이름}
+    ```
+    # 특정 로컬 저장소에서 설치가능한 차트 조회
+    helm search repo bitnami
+    ```
+- helm search hub
+    ```
+    # Helm Hub(공식 헬름 저장소)에서 설치가능한 차트 조회
+    ```
 
-# chart 설치 (클러스터를 구성)
-# e.g. helm install my-release bitnami/kafka
-helm install {관리할 이름} {차트 이름}
-
-# chart 삭제
-# e.g. helm uninstall my-release
-helm uninstall {관리할 이름}
-
-# 실행 중인 차트 목록
-helm list
-```
+### Chart 설치/조회/삭제
+- helm install {릴리즈 이름 지정} {차트 이름}
+    ```
+    # chart 설치 (release 생성, cluster를 구성)
+    helm install my-release bitnami/kafka
+    ```
+- helm list
+    ```
+    # 설치되어 실행중인 release 목록 조회
+    ```
+- helm uninstall {릴리즈 이름}
+    ```
+    # 릴리즈 삭제
+    helm uninstall my-release
+    ```
