@@ -85,3 +85,13 @@ sudo apt-get install helm
     # 릴리즈 삭제
     helm uninstall my-release
     ```
+
+### 커스텀 Chart 관리
+- helm dependency update
+    - chart.yaml 파일이 있는 곳에서 실행한다.
+    - 동일 경로에 Chart.lock과 charts/ 생성됨
+        - `chart/`:  chart.yaml에 기술된 dependency를 인터넷에서 가져옴
+        - `Chart.lock`: chart.yaml에 기술된 dependency 버전 범위 중에서 최종 자동선택된 최신 버전이 기술되어 있음
+- helm package {차트 경로}
+    - '템플릿', '변수', '값', '구성파일' 등의 리소스로 구성된 경로를 지정
+    - 배포가능한 하나의 차트파일(tar압축)로 생성함
