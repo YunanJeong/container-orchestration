@@ -453,29 +453,39 @@ kubectl describe ep {Service_name}
         - [오라클 피셜](https://docs.oracle.com/en-us/iaas/Content/ContEng/Tasks/contengcreatingloadbalancer.htm)
         - 클라우드 사용시 활용
 
-### (의문점)Ingress에다가 NodePort 또는 LoadBalancer를 함께 사용해야 한다는 글, 그림들이 있던데?
-#### 답변
-- 이는 K8s 관리자가 배포하려는 App Service를 NodePort or LoadBalancer 타입으로 만들어한다는 말은 아니다.
-- 단지, Ingress Controller의 내부구조상 NodePort와 LoadBalancer 타입의 Service를 사용하고 있는 것을 표현했을 확률이 높다.
-- 예를들면,
-    - 어쨌든 외부에서 클러스터에 접근하려면 가장먼저 Node의 Port를 통해야하고, 클라우드 사용시 외부 LoadBalancer를 사용할 수 있어야 한다.
-    - 이런 과정에서 NodePort나 LoadBalancer가 언급되는 것이지 App Service는 ClusterIP로 설정해도 된다.
-- Ingress Controller마다 구현방식이 다양하기 때문에 이 부분 설명은 케바케가 될 수 있음
-- 2020년 블로그들[[1]](https://5equal0.tistory.com/entry/Kubernetes-Nginx-Ingress-Controller)[[2]](https://zgundam.tistory.com/178)을 보면 App Service를 클라우드, 베어메탈 환경을 구분해서 NodePort, LoadBalancer타입으로 생성해줘야 된다고 하는데, 그냥 ClusterIP로만 생성해도 잘된다... nginx ingress controller가 패치된 것일 수도 있겠다.
-- 결론: `Ingress는 ClusterIP를 포함해서 어떤 타입의 Service에도 붙일 수 있고, 외부망 배포가 가능하다. 헷갈리지 말자`
+### (의문점)Ingress에다가 NodePort 또는 LoadBalancer를 반드시 함께 사용해야한다는 블로그 자료들이 많던데, 막상 실행해보니 ClusterIP Service도 Ingress로 외부노출이 가능하다. 팩트가 무엇인가?
 
-#### - Ingress와 함께 언급되는 LoadBalancer의 뜻
-- Ingress-Managed LoadBalancer
+#### 답변
+- `Ingress는 ClusterIP를 포함해서 어떤 타입의 Service에도 붙일 수 있고, 외부망 배포가 가능하다.`
+- 가장 많이 사용되는 Nginx Ingress Controller는 ClusterIP Service를 외부 노출 가능
+    - e.g. [Cluster IP 서비스로 Ingress](https://github.com/kubernetes/kubernetes/issues/26508)
+- 일부 클라우드 공급자의 Ingress Controller를 사용하는 경우, ClusterIP를 지원하지 않는 경우가 있을 수 있다.
+    - e.g. [GKE](https://stackoverflow.com/questions/58314207/why-cant-i-attach-a-service-type-clusterip-to-ingress-on-gke)
+- Ingress Controller마다 구현방식이 다양하기 때문에 이 부분 설명은 케바케가 될 수 있음
+- 그러나 `K8s 공식 Ingress 사양에서는 따로 특정 타입의 Service를 요구하지 않는다.`
+
+#### - 사람들이 오해하는 이유 1
+#### 공식적으로 Ingress와 함께 언급되는 LoadBalancer에 대한 오해
+- 이는 Ingress-Managed LoadBalancer를 의미
 - App(L7) 단위의 트래픽을 분산시켜주는 프록시 서버
 - [공홈](https://kubernetes.io/ko/docs/concepts/services-networking/ingress/)의 설명에서는 Service(LoadBalancer 타입)과는 분명히 구분하고 있다.
 
-#### - 대표적인 Nginx Ingress Controller의 경우
-- 실행시 별도 namespace에 Service(LoadBalancer 타입)가 생성된다.
-- 이는 다음과 같이 Controller의 자체 기능 구현을 위해 K8s의 Service(LoadBalancer)기능을 활용하려는 것이다.
-    - App을 외부노출하는 기능
-    - ingress 설정만으로 클라우드 공급자의 LoadBalancer를 활용하기 위함
-- 이를 두고 각종 설명글, 그림에서는 'LoadBalancer 타입의 Service를 활용해야한다'라고 표현하고 있으나 이는 내부구조를 설명한 것이지, K8s 관리자가 배포하고자 하는 App Service를 별도 Service(LoadBalancer 타입)로 구현해야한다는 것은 아니다. App Service는 ClusterIP 타입이어도 상관없다.
+#### - 사람들이 오해하는 이유 2
+#### NodePort, LoadBalancer 용어에 대한 오해
+- Ingress 사용시, 어쨌든 외부에서 클러스터에 접근하려면 가장먼저 Node의 Port를 통해야하고, 클라우드 사용시 외부 LoadBalancer를 사용할 수 있어야 한다.
+- 이런 기능들을 구현한 Ingress Controller 내부 컴포넌트가 있을 것이다.
+- 그렇다고 이것이 K8s 관리자가 배포하려는 App Service를 NodePort or LoadBalancer 타입으로 만들어한다는 말은 아니다.
+
+#### - 가장 널리 쓰이는 Nginx Ingress Controller의 사례
+- Nginx Ingress Controller 구성시 자동으로 별도 namespace에 'LoadBalancer 타입의 Service'가 생성된다.
+- 이는 Nginx에서 Controller 자체 기능구현을 위해 다음과 같이 K8s의 Service(LoadBalancer)기능을 활용하는 것이다.
+    - App 외부노출 기능을 구현하기 위해 NodePort or LoadBalancer 타입의 Service 설정
+    - K8s 관리자로 하여금 ingress 설정만으로 클라우드 공급자의 LoadBalancer를 활용할 수 있도록 하기 위해 LoadBalancer 타입의 Service 설정
+- 이를 두고 각종 설명글, 그림에서는 'LoadBalancer 타입의 Service를 활용해야만 한다'라고 표현하고 있으나 이는 Ingress Controller 내부구조에 한정된 것이지,
+- K8s 관리자가 배포하고자 하는 App Service를 LoadBalancer 타입으로 설정해야하는 것은 아니다. App Service는 ClusterIP 타입이어도 상관없다!!
 - 작업 환경이나 Ingress Controller 종류에 따라 더 세밀한 네트워크 제어를 위해, K8s 관리자가 직접적으로 LoadBalancer 타입의 Service를 추가하여 Controller의 일부기능을 구현할 수는 있으나, 그 Service가 백엔드 App Service를 의미하는 것은 아니다.
+
+- 2020년 블로그들[[1]](https://5equal0.tistory.com/entry/Kubernetes-Nginx-Ingress-Controller)[[2]](https://zgundam.tistory.com/178)을 보면 nginx controller인데도 App Service를 클라우드, 베어메탈 환경을 구분해서 LoadBalancer, NodePort타입으로 생성해줘야 된다고 하는데, 현재는 그냥 ClusterIP로만 생성해도 잘만 된다... nginx ingress controller가 패치된 것일 수도 있겠다.
 
 - 다시 한번 말하자면 `Ingress는 ClusterIP를 포함해서 어떤 타입의 Service에도 붙일 수 있다.`
 - 일반적인 Controller나 Nginx Controller를 쓰고 있다면, `일부러 배포하고자 하는 App Service를 NodePort나 LoadBalancer 타입으로 만들 필요는 없다.`
