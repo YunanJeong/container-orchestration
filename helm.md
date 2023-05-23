@@ -14,11 +14,37 @@ sudo apt-get install helm
 ## 사전준비
 - K8s 클러스터
 - helm에 대상 클러스터 정보 등록
-    - 배포판 및 환경마다 설정 방법이 조금씩 다름
-    ```
-    # Helm에 로컬 K3s 클러스터 정보 인식
-    export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-    ```
+    - K3s
+        ```
+        # Helm에 로컬 K3s 클러스터 정보 인식 (이는 default를 변경하는 것)
+        export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+        ```
+    - Minikube
+        - minikube는 start시 helm과 연동된다
+
+    - 대상 클러스터(컨텍스트) 전환하기
+        - 이 때 kubectl은 `.kube/config`에 있는 파일을 참조하는 것이기 때문에, minikube든 k3s든 어떤 kubectl을 써도 상관없다.
+
+        ```
+        # 컨텍스트(클러스터) 목록 확인
+        $ kubectl config get-contexts
+        CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+                  default    default    default
+        *         minikube   minikube   minikube   default
+        ```
+        ```
+        # 컨텍스트를 default(K3s)로 변경
+        CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+        *         default    default    default
+                  minikube   minikube   minikube   default
+        ```
+        ```
+        # 컨텍스트를 minikube로 변경
+        $ kubectl config use-context minikube
+        CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+                  default    default    default
+        *         minikube   minikube   minikube   default
+        ```
 
 ## Helm Charts (헬름 차트, 차트)
 - Helms에서의 패키지를 의미
@@ -71,10 +97,14 @@ sudo apt-get install helm
     ```
 
 ### Chart 설치/조회/삭제
-- helm install {릴리즈 이름 지정} {차트 이름}
+- helm install {릴리즈 이름 지정} {차트 경로or 파일}
     ```
     # chart 설치 (release 생성, cluster를 구성)
     helm install my-release bitnami/kafka
+    ```
+- helm install -f {value.yml} {릴리즈 이름 지정} {차트 경로or 파일}
+    ```
+    # 차트 설정에 Override할 value파일 반영
     ```
 - helm list
     ```
@@ -95,3 +125,8 @@ sudo apt-get install helm
 - helm package {차트 경로}
     - '템플릿', '변수', '값', '구성파일' 등의 리소스로 구성된 경로를 지정
     - 배포가능한 하나의 차트파일(tar압축)로 생성함
+
+- helm template -f {value.yml} {릴리즈 이름 지정} {차트 경로or 파일}
+    - helm install 커맨드와 동일한 형식으로 사용한다.
+    - 최종적으로 클러스터를 생성시 적용되는 설정파일을 stdout으로 확인가능
+    - 일종의 디버그 용도로 사용가능
