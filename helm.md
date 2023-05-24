@@ -130,3 +130,5 @@ sudo apt-get install helm
     - helm install 커맨드와 동일한 형식으로 사용한다.
     - 최종적으로 클러스터를 생성시 적용되는 설정파일을 stdout으로 확인가능
     - 일종의 디버그 용도로 사용가능
+- helm show values {chart이름}
+    - 해당 차트에서 default로 적용되는 value파일을 볼 수 있다. 이를 토대로 커스텀 value파일을 생성하면 된다.
