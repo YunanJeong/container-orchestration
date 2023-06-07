@@ -81,6 +81,31 @@ sudo systemctl start k3s
 - K3s 프로세스는 daemon으로 실행된다.
 - 클러스터 내 container는 containerd로 실행된다. (별도 설치 필요없음.default)
 
+# Context 관리
+- 컨텍스트(현재 kubectl 대상 클러스터) 전환하기
+    - 이 때 kubectl은 `.kube/config`에 있는 파일을 참조하는 것이기 때문에, minikube든 k3s든 어떤 kubectl을 써도 상관없다.
+
+    ```
+    # 컨텍스트(클러스터) 목록 확인
+    $ kubectl config get-contexts
+    CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+              default    default    default
+    *         minikube   minikube   minikube   default
+    ```
+    ```
+    # 컨텍스트를 default로 변경
+    CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+    *         default    default    default
+              minikube   minikube   minikube   default
+    ```
+    ```
+    # 컨텍스트를 minikube로 변경
+    $ kubectl config use-context minikube
+    CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
+              default    default    default
+    *         minikube   minikube   minikube   default
+    ```
+
 ## Command
 ```
 # k3s 서브커맨드로 kubectl
