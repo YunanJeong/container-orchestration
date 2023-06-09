@@ -132,3 +132,21 @@ sudo apt-get install helm
     - 일종의 디버그 용도로 사용가능
 - helm show values {chart이름}
     - 해당 차트에서 default로 적용되는 value파일을 볼 수 있다. 이를 토대로 커스텀 value파일을 생성하면 된다.
+
+
+## 컴퓨팅 리소스 관리
+- 개별 Pod가 점유할 리소스를 관리할 필요가 있음
+- value.yaml 파일에서 일반적으로 다음 key로 지정할 수 있다. 
+    - `resources.requests`: 최소 요구사항
+    - `requests.limits`: 맥시멈 제한
+    - `persistence`: 스토리지
+        - pvc 스토리지 용량은 한번 지정하면 변경하기가 까다로우니 운영 직전에 검토를 잘하자
+- 위 key 목록은 대부분 배포되는 helm 차트에서 지원한다.
+    - helm 툴에서 default로 지원하는 것은 아니고, helm차트 배포자가 template으로 구현한 것이다.
+    - K8s 용어가 위 key들과 같아서 관례적으로 template을 만들 때 해당 이름들을 사용하는 것이다.
+    - 따라서 차트마다 방법이 조금씩 다를 수 있으므로 artifact hub 또는 helm show values {chart이름} 명령어로 value파일 포맷을 확인하자.
+    - 만약 해당 key가 보이지 않는다면, 참조하는 차트를 찾아보면 있을 가능성이 높다. (template은 override하는 개념이므로)
+
+- 적용 확인
+    - resources는 `kubectl describe`했을 때 Containers 항목 아래에서 찾을 수 있음
+    - persistence는 `kubectl get pvc`로 확인 가능
