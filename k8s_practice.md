@@ -115,8 +115,9 @@ sudo k3s kubectl
 # (kubectl->k3s로 bin파일 link됨, k3s 설치시 default)
 sudo kubectl
 
-# sudo 없이 쓰기 (sudo 필수 서브커맨드들은 여전히 있음)
-sudo chmod -R 777 /etc/rancher/k3s/k3s.yaml
+# sudo 없이 쓰기 (sudo 필수 서브커맨드들은 여전히 필요)
+# 644가 적정권한, 777은 warning뜸
+sudo chmod -R 644 /etc/rancher/k3s/k3s.yaml
 ```
 
 ```
