@@ -14,6 +14,7 @@
 - `skaffold.yaml`
     - 설정 파일 딱 한 개만 필요하고 나머지는 cli커맨드로 제어
 - 가벼움(client-side only): K8s 클러스터측에 설치해야하는 에이전트가 없음
+- 클러스터 실행시 환경변수 전달에 용이 (AWS_KEY 등 전달시 편함)
 
 ## 예제
 ```
@@ -40,33 +41,34 @@ sudo install skaffold /usr/local/bin/
     - 빌드된 앱의 결과물, 또는 빌드 및 배포 과정 전후에 필요한 모든 파일들을 의미 (소스코드, 디펜던시, 생성된 파일, 패키지, 컨테이너 이미지 등)
 
 ---
-# memo
-
-##
-- K8s 클러스터(가급적 Minikube)가 1개 이상 켜져 있어야 함    
-
+# Practice
+- K8s 클러스터가 1개 이상 켜져 있어야 함
+- 주로 사용하는 커맨드 위주로 기술    
+    - `skaffold dev`와 `skaffold build`만 잘 써도 개발시 매우 편리
+    - 배포, 실행 등도 가능하나 라이브 환경에서는 helm으로 처리하는 것을 상정한다.
 
 ## 커맨드
-- skaffold init
+- `skaffold init`
     - 하위 디렉토리들을 조회하여 그에 맞는 `skaffold.yaml`파일 생성
     - 새로 작업시작할 때만 사용, 이미 `skaffold.yaml`이 있으면 안해도 됨
 
 ### End-to-end Pipelines
 파이프라인의 모든 단계를 한 번에 수행하는 명령어들
-- `skaffold run`
-    - 파이프라인 전체 실행
-    - skaffold 프로젝트를 타인에게 배포할 때 skaffold run 명령어 하나만으로 실행가능하도록 해준다.
-    - 실행결과를 kubectl, k9s 등으로 확인해보자.
-    - skaffold delete로 설치된 앱(K8s 오브젝트)을 삭제가능하나, Production 환경에서 쓰지 않도록 주의
 
 - `skaffold dev`
     - 개발모드로 실행
     - 터미널에서 실행시 세션을 점유하고, 대기상태가 된다.
-        - 이 때 에디터에서 Dockerfile 및 기타 파일 등을 수정하면 즉시 반영된다.
-        - 컨테이너 내부용 코드도 즉시 반영된다.
+        - 이 때 에디터에서 Dockerfile 및 기타 파일 등을 수정하면 즉시 반영
+        - 컨테이너 내부용 코드도 즉시 반영
     - dev모드의 변경내역이 실제환경에 반영되면 안되므로, 로컬 레지스트리에서 컨테이너 이미지가 처리된다.
         - 따라서, minikube를 쓰는 것이 편하다.
-        - K3s에서 Skaffold dev모드를 쓰려면 로컬 도커 레지스트리나 개별 레지스트리를 가리키도록 추가 설정 필요
+        - K3s에서 개발모드를 쓰려면 로컬 도커 레지스트리나 개별 레지스트리를 가리키도록 추가 설정 필요
+
+- `skaffold run`
+    - 파이프라인 전체 실행
+    - skaffold 프로젝트를 타인에게 배포할 때 skaffold run 명령어 하나만으로 실행가능하도록 해준다.
+    - 실행결과를 kubectl, k9s 등으로 확인해보자.
+    - `skaffold delete`로 설치된 앱(K8s 오브젝트)을 삭제가능
 
 - skaffold debug
     - 디버그 모드 실행. 사전 디버깅 지점 설정 또는 설정 파일 필요.
@@ -75,13 +77,32 @@ sudo install skaffold /usr/local/bin/
 파이프라인의 특정 단계만 수행하는 명령어들
 - `skaffold build`
     - `skaffold.init의 build.artifacts`에 기술한 이미지들을 빌드한다.
-        ```
-        # 결과물은 로컬 레지스트리에서 확인가능
-        minikube ssh
-        docker image ls
-        ```
-- `skaffold deploy --image {IMAGE}:{TAG}`
-    - 이전 단계에서 빌드된 이미지로 K8s앱을 실행한다.
+    - `--tag={x.x.x}`: 빌드할 때 태그 지정. 미지정시 랜덤
+    - `--default-repo={registry IP addr}}`: 어느 저장소에 저장할 것인가 지정
+    - `--push`: 대상 저장소가 원격이면 필요한 옵션
+    - 예시
+    ```
+    # minikube 사용시 빌드
+    skaffold build
+    
+    # 결과물은 minikube 내부 로컬 레지스트리에서 확인가능
+    minikube ssh
+    docker image ls
+    ```
+    ```
+    # e.g. 로컬호스트의 도커 레지스트리에 결과물을 남기고 싶은 경우 (K3s사용시)
+    skaffold build --tag=0.1.0 --default-repo=127.0.0.0/8
+    ```
+    ```
+    # e.g. 원격 사설 레지스트리(docker.my)에 결과물을 남기고 싶은 경우(push)
+    skaffold build --tag=0.1.0 --default-repo=docker.my/yunanj --push
+
+    # e.g. 공식 레지스트리(docker.io)에 결과물을 남기고 싶은경우 (push)
+    skaffold build --tag=0.1.0 --push
+    ```
+
+- `skaffold deploy --images {IMAGE}:{TAG}`
+    - 사전 빌드된 artifact(이미지)로 K8s앱을 실행한다.
 
 - `skaffold delete`
     - skaffold로 설치&배포된 모든 리소스를 삭제
