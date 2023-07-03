@@ -77,6 +77,7 @@ sudo install skaffold /usr/local/bin/
 파이프라인의 특정 단계만 수행하는 명령어들
 - `skaffold build`
     - `skaffold.init의 build.artifacts`에 기술한 이미지들을 빌드한다.
+    - 아래 옵션은 build를 포함하는 다른 명령어 수행시에도 적용가능하다. 태그와 저장소를 주의하여 명시하자.
     - `--tag={x.x.x}`: 빌드할 때 태그 지정. 미지정시 랜덤
     - `--default-repo={registry IP addr}}`: 어느 저장소에 저장할 것인가 지정
     - `--push`: 대상 저장소가 원격이면 필요한 옵션
