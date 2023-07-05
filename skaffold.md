@@ -117,10 +117,4 @@ sudo install skaffold /usr/local/bin/
 
 ### 참고
 - DockerFile에 apt설치 구문을 추가했는데 skaffold build, dev에서 반영되지 않는 경우
-    - But, 컨테이너에 ssh로 직접 설치시 잘 수행되는 경우(설치환경 충족) 
-    - 이는 빌드 당시 특정 dependency를 처리에 실패해서, 설치취소된 경우이고, 다음과 같이 해결할 수 있다.
-    ```
-    # e.g. apt-utils가 개별처리할 dependency이고, kafkacat이 본래 설치할 앱
-    RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
-    RUN apt-get install -y kafkacat
-    ```
+    - 특정 dependency를 처리하지 못해, 설치가 취소된 것일 수 있다. FROM 이미지 교체하거나 따로 대응 필요
