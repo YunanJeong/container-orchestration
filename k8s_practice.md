@@ -436,6 +436,8 @@ kubectl describe ep {Service_name}
     # 인그레스 정보 확인
     kubectl get ingress
     ```
+    2.1. k9s 툴에서 특정 Pod에 대해 `Shift+F`를 쓰면 ingress 설정 메니페스트 없이 로컬호스트에서 포트포워딩을 즉시 수행가능하다.
+
 3. 접속할 클라이언트에서 hosts 파일 수정
     - 윈도우(`C:\Windows\System32\drivers\etc\hosts`)
     - 리눅스(`/etc/hosts`)
