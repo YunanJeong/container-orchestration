@@ -37,9 +37,11 @@ sudo install skaffold /usr/local/bin/
 - Pipeline
     - Skaffold에서 앱 개발 및 배포 과정을 단계별로 정의하는 개념
 - Artifact
-    - 사실상 `skaffold.yaml`에 기술된 편집 및 빌드할 대상 이미지를 가리킴
+    - 사실상 `skaffold.yaml`에 기술하는 관리대상 이미지를 가리킴
     - 빌드된 앱의 결과물, 또는 빌드 및 배포 과정 전후에 필요한 모든 파일들을 의미 (소스코드, 디펜던시, 생성된 파일, 패키지, 컨테이너 이미지 등)
-
+- [Profile](https://skaffold.dev/docs/environment/profiles/)
+    - 다양한 컨텍스트로 스캐폴드 환경을 구성할 수 있게 해준다.
+    - 여기서 컨텍스트란, build, test, deployment 등 개발 및 배포 단계에 따라 구분된 환경을 의미한다. 
 ---
 # Practice
 - K8s 클러스터가 1개 이상 켜져 있어야 함
@@ -53,8 +55,7 @@ sudo install skaffold /usr/local/bin/
     - 새로 작업시작할 때만 사용, 이미 `skaffold.yaml`이 있으면 안해도 됨
 
 ### End-to-end Pipelines
-파이프라인의 모든 단계를 한 번에 수행하는 명령어들
-
+#### 파이프라인의 모든 단계를 한 번에 수행하는 명령어들
 - `skaffold dev`
     - 개발모드로 실행
     - 터미널에서 실행시 세션을 점유하고, 대기상태가 된다.
@@ -63,6 +64,14 @@ sudo install skaffold /usr/local/bin/
     - dev모드의 변경내역이 실제환경에 반영되면 안되므로, 로컬 레지스트리에서 컨테이너 이미지가 처리된다.
         - 따라서, minikube를 쓰는 것이 편하다.
         - K3s에서 개발모드를 쓰려면 로컬 도커 레지스트리나 개별 레지스트리를 가리키도록 추가 설정 필요
+        ```
+        # helm으로 로컬 프라이빗 레지스트리 빠른설치
+        helm repo add twuni https://helm.twun.io
+        helm repo update
+        helm install registry twuni/docker-registry --set ingress.enabled=true
+        # 다음처럼 이용
+        skaffold dev -p dev -d localhost:5000/myproj
+        ```
     - build 과정을 포함하고, build 옵션을 쓸 수 있다.
         - build되지 않으면 개발모드 실행이 되지 않는다.
         - 이에따라 개발작업 중 꾸준히 빌드가능한 상태를 유지할 수 있는 이점이 있다.
@@ -73,17 +82,17 @@ sudo install skaffold /usr/local/bin/
     - 실행결과를 kubectl, k9s 등으로 확인해보자.
     - `skaffold delete`로 설치된 앱(K8s 오브젝트)을 삭제가능
 
-- skaffold debug
+- `skaffold debug`
     - 디버그 모드 실행. 사전 디버깅 지점 설정 또는 설정 파일 필요.
 
 ### Pipeline Building Blocks
-파이프라인의 특정 단계만 수행하는 명령어들
+#### 파이프라인의 특정 단계만 수행하는 명령어들
 - `skaffold build`
     - `skaffold.init의 build.artifacts`에 기술한 이미지들을 빌드한다.
     - 아래 옵션은 build를 포함하는 다른 명령어 수행시에도 적용가능하다. 태그와 저장소를 주의하여 명시하자.
-    - `--tag={x.x.x}`: 빌드할 때 태그 지정. 미지정시 랜덤
-    - `--default-repo={registry IP addr}}`: 어느 저장소에 저장할 것인가 지정
-    - `--push`: 대상 저장소가 원격이면 필요한 옵션
+        - `--tag={x.x.x}`: 빌드할 때 태그 지정. 미지정시 랜덤
+        - `--default-repo={registry IP addr}}`: 어느 저장소에 저장할 것인가 지정
+        - `--push`: 대상 저장소가 원격이면 필요한 옵션
     - 예시
     ```
     # minikube 사용시 빌드
@@ -118,3 +127,4 @@ sudo install skaffold /usr/local/bin/
 ### 참고
 - DockerFile에 apt설치 구문을 추가했는데 skaffold build, dev에서 반영되지 않는 경우
     - 특정 dependency를 처리하지 못해, 설치가 취소된 것일 수 있다. FROM 이미지 교체하거나 따로 대응 필요
+    - 사설 레지스트리, 오케스트레이션 툴 종류 등 다양한 원인에 따라 dev모드에서 실시간 코드반영이 수행되지 않을 수 있다. 이는 Skaffold의 한계로, 문제점을 개별 확인 필요. 
