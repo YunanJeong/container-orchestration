@@ -69,6 +69,7 @@ sudo install skaffold /usr/local/bin/
         helm repo add twuni https://helm.twun.io
         helm repo update
         helm install registry twuni/docker-registry --set ingress.enabled=true
+        
         # 다음처럼 이용
         skaffold dev -p dev -d localhost:5000/myproj
         ```
