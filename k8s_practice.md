@@ -356,7 +356,11 @@ kubectl get all -n {namespace_name}
 - 로드밸런싱
 
 #### - 기능
-- 클러스터 외부 클라이언트에게 안정적인 단일 엔드포인트(External IP) 제공
+- 클러스터 외부에 안정적인 단일 엔드포인트(External IP) 제공
+    - 여기서 엔드포인트는 클라이언트가 접속시 직접사용하는 URL이 아니라 클러스터 쪽의 외부 엔드포인트를 의미한다.
+    - LoadBalancer에 할당된 IP가 공인 IP라면 클라이언트 입장에서도 직접사용하는 엔드포인트라고 할 수 있다.
+    - 이와 관련해서는 [LB타입 서비스 예제](https://github.com/YunanJeong/container-orchestration/blob/main/practice/service/3_svc-loadbalancer-redisdb-server.yml)의 LoadBalancerIP 및 externalIPs 관련 주석을 참고하자.
+
 - 엔드포인트로 들어오는 트래픽을 각 Node 또는 Pod로 분산(로드밸런싱)
 - ClusterIP, NodePort 기능 포함
     - LoadBalancer가 NodePort를 자동할당
@@ -367,7 +371,8 @@ kubectl get all -n {namespace_name}
 - 일반적으로 클라우드 공급자의 것을 활용
 - `Service와 별도로 존재하는 Proxy 서버(중요)`
     - (LoadBalancer 타입의) Service는 설정만 있는 것이고, 실제 대부분 기능은 LoadBalancer에서 수행된다.
-    - 해당 Service와 같은 클러스터 내 개별 Pod로 실행됨. 서드파티 LoadBalancer를 설치하면 동일 클러스터 내 다른 namespace를 쓰기도 한다.
+    - 별도 구축된 LB가 없으면 클러스터 내 가상 LB가 Pod로 실행되고 사실상 Nodeport와 동일하게 기능이 수행된다.(K8s 배포판마다 구현방식이 다름)
+    - MetalLB와 같은 서드파티 LoadBalancer도 설치하면 동일 클러스터 내 다른 namespace에 LB기능을 구현한 Pod가 실행된다.
 
 #### - 참고
 - LoadBalancer 의미는 문맥따라 파악
