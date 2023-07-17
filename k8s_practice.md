@@ -69,6 +69,9 @@
 # K3s 설치
 curl -sfL https://get.k3s.io | sh -
 
+# K3s 설치 (docker 사전 설치 필요, docker를 K3s의 컨테이너 런타임으로 사용)
+curl -sfL https://get.k3s.io | sh -s - --docker
+
 # 새 노드 추가시 설치(환경 변수 설정 및 클러스터 참여)
 curl -sfL https://get.k3s.io | K3S_URL=https://{myserver}:6443 K3S_TOKEN={mynodetoken} sh -
 
