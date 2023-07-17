@@ -17,6 +17,7 @@ sudo apt-get install helm
     - K3s
         ```
         # Helm에 로컬 K3s 클러스터 정보 인식 (이는 default를 변경하는 것)
+        # ~/.bashrc에 추가해두자
         export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
         ```
     - Minikube
