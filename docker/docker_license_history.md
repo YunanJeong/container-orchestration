@@ -30,6 +30,13 @@
 - Debian/Ubuntu의 공식 repos에 배포된 Docker Engine 릴리스
 - 오래된 버전
 - Docker Engine 및 필요한 플러그인(Docker-cli, ...)이 포함된다
+- 편하게 설치가능한 것이 장점. 간단한 컨테이너 사용시 별 문제없고 사용법도 거의 동일
+- docker compose 미포함
+```
+$ sudo apt update
+$ sudo apt install docker.io
+```
+
 ### `docker-ce` (Community Edition)
 - docker.com 에서 직접 배포하는 Docker Engine 릴리스
 - `docker-ce는 사람들이 많이 쓰는 관례적인 이름`에 가깝고, `도커 공홈에서는 더 공식적인 표현으로 Docker Engine`이라고 칭해진다.

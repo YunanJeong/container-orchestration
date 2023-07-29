@@ -1,3 +1,7 @@
+# Delete Legacy
+for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
+
+# Install
 # https://docs.docker.com/engine/install/ubuntu/
 sudo apt-get update -y
 sudo apt-get install -y \
@@ -17,7 +21,7 @@ sudo apt-get update -y
 
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
-# non-root settings
+# Non-root settings
 # https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
 sudo groupadd docker
 sudo usermod -aG docker $USER
