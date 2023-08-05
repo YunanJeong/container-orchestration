@@ -2,6 +2,13 @@
 - 컨테이너 기반 및 Kubernetes 애플리케이션의 지속적인 개발을 촉진하는 CLI 툴
 - K8s 앱의 지속적 배포를 위한 구글 자체 툴
 
+## 설치
+```sh
+# For Linux x86_64 (amd64)
+curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
+sudo install skaffold /usr/local/bin/
+```
+
 ## 쓰는 이유
 - 로컬에서 빠른 K8s 개발
     - 일반적으로 컨테이너 내부를 사소하게라도 수정하면, 다음과 같은 과정을 거쳐야 하는데, skaffold는 이를 자동화해준다.(지속적 배포, CD)
@@ -17,7 +24,7 @@
 - 클러스터 실행시 환경변수 전달에 용이 (AWS_KEY 등 전달시 편함)
 
 ## 예제
-```
+```sh
 git clone https://github.com/GoogleContainerTools/skaffold
 ```
 - 위 저장소의 examples 디렉토리에 유형 별 배포 예시가 제공됨
@@ -27,12 +34,7 @@ git clone https://github.com/GoogleContainerTools/skaffold
 ## 문서
 - https://skaffold.dev/docs/
 
-## 설치
-```
-# For Linux x86_64 (amd64)
-curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
-sudo install skaffold /usr/local/bin/
-```
+
 ## 용어
 - Pipeline
     - Skaffold에서 앱 개발 및 배포 과정을 단계별로 정의하는 개념

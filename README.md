@@ -39,8 +39,11 @@ Docker, Kubernetes(minikube, K3s), Helm, skaffold 등
 	- 약어: k8s(케이츠, 케이에이츠), kube(큐브)
 	- Container Orchestration Tool의 사실상 표준
 	- 구글에서 만듦
-
-
+- Helm (헬름)
+	- Kubernetes 애플리케이션을 패키징하고 배포하기 위한 도구
+- Skaffold
+	- 컨테이너 기반 및 Kubernetes 애플리케이션의 지속적인 개발을 촉진하는 CLI 툴
+	- K8s 앱의 지속적 배포를 위한 구글 자체 툴
 
 
 
