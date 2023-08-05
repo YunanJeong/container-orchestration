@@ -4,7 +4,7 @@
 - Google이 개발 후 CNCF재단에 기부해서 오픈소스화 됨
 
 ## 설치 (공식 K8s, 업스트림 쿠버네티스)
-- 공식버전보다는 목적에 맞는 배포판 설치 권장
+- **공식버전보다는 목적에 맞게 후술할 배포판 설치 권장**
 - [설치하기 전 쿠버네티스 컴포넌트 관련 설명 참고](https://kubernetes.io/ko/docs/setup/)
 
 - 배포도구
@@ -23,13 +23,13 @@
 ### 경량
 - 주요 목적: 학습용, 빠른 환경 구성, 가벼움
     - (e.g. IoT, 라즈베리파이 등에서도 가능)
-- minikube (미니큐브)
+- `minikube (미니큐브)`
     - is local Kubernetes, focusing on making it easy to learn and develop for Kubernetes.
     - 제공: SIG(Special Interest Group, **쿠버네티스 개발자들** 중 특정 주제에 관심있는 개발자모임)
-    - **유일하게 K8s 공식문서에서도 다뤄짐**. 다른 배포판은 다른 기관에서 제공
+    - **유일하게 K8s 공식문서에서 다뤄짐**. 다른 배포판은 다른 기관에서 제공
     - 테스트나 개발 용도에 적합
-- k3s (by *Rancher Labs(SUSE)* 기업)
-    - minikube와 마찬가지로 경량이나, minikube보다 production ready로 적합하다는 의견이 많음 
+- `k3s` (by *Rancher Labs(SUSE)* 기업)
+    - minikube와 마찬가지로 경량이나, minikube보다 **production ready**로 적합하다는 의견이 많음 
 - k3d
     - Docker Container안에 k3s가 설치되어 배포되는 형태
     - 단일 PC에서 다수 클러스터 상황을 시뮬레이션하고 싶을 때 사용
@@ -46,7 +46,8 @@
     - 워커노드에 kubelet 함께 설치 필요
 
 ### Managed K8s Service
-- AWS(EKS), Azure(AKS), GCP(GKE)와 같은 클라우드 기반 서비스 (CaaS), (IaaS와 PaaS 사이)
+- AWS(EKS), Azure(AKS), GCP(GKE)와 같은 클라우드 기반 서비스
+- CaaS (IaaS와 PaaS 사이)라고 칭한다.
 
 
 
