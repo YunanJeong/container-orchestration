@@ -1,7 +1,6 @@
 # Skaffold
 
-- 컨테이너 기반 및 Kubernetes 애플리케이션의 지속적인 개발을 촉진하는 CLI 툴
-- K8s 앱의 지속적 배포를 위한 구글 자체 툴
+- 컨테이너 기반 및 K8s 앱의 지속적 배포 & 지속적 개발을 촉진하는 CLI 툴 (구글 제공)
 
 ## 설치
 
@@ -14,7 +13,7 @@ sudo install skaffold /usr/local/bin/
 ## 쓰는 이유
 
 - 로컬에서 빠른 K8s 개발
-  - 일반적으로 컨테이너 내부를 사소하게라도 수정하면, 다음과 같은 과정을 거쳐야 하는데, skaffold는 이를 자동화해준다.(지속적 배포, CD)
+  - 일반적으로 컨테이너 내부를 사소하게라도 수정하면, 다음 과정을 거쳐야 하는데, skaffold는 이를 자동화한다.(지속적 배포, CD)
     - 소스코드 or DockerFile 수정
     - 이미지 build
     - 이미지 push
@@ -34,7 +33,7 @@ git clone https://github.com/GoogleContainerTools/skaffold
 
 - 위 저장소의 examples 디렉토리에 유형 별 배포 예시가 제공됨
 - docker, helm, kustomize, 클라우드 등 **배포방법에 따라 디렉토리 구성 및 skaffold.yaml 설정을 알 수 있어서 좋음**
-- 또, react, ruby, nodejs 등 K8s앱 유형 별 예시도 있음
+- react, ruby, nodejs 등 K8s앱 유형 별 예시도 있음
 
 ## 문서
 
@@ -111,28 +110,38 @@ git clone https://github.com/GoogleContainerTools/skaffold
     - `--tag={x.x.x}`: 빌드할 때 태그 지정. 미지정시 랜덤
     - `--default-repo={registry IP addr}}`: 어느 저장소에 저장할 것인가 지정
     - `--push`: 대상 저장소가 원격이면 필요한 옵션
-  - 예시
+
+- skaffold build는 기본적으로 이미지를 로컬 빌드 후 원격 registry에 push한다.
+  - registry 의존없이 로컬(도커 데몬)에만 이미지가 남도록 설정할 수 있다.
+  - `--push` 옵션을 쓰면 이 때에도 원격 registry에 push 가능
+
+  ```yaml
+  # skkafold.yaml의 build property 작성 예시
+  build:
+    local:
+      push: false              # 로컬(도커 데몬)에서만 빌드 (default: true)
+    artifacts:
+      - image: myapp           # 생성할 이미지 이름 지정
+        context: images/myapp  # DockerFile 경로
+  ```
+
+  - K3s는 컨테이너 런타임으로 docker를 권장
+  - Minikube는 기본적으로 minikube 내부의 docker를 사용함
 
     ```sh
-    # minikube 사용시 빌드
-    skaffold build
-    
     # 결과물은 minikube 내부 로컬 레지스트리에서 확인가능
     minikube ssh
     docker image ls
     ```
 
-    ```sh
-    # e.g. 로컬호스트의 도커 레지스트리에 결과물을 남기고 싶은 경우 (K3s사용시)
-    skaffold build --tag=0.1.0 --default-repo=127.0.0.0/8
-    ```
+  - 예시
 
     ```sh
-    # e.g. 원격 사설 레지스트리(docker.my)에 결과물을 남기고 싶은 경우(push)
-    skaffold build --tag=0.1.0 --default-repo=docker.my/yunanj --push
+    # 빌드
+    skaffold build
 
-    # e.g. 공식 레지스트리(docker.io)에 결과물을 남기고 싶은경우 (push)
-    skaffold build --tag=0.1.0 --push
+    # 빌드
+    skaffold build --default-repo={registry} -tag={version}
     ```
 
 - `skaffold deploy --images {IMAGE}:{TAG}`
