@@ -25,7 +25,10 @@ sudo install skaffold /usr/local/bin/
 - 가벼움(client-side only): K8s 클러스터측에 설치해야하는 에이전트가 없음
 - 클러스터 실행시 환경변수 전달에 용이 (AWS_KEY 등 전달시 편함)
 
-## 예제
+
+## 참고자료
+
+### 예제
 
 ```sh
 git clone https://github.com/GoogleContainerTools/skaffold
@@ -35,9 +38,8 @@ git clone https://github.com/GoogleContainerTools/skaffold
 - docker, helm, kustomize, 클라우드 등 **배포방법에 따라 디렉토리 구성 및 skaffold.yaml 설정을 알 수 있어서 좋음**
 - react, ruby, nodejs 등 K8s앱 유형 별 예시도 있음
 
-## 문서
-
-- https://skaffold.dev/docs/
+### 문서
+[공식 문서](https://skaffold.dev/docs/)
 
 ## 용어
 
@@ -51,6 +53,7 @@ git clone https://github.com/GoogleContainerTools/skaffold
   - 여기서 컨텍스트란, build, test, deployment 등 개발 및 배포 단계에 따라 구분된 환경을 의미한다.
 
 ---
+
 # Practice
 
 - K8s 클러스터가 1개 이상 켜져 있어야 함
