@@ -59,7 +59,7 @@ git clone https://github.com/GoogleContainerTools/skaffold
   - `skaffold dev`와 `skaffold build`만 잘 써도 개발시 매우 편리
   - 배포, 실행 등도 가능하나 라이브 환경에서는 helm으로 처리하는 것을 상정한다.
 
-## 시작
+### 시작
 
 - `skaffold init`
   - 하위 디렉토리들을 조회하여 그에 맞는 `skaffold.yaml`파일 생성
