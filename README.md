@@ -24,6 +24,9 @@ Docker, Kubernetes(minikube, K3s), Helm, skaffold 등
   - *Repository*: Registry 내 도커 이미지 저장공간. 이미지 이름으로 여기는게 더 직관적이다.
   - *Tag*: 동일한 repository(이름)의 이미지들을 구분하는 용도로 사용. 주로 버전이 표기되는 자리
 
+- Docker Context
+  - DockerFile을 포함하여 이미지 생성에 필요한 모든 리소스들의 모음 or 그 디렉토리
+
 - Docker Compose(도커 컴포즈)
   - (하나의 호스트에서) 여러 Container들을 관리하는 도구
     - 한 호스트 내 한정이라는 점 때문에, Orchestration Tool로는 취급되지 않는 편
@@ -43,6 +46,6 @@ Docker, Kubernetes(minikube, K3s), Helm, skaffold 등
   - 구글에서 만듦
 - Helm (헬름)
   - Kubernetes 애플리케이션을 패키징하고 배포하기 위한 도구
-- Skaffold
+- Skaffold (스캐폴드)
   - 컨테이너 기반 및 Kubernetes 애플리케이션의 지속적인 개발을 촉진하는 CLI 툴
   - K8s 앱의 지속적 배포를 위한 구글 자체 툴

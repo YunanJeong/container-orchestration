@@ -25,7 +25,6 @@ sudo install skaffold /usr/local/bin/
 - 가벼움(client-side only): K8s 클러스터측에 설치해야하는 에이전트가 없음
 - 클러스터 실행시 환경변수 전달에 용이 (AWS_KEY 등 전달시 편함)
 
-
 ## 참고자료
 
 ### 예제
@@ -39,6 +38,7 @@ git clone https://github.com/GoogleContainerTools/skaffold
 - react, ruby, nodejs 등 K8s앱 유형 별 예시도 있음
 
 ### 문서
+
 [공식 문서](https://skaffold.dev/docs/)
 
 ## 용어
