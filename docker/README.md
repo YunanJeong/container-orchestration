@@ -1,15 +1,18 @@
 # Docker
 
 ## 도커 설치 유형 및 라이센스 정리
+
 [설치유형 및 라이센스](https://github.com/YunanJeong/container-orchestration/blob/main/docker/docker_license_history.md)
 
 ## 최신 Docker Engine (docker-ce) 및 CLI 설치
+
 - docker-ce는 현재 공식명칭은 아니지만, 패키지명으로 남아있으며 여전히 Docker Engine을 관례적으로 가리키는 말이다.
-- **Apache 2.0 License**  (출처: [[1]](https://docs.docker.com/engine/#licensing)[[2]](https://github.com/moby/moby/blob/master/LICENSE))
-	- 사람들이 많이쓰는, 회사에서도 사용가능한 버전
+- **Apache 2.0 License**  (출처: [[1]](https://docs.docker.com/engine/#licensing) [[2]](https://github.com/moby/moby/blob/master/LICENSE))
+  - 사람들이 많이쓰는, 회사에서도 사용가능한 버전
 - [Ubuntu에서 설치방법(공식)](https://docs.docker.com/engine/install/ubuntu/)
-	- 레포지토리 등록 후 apt install
-	- 또는, deb패키지파일을 다운받아서 설치
+  - 레포지토리 등록 후 apt install
+  - 또는, deb패키지파일을 다운받아서 설치
+
 ```shell
 # Delete Legacy
 for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
@@ -41,10 +44,7 @@ sudo usermod -aG docker $USER
 newgrp docker
 ```
 
-
-
 - [WSL에서 설치시 참고(init vs. systemd)](https://github.com/YunanJeong/linux-tips/blob/main/wsl/wsl_servicedaemon.md)
-	- Docker Engine은 백그라운드로 항상 실행되는 프로세스로, 현재 작동 유무 체크를 위해 서비스 관리자가 필요
+  - Docker Engine은 백그라운드로 항상 실행되는 프로세스로, 현재 작동 유무 체크를 위해 서비스 관리자가 필요
 - [도커를 non-root 권한으로 사용하기](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
-	- 종종 필요하다.
-
+  - 종종 필요하다.
