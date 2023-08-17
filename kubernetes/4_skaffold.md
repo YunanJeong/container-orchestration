@@ -52,16 +52,14 @@ git clone https://github.com/GoogleContainerTools/skaffold
   - 다양한 컨텍스트로 스캐폴드 환경을 구성할 수 있게 해준다.
   - 여기서 컨텍스트란, build, test, deployment 등 개발 및 배포 단계에 따라 구분된 환경을 의미한다.
 
----
-
-# Practice
+## 주요 커맨드 및 Practice
 
 - K8s 클러스터가 1개 이상 켜져 있어야 함
 - 주로 사용하는 커맨드 위주로 기술
   - `skaffold dev`와 `skaffold build`만 잘 써도 개발시 매우 편리
   - 배포, 실행 등도 가능하나 라이브 환경에서는 helm으로 처리하는 것을 상정한다.
 
-## 커맨드
+## 시작
 
 - `skaffold init`
   - 하위 디렉토리들을 조회하여 그에 맞는 `skaffold.yaml`파일 생성
