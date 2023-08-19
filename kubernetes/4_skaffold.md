@@ -57,12 +57,14 @@ git clone https://github.com/GoogleContainerTools/skaffold
 
 - K8s 클러스터가 1개 이상 켜져 있어야 함
 - `skaffold build`, `skaffold dev`만 잘 써도 개발시 매우 편리
-- Pipeline 모든 단계를 한 번에 수행하는 명령어(End-to-end Pipelines)와 각 단계만 실행하는 명령어(Pipeline building Blocks)들이 있다.
-
+- 분류
+  - 각 단계만 실행하는 명령어(Pipeline building Blocks)
+  - Pipeline 모든 단계를 한 번에 수행하는 명령어(End-to-end Pipelines)
+  
 ### skaffold init
 
-- 하위 디렉토리들을 조회하여 그에 맞는 새로운 `skaffold.yaml`파일 생성
-- `skaffold.yaml`을 편집하거나 cli 명령어 옵션으로 skaffold 동작을 제어할 수 있다.
+- 하위 디렉토리를 조회하여 그에 맞는 새로운 `skaffold.yaml`파일 생성
+- `skaffold.yaml`을 편집하거나 cli 옵션으로 skaffold 동작 제어 가능
 
 ### skaffold build
 
@@ -89,10 +91,11 @@ git clone https://github.com/GoogleContainerTools/skaffold
   - remote registry, tag 미지정시 에러 발생
   - remote registry로 docker.io, private registry 등을 활용가능
 
-- **(필수)이는 로컬 개발 작업시 매우 비효율적이므로 다음과 같이 skaffold.yaml을 수정하여 해당 기능을 꺼주도록 한다.**
+  - _**(필수)이는 로컬 개발 작업시 매우 비효율적이므로 다음과 같이 skaffold.yaml을 수정하여 해당 기능을 꺼주도록 한다.**_
 
   ```yaml
   # skaffold.yaml
+  # Do NOT push to remote registry
   build:
     local:
       push: false              # 로컬(도커 데몬)에서만 빌드
@@ -101,16 +104,16 @@ git clone https://github.com/GoogleContainerTools/skaffold
         context: images/myapp  # Docker Context
   ```
 
-- 이후엔 remote registry 의존성 없이 skaffold 실행 가능
-  - cli에서 `-d`, `-t` 옵션없이 간편하게 실행
-  - 다시 remote registry에 push가 필요할 땐 skaffold.yaml를 수정하지말고 cli에서 `--push` 옵션을 사용하면 된다.
+- 이후 remote registry에 의존없이 skaffold 실행 가능
+  - cli에서 `-d`, `-t` 옵션없이 간편 실행
+  - 다시 remote registry에 push 필요시, skaffold.yaml를 수정하지말고 **cli에서 `--push` 옵션을 사용**
 
   ```sh
-  # skaffold.yaml 수정 후 remote registry 없이 빌드 가능
+  # remote registry 없이 빌드
   skaffold build
 
-  # remote regsitry에 push
-  skaffold dev -d docker.io/yunanj -t 1.0.0 --push
+  # 빌드 및 remote regsitry에 push
+  skaffold build -d docker.io/yunanj -t 1.0.0 --push
   ```
 
 - 로컬(도커 데몬)에 저장된 이미지 확인
@@ -125,7 +128,7 @@ git clone https://github.com/GoogleContainerTools/skaffold
   ```
 
 - 참고
-  - remote registry 대용으로 빠르게 로컬에 설치가능한 private registry가 있다.
+  - remote registry 대용으로 빠르게 로컬에 설치가능한 private registry도 있다.
 
   ```sh
   # helm으로 로컬 프라이빗 레지스트리 빠른설치
@@ -143,10 +146,9 @@ git clone https://github.com/GoogleContainerTools/skaffold
 
 `skaffold build`와 `skaffold deploy` 과정이 포함되는 End-to-end pipeline 커맨드
 
-- 실행시 터미널 세션을 점유하고, 대기상태가 된다.
-  - 이 때 에디터에서 Dockerfile 및 기타 파일을 수정하면 즉시 반영
-  - 컨테이너 내부 코드도 수정시 즉시 반영
-  - **개발모드의 수정사항은 즉시 반영되므로, Production 환경에서는 사용하지 않도록 한다.**
+- 실행시 터미널 세션을 점유하고, 대기상태로 진입
+  - 이 때 에디터에서 Dockerfile, 이미지 내부 앱 코드, 기타 파일을 수정하면 즉시 반영
+  - **개발모드의 수정사항은 즉시 반영되므로, _Production 환경에서는 사용하지 않도록 한다._**
 
 - build 과정이 포함되므로, build 옵션을 쓸 수 있다.
   - build되지 않으면 개발모드 실행이 되지 않음
