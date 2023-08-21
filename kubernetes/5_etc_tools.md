@@ -23,7 +23,10 @@ curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Li
 
 ### How to use
 
+- GUI 상단에 현재 사용가능한 단축키가 항상 보임
+
 - `:{Object}`
+  - 해당 항목만 조회
   - :pod
   - :service
   - :deploy
