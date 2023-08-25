@@ -57,7 +57,7 @@ sudo dpkg -i minikube_latest_amd64.deb
   - K8s 클러스터의 단일노드 ip를 의미
   - 멀티노드
     - default: Control Plane이 포함된 노드 IP를 반환
-    - `--node={대상노드NAME}`: 대상 노드 IP 반환 
+    - `--node={대상노드NAME}`: 대상 노드 IP 반환
 - `minikube service {service name}`
 - `minikube service --all`
   - K8s에서 service마다 ip가 할당되는데, 이는 K8s 클러스터 환경 내 private ip이다.
@@ -79,7 +79,7 @@ minikube stop
 minikube delete
 
 # minikube 툴 삭제(설치시 deb패키지 이용되었음)
-sudo apt-get purge minikube
+sudo apt-get purge -y minikube
 
 # Minikube VM 파일 및 디렉토리 삭제 (Linux기준)
 rm -rf ~/.minikube
