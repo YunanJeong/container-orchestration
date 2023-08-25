@@ -60,3 +60,17 @@
 - `minikube addons`
     - minikube로 각종 K8s 애드온 활성화 용도 (dashboard, ingress controller 등)
     - 이 기능말고, kubectl로 K8s 자체기능으로 추가해도 된다.
+
+## Minikube 클린삭제
+
+```sh
+# 클러스터 중지 및 삭제
+minikube stop
+minikube delete
+
+# minikube 툴 삭제(설치시 deb패키지 이용되었음)
+sudo apt-get purge minikube
+
+# Minikube VM 파일 및 디렉토리 삭제 (Linux기준)
+rm -rf ~/.minikube
+```

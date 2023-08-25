@@ -48,3 +48,19 @@ newgrp docker
   - Docker Engine은 백그라운드로 항상 실행되는 프로세스로, 현재 작동 유무 체크를 위해 서비스 관리자가 필요
 - [도커를 non-root 권한으로 사용하기](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user)
   - 종종 필요하다.
+
+## Docker 클린 삭제
+
+```sh
+
+# 도커 런타임 툴 삭제
+for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
+sudo apt-get purge -y docker-engine docker docker.io docker-ce
+sudo apt-get autoremove -y --purge docker-engine docker docker.io docker-ce
+
+# 이미지, 컨테이너 및 기타 설정 제거
+sudo rm -rf /var/lib/docker /etc/docker ~/.docker
+sudo rm /etc/apparmor.d/docker
+sudo groupdel docker
+sudo rm -rf /var/run/docker.sock
+```
