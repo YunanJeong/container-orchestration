@@ -41,7 +41,7 @@ chmod 644 /etc/rancher/k3s/k3s.yaml
 - helm, skaffold 등 서드파티앱을 지속적으로 사용한다면 KUBECONFIG를 .bashrc에 등록하는 것이 더 확실한 방법이다.
 
 ```sh
-# minikube와 K3s가 함께 있을 때 kube config로 Context 변경
+# minikube와 K3s가 함께 있을 때 kube config로 Context 변경 예시
 
 # 컨텍스트(클러스터) 목록 확인
 $ kubectl config get-contexts
