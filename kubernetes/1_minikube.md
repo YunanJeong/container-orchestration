@@ -11,6 +11,10 @@
 # 다운로드 및 설치
 curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest_amd64.deb
 sudo dpkg -i minikube_latest_amd64.deb
+
+# 기존 다른 K8s 사용중인 경우 컨텍스트 설정
+export KUBECONFIG=~/.kube/config  # .bashrc에 등록
+minikube update-context
 ```
 
 ## 참고 (minikube의 네트워크 구성, docker 기준 설명)
