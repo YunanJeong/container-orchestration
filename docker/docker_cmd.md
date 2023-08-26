@@ -46,4 +46,3 @@
     - -i: interactive, 계속 상호작용할 수 있도록 stdin을 받게 열어둔다.
     - -t: tty. terminal cli 형태로 띄운다.
   - 특히, ubuntu 이미지의 경우 간단한 ping, apt, cat, ifconfig 등을 자유롭게 테스트해보기에 좋으므로 익숙해지도록 하자.
-
