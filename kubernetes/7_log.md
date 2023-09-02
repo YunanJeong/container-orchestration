@@ -1,11 +1,14 @@
 # 쿠버네티스에서 로깅
 
-쿠버네티스 노드(로컬호스트)에 저장되는 로그는 기본적으로 K8s 앱 개발시 최근 로그를 터미널에서 쉽게 조회하는 정도의 목적임
+K8s 노드(로컬호스트)에 저장되는 로그는 기본적으로 K8s 앱 개발시 최근 로그를 터미널에서 쉽게 조회하는 정도의 목적임
 
-장기보관이나 고도화된 운영로그 조회가 필요하다면 결국은 백엔드가 뭐라도 하나 있어야 함
+장기보관이나 고도화된 운영로그 조회가 필요하다면 결국은 백엔드가 별도로  하나 있어야 함
 
-쿠버네티스의 기본적인 로그 저장 정책이 있으나, 사용하는 컨테이너 런타임을 따를 수도 있다.
-docker runtime 사용시, 쿠버네티스 로그 저장경로는 도커 로그저장경로로 symbolic link되어있다. 쿠버네티스 로그파일이 사라져도, docker쪽에 무한정 남아있기 때문에 docker 로깅드라이버 설정을 바꿔 줘야 한다. docker의 default 로깅 정책은 없기 때문에 production 환경에선 꼭 설정을 해주도록 하자.
+K8s의 로그 저장 정책이 있으나, 사용하는 컨테이너 런타임에 따라 동작이 다를 수 있음
+
+Docker runtime 사용시, K8s 로그 저장경로는 Docker 로그저장경로로 symbolic link되어있다.
+
+K8s 로그파일이 사라져도, docker쪽에 무한정 남아있기 때문에 docker 로깅드라이버 설정을 바꿔 줘야 한다. Docker의 default 로깅 정책은 없기 때문에 production 환경에선 꼭 설정을 해주도록 하자.
 
 ## 앱 로그
 
@@ -36,18 +39,15 @@ Pod 단위 (`/var/log/pod/`)
 
 ## 쿠버네티스 로깅 관련 참고 자료
 
-https://kubernetes.io/docs/concepts/cluster-administration/logging/#logging-at-the-node-level
+[K8s 로깅유형 및 fluentd 예제(공식)](https://kubernetes.io/docs/concepts/cluster-administration/logging/#logging-at-the-node-level)
 
-https://unofficial-kubernetes.readthedocs.io/en/latest/concepts/cluster-administration/logging/
+[K8s 로깅유형, 예제, retention](https://unofficial-kubernetes.readthedocs.io/en/latest/concepts/cluster-administration/logging/)
 
+[K8s 로그 retention 관련 stack overflow](https://stackoverflow.com/questions/71948846/kubernetes-pod-logs-retention)
 
-
-https://kubernetes.io/docs/concepts/cluster-administration/logging/#logging-at-the-node-level
-
-https://stackoverflow.com/questions/71948846/kubernetes-pod-logs-retention
+[Docker에서 로깅 설정(공식)](https://docs.docker.com/config/containers/logging/configure/)
 
 
-https://docs.docker.com/config/containers/logging/configure/
 ```sh
 
 /var/log/container/
