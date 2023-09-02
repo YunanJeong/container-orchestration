@@ -39,13 +39,12 @@ Pod 단위 (`/var/log/pod/`)
 
 - Docker 사용시,
   - rotation은 docker 정책 다름
-  - Docker default는 rotation 정책이 없으며, `/etc/docker/daemon.json`에서 설정필요
-  
+  - default Docker엔 로그 rotation 정책이 없으며, `/etc/docker/daemon.json`에서 설정필요
+
 - Pod 종료시 해당 로그파일 삭제됨
 
 - 앱 로그: 10메가 넘으면 rotation
 - 시스템 로그: 100메가 넘으면 rotation
-
 
 ## 참고 자료
 
