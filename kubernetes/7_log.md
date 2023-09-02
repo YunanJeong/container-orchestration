@@ -10,7 +10,7 @@ Docker runtime 사용시, K8s 로그 저장경로는 Docker 로그저장경로�
 
 K8s 로그파일이 사라져도, docker쪽에 무한정 남아있기 때문에 docker 로깅드라이버 설정을 바꿔 줘야 한다. Docker의 default 로깅 정책은 없기 때문에 production 환경에선 꼭 설정을 해주도록 하자.
 
-## 앱 로그
+## 로그 조회
 
 ```sh
 # kubectl logs {POD_NAME}
@@ -22,7 +22,13 @@ kubectl logs podname-xxxxxxxxxxx-xxxx
 - 요즘 대부분 상용툴은 로거가 포함되어 있고, 파일로 로그가 저장된다.
 - 해당 툴들의 이미지 배포판은 로거 출력 설정을 stdout, stderr로 설정되어 배포된다.
 
-### 
+### 실제 저장 위치
+
+```sh
+/var/log/containers/
+/var/log/pods/
+/var/lib/docker/containers
+```
 
 컨테이너 단위 (`/var/log/container/`)
 Pod 단위 (`/var/log/pod/`)
@@ -31,13 +37,17 @@ Pod 단위 (`/var/log/pod/`)
 - Pod 쪽 파일이 컨테이너 쪽 경로 파일을 가리킴(symbolic link)
 10메가 넘으면 로테이션
 
+- Docker 사용시,
+  - rotation은 docker 정책 다름
+  - Docker default는 rotation 정책이 없으며, `/etc/docker/daemon.json`에서 설정필요
+  
+- Pod 종료시 해당 로그파일 삭제됨
 
-## 시스템 로그
+- 앱 로그: 10메가 넘으면 rotation
+- 시스템 로그: 100메가 넘으면 rotation
 
-100메가 넘으면 로테이션
 
-
-## 쿠버네티스 로깅 관련 참고 자료
+## 참고 자료
 
 [K8s 로깅유형 및 fluentd 예제(공식)](https://kubernetes.io/docs/concepts/cluster-administration/logging/#logging-at-the-node-level)
 
@@ -47,11 +57,3 @@ Pod 단위 (`/var/log/pod/`)
 
 [Docker에서 로깅 설정(공식)](https://docs.docker.com/config/containers/logging/configure/)
 
-
-```sh
-
-/var/log/container/
-/var/log/pod/
-```
-
-### K8s 시스템로그
