@@ -17,7 +17,7 @@ sudo install skaffold /usr/local/bin/
     1. 소스코드 or DockerFile 수정
     2. 이미지 build
     3. 이미지 push
-    4.  K8s앱 실행
+    4. K8s앱 실행
 - skaffold로 최종 배포도 가능하지만 **개발 중 사용만으로도 효율적**
   - 배포는 kubectl, helm 등과의 연동을 공식지원하며, GoogleCloud, Gitops 등으로도 가능
 - `skaffold.yaml`
@@ -40,20 +40,25 @@ git clone https://github.com/GoogleContainerTools/skaffold
 
 ### 문서
 
-[공식 문서](https://skaffold.dev/docs/)
+- [공식 문서](https://skaffold.dev/docs/)
 
 ## 용어
 
-- Pipeline
-  - Skaffold에서 앱 개발 및 배포 과정을 단계별로 정의하는 개념
-- Artifact
-  - **skaffold.yaml에 기술하는 관리대상 이미지**
-  - 넓은 의미로, 빌드된 앱의 결과물, 또는 빌드 및 배포 과정 전후에 필요한 모든 파일들을 의미 (소스코드, 디펜던시, 생성된 파일, 패키지, 컨테이너 이미지 등)
-- [Profile](https://skaffold.dev/docs/environment/profiles/)
-  - 다양한 컨텍스트로 스캐폴드 환경을 구성할 수 있게 해준다.
-  - 여기서 컨텍스트란, build, test, deployment 등 개발 및 배포 단계에 따라 구분된 환경을 의미
+### Pipeline
 
-## 커맨드 및 Practice
+- Skaffold에서 앱 개발 및 배포 과정을 단계별로 정의하는 개념
+
+### Artifact
+
+- **skaffold.yaml에 기술하는 관리대상 이미지**
+- 넓은 의미로, 빌드된 앱의 결과물, 또는 빌드 및 배포 과정 전후에 필요한 모든 파일들을 의미 (소스코드, 디펜던시, 생성된 파일, 패키지, 컨테이너 이미지 등)
+
+### [Profile](https://skaffold.dev/docs/environment/profiles/)
+
+- 다양한 컨텍스트로 스캐폴드 환경을 구성할 수 있게 해준다.
+- 여기서 컨텍스트란, build, test, deployment 등 개발 및 배포 단계에 따라 구분된 환경을 의미
+
+## 자주 쓰는 커맨드 및 skaffold.yaml 설정
 
 - K8s 클러스터가 1개 이상 켜져 있어야 함
 - `skaffold build`, `skaffold dev`만 잘 써도 개발시 매우 편리
@@ -128,7 +133,7 @@ git clone https://github.com/GoogleContainerTools/skaffold
   ```
 
 - 참고
-  - remote registry 대용으로 빠르게 로컬에 설치가능한 private registry도 있다.
+  - remote registry 대용으로 빠르게 로컬에 설치가능한 private registry를 쓸 수도 있다.
 
   ```sh
   # helm으로 로컬 프라이빗 레지스트리 빠른설치
@@ -142,9 +147,8 @@ git clone https://github.com/GoogleContainerTools/skaffold
 
 ### skaffold dev
 
-개발모드 실행
-
-`skaffold build`와 `skaffold deploy` 과정이 포함되는 End-to-end pipeline 커맨드
+- 개발모드 실행
+- `skaffold build`와 `skaffold deploy` 과정이 포함되는 End-to-end pipeline 커맨드
 
 - 실행시 터미널 세션을 점유하고, 대기상태로 진입
   - 이 때 에디터에서 Dockerfile, 이미지 내부 앱 코드, 기타 파일을 수정하면 즉시 반영
@@ -155,14 +159,60 @@ git clone https://github.com/GoogleContainerTools/skaffold
   - 이에따라 개발 중 꾸준히 빌드가능 상태를 유지한다는 이점이 있다.
 
 ```sh
-# 개발모드
-skaffold dev
-
 # remote registry에 실시간 수정되는 이미지를 push 하면서 개발
 skaffold dev -d "docker.io/yunanj" -t 1.0.0 --push
 ```
 
-### 기타 Pipeline Building Blocks
+### skaffold dev (Remote Push 없이 Local Registry로만 개발하기)
+
+- build 단계의 Local 설정은 build단계에만 적용된다.
+- 로컬 개발모드를 위해, deploy단계에서는 build단계의 이미지를 인식하여 실행돼야 한다.
+- 다음과 같이 `setValueTemplates` 프로퍼티를 활용한다.
+
+```yml
+# skaffold.yaml
+build:
+  local:
+    push: false                 
+  artifacts:
+   - image: my-image     # 생성할 이미지 이름(repository)
+     context: my-image/  # Docker Context 경로
+
+deploy:
+  helm:                  # skaffold의 deploy를 helm으로 수행
+    releases: 
+      - name: xxx        # 릴리즈 이름
+        chartPath: xxx   # Helm 차트 경로 (source or archive)
+        skipBuildDependencies: true
+        setValueTemplates:
+          image.registry: "{{ .IMAGE_DOMAIN_my_image }}"
+          image.repository: "{{ .IMAGE_REPO_NO_DOMAIN_my_image }}"
+          image.tag: "{{ .IMAGE_TAG_my_image }}"
+        valuesFiles: 
+          - my-custom-value-for-live.yaml
+```
+
+- setValueTemplates
+  - Helm 배포시 사용될 개별 value 할당하는 기능
+  - skaffold로 local build된 이미지는 랜덤 tag를 가진다.
+  - 따라서 deploy 단계에서는 동적으로 build단계 이미지 정보를 인식해야 한다.
+    - `{{ .IMAGE_DOMAIN_my_image }}`: build단계 레지스트리 할당
+    - `{{ .IMAGE_REPO_NO_DOMAIN_my_image }}`: build단계 이미지 할당
+    - `{{ .IMAGE_TAG_my_image }}`: build 단계 태그 할당
+    - my_image 부분은 build.artifacts의 이미지 이름을 따른다.
+    - 대문자는 소문자로, 하이픈은 언더바로 표기
+- valuesFiles
+  - Helm 배포시 overriding values 파일
+  - **setValueTemplates 대상 외 나머지 value들만 할당**
+- 우선순위
+  - skaffold CLI options > `setValueTemplates` > `valuesFiles`
+
+- 이후 remote registry에 의존없이 로컬 개발모드(`skaffold dev`) 실행가능
+- 라이브 배포는 skaffold가 아닌, helm으로 수행한다. 로컬 개발모드를 위와 같이 설정함으로써, `my-custom-value-for-live.yaml`은 단 하나의 실제 배포환경용 파일로 관리할 수 있게 된다.
+
+## 기타 커맨드
+
+### Pipeline Building Blocks
 
 ```sh
 # 빌드
@@ -180,7 +230,7 @@ skaffold apply
 skaffold verify
 ```
 
-### 기타 End-to-end Pipelines
+### End-to-end Pipelines
 
 - `skaffold dev`
 
@@ -196,3 +246,9 @@ skaffold verify
 ### 참고
 
 - DockerFile에 apt설치 구문을 추가했는데 skaffold build, dev에서 반영되지 않는 경우, 특정 dependency를 처리하지 못해, 설치가 취소된 것일 수 있다. FROM 이미지 교체하거나 별도 대응 필요
+
+- skaffold로 최근 빌드된 이미지 조회
+
+```sh
+skaffold build -p mavenapp -q
+```
