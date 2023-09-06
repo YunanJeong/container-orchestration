@@ -36,7 +36,7 @@ chmod 644 /etc/rancher/k3s/k3s.yaml
 ## Context 변경방법 2 (kubectl config 커맨드)
 
 - 관리해야 할 원격 클러스터가 많다면, 매번 KUBECONFIG 수정은 번거로울 수 있다.
-- `kube config`를 쓰면 대상 클러스터 전환 가능
+- `kubectl config`를 쓰면 대상 클러스터 전환 가능
 - 단, 현재 세션에서 임시로 Context를 바꾸는 것이므로, 매번 개발자가 현재 Context를 꼼꼼히 체크해야 한다.
 - helm, skaffold 등 서드파티앱을 지속적으로 사용한다면 KUBECONFIG를 .bashrc에 등록하는 것이 더 확실한 방법이다.
 
