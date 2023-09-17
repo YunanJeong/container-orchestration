@@ -2,7 +2,8 @@
 
 컨테이너 및 이미지 관리에 필요한 내용들을 정리
 
-Docker, Kubernetes(minikube, K3s), Helm, skaffold 등
+- [Docker](https://github.com/YunanJeong/container-orchestration/blob/main/docker/README.md)
+- [Kubernetes(minikube, K3s), Helm, skaffold 등](https://github.com/YunanJeong/container-orchestration/blob/main/kubernetes/README.md)
 
 ## 기초용어
 
