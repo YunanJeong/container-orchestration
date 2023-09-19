@@ -13,7 +13,8 @@ curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube_latest
 sudo dpkg -i minikube_latest_amd64.deb
 
 # 기존 다른 K8s 사용중인 경우 컨텍스트 설정
-export KUBECONFIG=~/.kube/config  # .bashrc에 등록
+echo 'export KUBECONFIG=~/.kube/config' >> ~/.bashrc
+source ~/.bashrc
 minikube update-context
 ```
 

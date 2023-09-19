@@ -25,11 +25,13 @@ minikube와 K3s가 한 호스트에 설치되었다면, 이를 구분해서 관�
 # minikube와 K3s가 함께 있을 때 Context 변경 예시
 
 # General KUBECONFIG (minikube로 전환)
-export KUBECONFIG=~/.kube/config  # .bashrc 등록 추천
+echo 'export KUBECONFIG=~/.kube/config' >> ~/.bashrc
+source ~/.bashrc
 minikube update-context
 
 # K3s로 전환
-export KUBECONFIG=/etc/rancher/k3s/k3s.yaml # .bashrc 등록 추천
+echo 'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml' >> ~/.bashrc
+source ~/.bashrc
 chmod 644 /etc/rancher/k3s/k3s.yaml
 ```
 
