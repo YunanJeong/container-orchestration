@@ -17,6 +17,7 @@
 
 ```sh
 # 커맨드로 최신 버전 설치
+sudo apt install -y jq
 K9S_VERSION=$(curl -s https://api.github.com/repos/derailed/k9s/releases/latest | jq -r '.tag_name')
 curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Linux_amd64.tar.gz | sudo tar xfz - -C /usr/local/bin k9s
 ```
