@@ -17,8 +17,8 @@ K8s 로그파일이 사라져도, docker쪽에 무한정 남아있기 때문에 
 kubectl logs podname-xxxxxxxxxxx-xxxx
 ```
 
-- pod에 container가 여러 개면, -c옵션으로 특정 container 지정
-- **여기서 보여주는 로그는 pod내에서 발생하는 stdout, stderr**다.
+- **pod내에서 발생하는 stdout, stderr 조회**
+- pod에 container가 여러 개면, -c옵션으로 특정 container 지정가능
 - 요즘 대부분 상용툴은 로거가 포함되어 있고, 파일로 로그가 저장된다.
 - 해당 툴들의 이미지 배포판에선 로거 출력이 stdout, stderr로 설정되어 배포된다.
 
