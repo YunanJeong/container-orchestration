@@ -14,7 +14,7 @@ sudo install skaffold /usr/local/bin/
 
 - 로컬에서 빠른 K8s 개발
   - 일반적으로 컨테이너 내부를 사소하게라도 수정하면, 다음 과정을 거쳐야 하는데, skaffold는 이를 자동화한다.(지속적 배포, CD)
-    1. 소스코드 or DockerFile 수정
+    1. 앱 소스코드 build
     2. 이미지 build
     3. 이미지 push
     4. K8s앱 실행
@@ -149,11 +149,10 @@ git clone https://github.com/GoogleContainerTools/skaffold
 
 - 개발모드 실행
 - `skaffold build`와 `skaffold deploy` 과정이 포함되는 End-to-end pipeline 커맨드
-
 - 실행시 터미널 세션을 점유하고, 대기상태로 진입
-  - 이 때 에디터에서 Dockerfile, 이미지 내부 앱 코드, 기타 파일을 수정하면 즉시 반영
+  - 이 때, 에디터로 DockerFile, 이미지 내부 앱 코드, 기타 파일을 수정하면 배포 파이프라인이 시작됨
+    - Save 직후, 소스build, 이미지 처리, 이미지 배포까지 자동 실행
   - **개발모드의 수정사항은 즉시 반영되므로, _Production 환경에서는 사용하지 않도록 한다._**
-
 - build 과정이 포함되므로, build 옵션을 쓸 수 있다.
   - build되지 않으면 개발모드 실행이 되지 않음
   - 이에따라 개발 중 꾸준히 빌드가능 상태를 유지한다는 이점이 있다.
@@ -166,7 +165,7 @@ skaffold dev -d "docker.io/yunanj" -t 1.0.0 --push
 ### skaffold dev (Remote Push 없이 Local Registry로만 개발하기)
 
 - build 단계의 Local 설정은 build단계에만 적용된다.
-- 로컬 개발모드를 위해, deploy단계에서는 build단계의 이미지를 인식하여 실행돼야 한다.
+- 외부저장소 없이 로컬 dev모드를 하려면, deploy단계에서는 build단계의 이미지를 인식하여 실행돼야 한다.
 - 다음과 같이 `setValueTemplates` 프로퍼티를 활용한다.
 
 ```yml
