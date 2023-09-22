@@ -165,7 +165,7 @@ skaffold dev -d "docker.io/yunanj" -t 1.0.0 --push
 ### skaffold dev (Remote Push 없이 Local Registry로만 개발하기)
 
 - build 단계의 Local 설정은 build단계에만 적용된다.
-- 외부저장소 없이 로컬 dev모드를 하려면, deploy단계에서는 build단계의 이미지를 인식하여 실행돼야 한다.
+- 외부저장소 없이 로컬 dev모드를 하려면, deploy단계는 build단계의 로컬 이미지를 인식하여 실행돼야 한다.
 - 다음과 같이 `setValueTemplates` 프로퍼티를 활용한다.
 
 ```yml
