@@ -157,12 +157,12 @@
 - 한 클러스터 내에서 Resource들을 묶고 환경을 격리하는 방법
 - 네임스페이스가 다르면 Object 이름이 중복돼도 괜찮다.
 - 용도1: 사용자환경 분리
-    - 여러 사용자나 팀이 한 클러스터에서 작업할 때 환경 분리
-    - 차등적인 권한부여 가능
+  - 여러 사용자나 팀이 한 클러스터에서 작업할 때 환경 분리
+  - 차등적인 권한부여 가능
 - 용도2: 개발환경 분리
-    - dev/test/production 등으로 나누어서 작업 가능
+  - dev/test/production 등으로 나누어서 작업 가능
 - 용도3: 리소스 제어
-    - namespace로 묶은 리소스들에 대해서 CPU/GPU 허용량을 할당 가능
+  - namespace로 묶은 리소스들에 대해서 CPU/GPU 허용량을 할당 가능
 
 ```sh
 # namespace 목록 조회
@@ -302,7 +302,6 @@ kubectl get all -n {namespace_name}
 
 - [Service 개념, 그림(특히 배포방법 및 LoadBalancer에 대한 설명이 좋음)](https://blog.eunsukim.me/posts/kubernetes-service-overview)
 
-
 ### 4. `ExternalName` is used to provide DNS aliases to external services.
 
 ```sh
@@ -318,7 +317,7 @@ kubectl describe ep {Service_name}
 ## Ingress (입구, 인바운드)
 
 - Service에 대한 클러스터 외부접근을 관리하는 API Object
-- Ingress Controller가 실제 기능을 수행하는 주체이고, Ingress는 수행 규칙을 정의&선언하는 Object 
+- Ingress Controller가 실제 기능을 수행하는 주체이고, Ingress는 수행 규칙을 정의&선언하는 Object
 
 - 사용 목적
   - 클러스터 외부에 http/https를 열어주기 위해 쓰임
@@ -374,7 +373,6 @@ kubectl describe ep {Service_name}
     X.X.X.X example1.mydomain.com
     X.X.X.X example2.mydomain.com
     ```
-
 
 ## NodePort vs. LoadBalancer vs. Ingress (K8s App. 외부 네트워크 노출 3가지 방법 비교)
 
