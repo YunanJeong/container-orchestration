@@ -20,28 +20,46 @@ They allow network communication between the Pods and other components in the cl
 - LoadBalancer
 - ExternalName
 
-### 주의사항
+### 용어 주의사항
 
-- Service Type과 별개로, ClusterIP, NodePort, LoadBalancer, ExternalName이라는 네트워크 구성요소들이 존재한다.
+- Service Type과 별개로, ClusterIP, NodePort, LoadBalancer, ExternalName이라는 네트워크 구성요소들이 있다. Service와 깊게 연관된 네트워크 구성요소의 이름을 따서, Service Type이 구분된다.
 
-- Service와 깊게 연관된 네트워크 구성요소의 이름을 따서, Service Type 이름을 지은 것이다.
+```txt
+# ClusterIP
+  1. Service Type 중 하나인 ClusterIP
+  2. Pod에 기본 할당되는 클러스터 내 가상 IP
+# NodePort
+  1. Service Type 중 하나인 NodePort
+  2. Node(호스트)의 Port
+# LoadBalancer
+  1. Service Type 중 하나인 LoadBalancer
+  2. 네트워크 트래픽 부하를 분산시키는 LoadBalancer
+# ExternalName
+  1. Service Type 중 하나인 ExternalName
+  2. DNS alias
+```
 
-- e.g. 블로그 등에서 단순히 ClusterIP라고 칭할 때, 네트워크 요소인 ClusterIP인지, Service의 타입인 ClusterIP인지는 문맥에 따라 다르다. 구글링할 때 오인할만한 글, 그림 등이 종종 있기 때문에 헷갈리지 않도록 하자
+- e.g. 문서에서 단순히 ClusterIP라고 칭할 때
+  - 네트워크 요소인 ClusterIP인지, Service의 타입인 ClusterIP인지는 문맥에 따라 다르다.
+  - `구글링할 때 오인할만한 글, 그림이 종종 있기 때문에 헷갈리지 않도록 하자`
+- e.g. LoadBalancer에는 NodePort, ClusterIP가 포함되어 있다.
+  - LoadBalancer Service 사용시, 네트워크 구성요소인 NodePort와 ClusterIP도 할당되어 함께 사용된다는 의미
+  - LoadBalancer Service 사용시, NodePort Service와 ClusterIP Service가 추가로 존재한다는 뜻은 아니다.
 
 ## ServiceType: ClusterIP
 
 `ClusterIP` is the default Service type and provides **a virtual IP address** inside the cluster to access the Pods.
+
+### 사용목적
+
+- Pod들 간 클러스터 내부 통신 관리
+- Service를 클러스터 내부 노출
 
 ### Cluster IP
 
 - 모든 타입의 Service에 default로 할당되는 IP
 - 클러스터 내에서만 접근가능한 Private IP
 - `kubectl get svc`으로 확인가능
-
-### 사용목적
-
-- Pod들 간 클러스터 내부 통신 관리
-- Service를 클러스터 내부 노출
 
 ### 기능&용례
 
@@ -153,7 +171,7 @@ They allow network communication between the Pods and other components in the cl
 
 - [Service 개념, 그림(특히 배포방법 및 LoadBalancer에 대한 설명이 좋음)](https://blog.eunsukim.me/posts/kubernetes-service-overview)
 
-### Service Type - ExternalName
+## Service Type: ExternalName
 
 `ExternalName` is used to provide DNS aliases to external services.
 
