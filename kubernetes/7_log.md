@@ -68,4 +68,3 @@ K8s 노드(로컬호스트)에 저장되는 로그는 기본적으로 K8s 앱 �
 [K8s 로그 retention 관련 stack overflow](https://stackoverflow.com/questions/71948846/kubernetes-pod-logs-retention)
 
 [Docker에서 로깅 설정(공식)](https://docs.docker.com/config/containers/logging/configure/)
-

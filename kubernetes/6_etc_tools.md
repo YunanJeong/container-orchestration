@@ -39,6 +39,4 @@ curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Li
 
 ## kubectl krew
 
-### install
-
-### How to use
+## kubectl fuzzy
