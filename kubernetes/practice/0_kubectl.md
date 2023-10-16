@@ -69,3 +69,17 @@ kubectl logs podname-xxxxxxxxxxx-xxxx
 # 현재 컨텍스트 조회
 kubectl config current-context
 ```
+
+### 8. kubectl label {OBJ_TYPE} {OBJ_NAME} {LABEL_KEY}={LABEL_VALUE}
+
+- Pod, Node 등에 레이블 설정
+- 특정 오브젝트를 레이블을 등록시, 이후 해당 레이블로 오브젝트를 구분하여 제어할 수 있다.
+- 이를테면 Node의 경우, `nodeSelector`, `nodeAffinity` 등 설정으로 앱을 어느 노드에 분배하여 실행할지 설정가능
+
+```sh
+# 등록 예
+kubectl label nodes my-node-1 myapp/noderole=kafka
+
+# 삭제 예 (Key로 삭제)
+kubectl label nodes my-node-1 myapp/noderole-
+```
