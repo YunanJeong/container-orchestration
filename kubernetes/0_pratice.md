@@ -13,4 +13,3 @@
 
 - 스토리지와 관련된 오브젝트
   - [pvc,pv](https://github.com/YunanJeong/container-orchestration/blob/main/kubernetes/practice/4_k8s_obj_storage.md)
-  
