@@ -39,4 +39,6 @@ curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Li
 
 ## kubectl krew
 
+[Quick Start](https://krew.sigs.k8s.io/docs/user-guide/quickstart/)
+
 ## kubectl fuzzy
