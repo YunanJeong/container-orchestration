@@ -13,11 +13,17 @@ minikube와 K3s가 한 호스트에 설치되었다면, 이를 구분해서 관�
 - 클러스터, 사용자 권한 및 네임스페이스와 같이 K8s 작업 환경을 조합을 총칭
 - **kubectl로 관리하는 대상 클러스터**, 사용자 권한 등을 의미
 
+## `~/.kube/config`
+
+- context(클러스터 정보)가 담긴 파일
+
 ## 환경변수 KUBECONFIG
 
 - kubectl 명령어가 사용하는 설정파일경로를 지정
-
 - kubectl은 KUBECONFIG에 등록된 파일로 클러스터 연결, 사용자 인증, 작업 네임스페이스를 인식
+- KUBECONFIG 값이 없으면
+  - 대부분 K8s배포판들은 default로 `~/.kube/config`를 참조
+  - **K3s만 예외로 default가 /etc/rancher/k3s/k3s.yaml**
 
 ## Context 변경방법 1 (KUBECONFIG 변수 수정 후 반영)
 
