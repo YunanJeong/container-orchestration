@@ -29,7 +29,7 @@ minikube update-context
   # minikube 실행
   minikube start
 
-  # http 사설 저장소 접근시 보안 허용
+  # http 사설 저장소 접근 허용하며 실행
   # minikube start --insecure-registry="저장소URL:PORT"
   minikube start --insecure-registry="docker.wai, private.docker.wai"
 
