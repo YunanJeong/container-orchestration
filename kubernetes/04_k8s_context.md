@@ -17,11 +17,12 @@ minikube와 K3s가 한 호스트에 설치되었다면, 이를 구분해서 관�
 
 ## `~/.kube/config`
 
+- 컨텍스트 파일
 - 클러스터 정보(Context)가 담긴 파일
 - yaml 형식이고 여러 클러스터에 대한 정보가 함께 있을 수 있음
 - 현재 지정된 컨텍스트(current-context)도 쓰여있고, CLI로 Context 전환시 이 값이 수정됨
 
-## 환경변수 KUBECONFIG
+## 환경변수 `KUBECONFIG`
 
 - kubectl 명령어가 사용할 컨텍스트 파일경로 지정
 - kubectl은 KUBECONFIG에 등록된 파일로 클러스터 연결, 사용자 인증, 작업 네임스페이스를 인식
