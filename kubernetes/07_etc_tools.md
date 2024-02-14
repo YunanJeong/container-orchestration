@@ -37,8 +37,26 @@ curl -sL https://github.com/derailed/k9s/releases/download/${K9S_VERSION}/k9s_Li
 - `l`: log
 - `d`: describe
 
+### k9s logger
+
+k9s로 Pod로그 조회시, 최근 것만 보이는 문제가 있다.
+`~/.config/k9s/config.yml`에서 기본설정을 다음과 같이 변경한다.
+
+```yaml
+k9s:
+  logger:
+    tail: 500
+    buffer: 5000
+    sinceSeconds: -1
+```
+
 ## kubectl krew
 
 [Quick Start](https://krew.sigs.k8s.io/docs/user-guide/quickstart/)
+
+```sh
+kubctl ctx
+kubctl ns
+```
 
 ## kubectl fuzzy
