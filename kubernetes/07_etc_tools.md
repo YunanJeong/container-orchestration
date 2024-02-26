@@ -59,4 +59,10 @@ kubctl ctx
 kubctl ns
 ```
 
+## fzf
+
+`k ctx` 할 때 클러스터명을 직접 입력할 필요없이, 리스트 선택창으로 보여줌
+
+[fzf 설치](https://github.com/junegunn/fzf?tab=readme-ov-file#installation)
+
 ## kubectl fuzzy
