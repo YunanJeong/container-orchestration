@@ -106,4 +106,5 @@ CURRENT   NAME       CLUSTER    AUTHINFO   NAMESPACE
 ## 참고
 
 - `minikube kubectl`과 `k3s kubectl`과 같이 각 subcommand를 사용한다고 해서 Context 구분이 보장되지 않음. Context 파일이 중요.
-- `KUBECONFIG=/etc/rancher/k3s/k3s.yaml:~/.kube/config`과 같이 체인형식으로 써도 인식은되나, `kubectl config` 명령어 쓸 때 꼬일 수 있음. 비권장.
+- `KUBECONFIG=/etc/rancher/k3s/k3s.yaml:~/.kube/config`과 같이 체인형식으로 써도 인식은되나, `kubectl config` 명령어 쓸 때 꼬일 수 있음. `비권장`.
+- context 명령어가 길기 때문에 fzf, krew 등 서드파티 툴을 쓰는 것이 훨씬 편함
