@@ -96,7 +96,10 @@ They allow network communication between the Pods and other components in the cl
 
 ### 기능
 
-- Node 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port(Service)->targetPort(Pod)로 이어지는 포트포워딩이 수행됨
+- Node 외부에서 {NodeIP}:{NodePort}로 request할 때, nodePort->port->targetPort로 이어지는 포트포워딩이 수행됨
+  - nodePort: 외부 클라이언트가 클러스터 Node에 접근시 사용하는 포트
+  - port (Service Port): Node(호스트 머신)에서 Service로 request를 전달할 때 사용되는 port
+  - targetPort (Pod Port): Service에서 Pod로 트래픽을 전달할 때 사용되는 port
 - ClusterIP 기능 포함
 
 ### NodePort
