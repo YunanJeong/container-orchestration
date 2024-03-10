@@ -95,6 +95,12 @@ kubectl get ns
 kubectl get all -n {namespace_name}
 ```
 
+## DaemonSet
+
+- 클러스터 내 모든 (또는 일부) 노드에서 파드의 사본을 실행하도록 하는 리소스
+- 특정 노드에 시스템 데몬 배포시 유용(e.g. 로그 수집기, 모니터링 에이전트)
+- 신규 Node가 클러스터에 추가될 시 DaemonSet으로 설정된 앱은 신규 Pod로 해당 Node에 추가 실행됨, Node 제거시에도 마찬가지로 자동삭제
+
 ## 네트워크 설정에 필요한 K8s Object
 
 분량이 많으므로 별도 파일에 정리
