@@ -101,6 +101,13 @@ kubectl get all -n {namespace_name}
 - 특정 노드에 시스템 데몬 배포시 유용(e.g. 로그 수집기, 모니터링 에이전트)
 - 신규 Node가 클러스터에 추가될 시 DaemonSet으로 설정된 앱은 신규 Pod로 해당 Node에 추가 실행됨, Node 제거시에도 마찬가지로 자동삭제
 
+### hostPort로 네트워크 노출
+
+- DaemonSet으로 배포되는 Pod는, `hostPort`방식의 네트워크 노출이 종종 사용됨
+- Host(Node)의 특정 Port에 Container의 Port를 바인딩하는 방식
+  - `도커 네트워크 호스트 모드 or Native 앱 설치와 비슷한 효과`
+- K8s에서 일반적인 네트워크 노출방식은 후술할 Service 또는 Ingress 방식이 적절하지만, 로그수집기처럼 DaemonSet으로 Node마다 배포되어야 하는 앱들은 hostPort 방식이 편리
+
 ## 네트워크 설정에 필요한 K8s Object
 
 분량이 많으므로 별도 파일에 정리
