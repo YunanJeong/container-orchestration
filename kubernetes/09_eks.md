@@ -20,8 +20,8 @@ service:
 
 두 가지 방법이 있음. 장단점이 다양. 용도에 따른 선택
 
-- instance type이 default라서 좀 더 보편적으로 쓰이고, AWS 각 서비스와 호환성이 좋다고 함. 단, 서비스 많으면 클러스터 내부의 iptables 부하 이슈 등등 ...
-- ip type은 빠른 속도 빠름, 보안 이슈 있음
+- instance type이 default라서 좀 더 보편적으로 쓰이고, AWS 각 서비스와 호환성이 좋다고 함. 단, 배포된 서비스 많으면 클러스터 내부의 iptables 부하 이슈 등 가능성...
+- ip type은 속도가 빠르고, 보안 이슈 있음
 
 ### 방법1 (target-type: instance)
 
