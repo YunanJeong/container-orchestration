@@ -56,8 +56,12 @@ K8s 노드(로컬호스트)에 저장되는 로그는 기본적으로 K8s 앱 �
 
 장기보관이나 고도화된 운영로그 조회가 필요하다면 결국은 별도 백엔드 구축 필요
 
-- 앱 로그: Elastic Stack, fluentbit, fluentd 등
-- 노드의 시스템로그(metric): Prometheus, Grafana 계열 등
+- 앱 로그:
+  - Elastic Stack (ELK), EFK Stack (fluentd)
+  - PLG Stack
+- 노드의 시스템로그(metric)
+  - Exporter-Prometheus-Grafana: Pull방식
+  - telgraf-influxDB: Push방식
 
 ## 참고 자료
 
