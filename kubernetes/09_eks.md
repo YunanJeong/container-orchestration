@@ -1,8 +1,5 @@
 # EKS에서 앱 외부노출 방법 (AWS Load Balancer Controller)
 
-- 아래 yaml 예시는 보편적인 헬름차트의 values.yaml 기준
-- helm template, k8s manifest 직접 작성시 그에맞게 반영 필요
-
 ## Service(Type: LoadBalancer)로 배포
 
 - annotations에 두 줄 추가
@@ -12,8 +9,8 @@
 service:
   type: LoadBalancer
   annotations: 
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"                # EKS
-    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  # EKS  # default: internal(VPC)
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"                # Network Load Balancer
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  # default: internal(VPC)
 ```
 
 ## Ingress로 배포
@@ -30,23 +27,31 @@ service:
 - 로드밸런서가 자동생성된 후, 할당된 Public DNS를 ingress 속성에 등록(helm upgrade)
 
 ```yaml
-service:
+apiVersion: xxxxxxxxxxxxxx
+kind: Service
+spec:
   type: NodePort
-
 (...)
-
 ---
-ingress:
-  annotations: 
-    
+apiVersion: xxxxxxxxxxxxxx
+kind: Ingress
+metadata:
+  annotations:
     kubernetes.io/ingress.class: alb  # Application Load Balancer. "spec.ingressClassName: alb" 불가
     alb.ingress.kubernetes.io/scheme: internet-facing  # default: internal
     alb.ingress.kubernetes.io/target-type: instance    # default
-  hosts:
-    # 로드밸런서에 할당된 DNS를 여기 입력 후 다시 helm upgrade
-    - XXXXXXXXXXXXXXXXXXXXXXXXXXXX.elb.amazonaws.com  
+    (...)
 
-(...)
+spec:
+  rules:
+    # 로드밸런서에 할당된 DNS를 여기 입력 후 다시 helm upgrade
+    - host: XXXXXXXXXXXXXXXXXXXXXXXXXXXX.elb.amazonaws.com
+      http:
+        paths:
+          - path: /my-service
+            pathType: Prefix
+            backend: my-service
+    (...)
 ```
 
 ### 방법2 (target-type: ip)
@@ -55,18 +60,27 @@ ingress:
 - 로드밸런서가 자동생성된 후, 할당된 Public DNS를 ingress 속성에 등록(helm upgrade)
 
 ```yaml
-ingress:
+apiVersion: xxxxxxxxxxxxxx
+kind: Ingress
+metadata:
   annotations:
     kubernetes.io/ingress.class: alb  # Application Load Balancer. "spec.ingressClassName: alb" 불가
     alb.ingress.kubernetes.io/scheme: internet-facing    # default: internal
     alb.ingress.kubernetes.io/target-type: ip            
-  hosts:
-    # 로드밸런서에 할당된 DNS를 여기 입력 후 다시 helm upgrade
-    - XXXXXXXXXXXXXXXXXXXXXXXXXXXX.elb.amazonaws.com  
+    (...)
 
-(...)
+spec:
+  rules:
+    # 로드밸런서에 할당된 DNS를 여기 입력 후 다시 helm upgrade
+    - host: XXXXXXXXXXXXXXXXXXXXXXXXXXXX.elb.amazonaws.com
+      http:
+        paths:
+          - path: /my-service
+            pathType: Prefix
+            backend: my-service
+    (...)
 ```
 
 ## (중요) 라이브용 로드밸런서 개별 보안그룹 설정 필수
 
-  - default: 전체 개방
+- default: 전체 개방
