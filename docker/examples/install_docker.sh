@@ -25,4 +25,5 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plu
 # https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user
 sudo groupadd docker
 sudo usermod -aG docker $USER
+# sudo is required case by case
 newgrp docker
