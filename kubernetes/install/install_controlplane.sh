@@ -7,6 +7,7 @@ curl -sfL https://get.k3s.io | sh -s - --docker
 # # context 파일의 소유자, 소유그룹이 실제 작업 user와 일치하면서 `chmod 600`을 하면 warning, permission denied 없이 사용가능
 mkdir -p ~/.kube
 sudo cat /etc/rancher/k3s/k3s.yaml > ~/.kube/config
+# sudo chown myuser:myuser ~/.kube/config
 sudo chmod 600 ~/.kube/config
 echo 'export KUBECONFIG=~/.kube/config' >> ~/.bashrc
 echo 'alias k="kubectl"' >> ~/.bashrc
