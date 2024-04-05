@@ -3,7 +3,7 @@ curl -sfL https://get.k3s.io | sh -s - --docker
 
 # K3s kubeconfig 및 bashrc
 mkdir -p ~/.kube
-sudo chmod 644 /etc/rancher/k3s/k3s.yaml
+sudo chmod 600 /etc/rancher/k3s/k3s.yaml
 sudo cp /etc/rancher/k3s/k3s.yaml ~/.kube/config
 # kubectl 설정
 echo 'export KUBECONFIG=~/.kube/config' >> ~/.bashrc
