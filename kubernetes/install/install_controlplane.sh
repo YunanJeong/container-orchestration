@@ -1,14 +1,13 @@
 # K3s controlplane
 curl -sfL https://get.k3s.io | sh -s - --docker
 
-# K3s kubeconfig 및 bashrc
-# k3s context파일(k3s.yaml)을 표준경로(~/.kube/config)로 옮겨준다.
-# 표준경로에 기존 context가 있다면, 수동으로 텍스트 편집하여 k3s 추가 
-# context 파일의 소유자, 소유그룹이 실제 작업 user와 일치하면서 `chmod 600`을 하면 warning, permission denied 없이 사용가능
+# K3s settings (Context and etc.)
+# # k3s context파일(k3s.yaml)을 표준경로(~/.kube/config)로 옮겨준다.
+# # 표준경로에 기존 context가 있다면, 수동으로 텍스트 편집하여 k3s 추가 
+# # context 파일의 소유자, 소유그룹이 실제 작업 user와 일치하면서 `chmod 600`을 하면 warning, permission denied 없이 사용가능
 mkdir -p ~/.kube
 sudo cat /etc/rancher/k3s/k3s.yaml > ~/.kube/config
 sudo chmod 600 ~/.kube/config
-# kubectl 설정
 echo 'export KUBECONFIG=~/.kube/config' >> ~/.bashrc
 echo 'alias k="kubectl"' >> ~/.bashrc
 source ~/.bashrc
