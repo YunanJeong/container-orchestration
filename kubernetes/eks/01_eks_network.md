@@ -8,7 +8,16 @@
   - IAM Role을 생성하기 위해 awscli를 쓰는데, 이 때 awscli의 액세스키에는 IAMFullAccess 권한이 있어야 한다.
   - Pod 배포엔 eksctl, Helm 등 여러 방법이 사용될 수 있다. namespace kube-system에 한 번 설치후 업데이트전 까지 영구사용한다.
 - [설치방법 문서](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/aws-load-balancer-controller.html)를 따라하면 어렵지 않다.
-  
+
+### kube-controller-manager(in-tree)와 비교
+
+- `kube-controller-manager`는 클라우드 기능(AWS, GCP, Azure 등)을 제공하기 위해 업스트림 쿠버네티스에 포함된 도구이다. 이에 따라 `in-tree controller`라는 용어로 칭하기도 한다.
+- `AWS Load Balancer Controller`
+  - AWS에선 특화된 기능을 제공
+  - in-tree controller 대신 이를 쓰는 것이 더 최신 권장사양
+  - 쿠버네티스 입장에선 별도 툴이기 때문에 `out-of-tree controller`라고 칭해짐
+  - helm,kubectl 등을 사용하여 클러스터 내 Pod로 배포되는 형태
+
 ## Service(Type: LoadBalancer)로 배포
 
 - annotations에 두 줄 추가
