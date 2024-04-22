@@ -29,6 +29,7 @@ service:
   annotations: 
     service.beta.kubernetes.io/aws-load-balancer-type: "nlb"                # Network Load Balancer
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  # default: internal(VPC)
+    service.beta.kubernetes.io/load-balancer-source-ranges: "10.0.0.1/24, 198.168.0.1/24"  # NLB의 보안그룹 inbound를 cidr로 설정. 미설정시 0.0.0.0/0
 ```
 
 ## Ingress로 배포
@@ -58,6 +59,7 @@ metadata:
     kubernetes.io/ingress.class: alb  # Application Load Balancer. "spec.ingressClassName: alb" 불가
     alb.ingress.kubernetes.io/scheme: internet-facing  # default: internal
     alb.ingress.kubernetes.io/target-type: instance    # default
+    alb.ingress.kubernetes.io/inbound-cidrs: "10.0.0.1/24, 198.168.0.1/24" # ALB의 보안그룹 Inbound를 cidr로 설정. 미설정시 0.0.0.0/0
     (...)
 
 spec:
