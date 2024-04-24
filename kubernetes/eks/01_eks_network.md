@@ -4,15 +4,15 @@
 
 - AWS 서비스 중 하나인 Elastic LoadBalancer를 생성하기 위한 Controller
 - EKS에서 LoadBalancer Service 및 Ingress 기능을 실제 구현하기 위해 사용된다.
-- `Controller 설치 후 클러스터 내 실제 Pod 형태로 확인`가능하며, 해당 Pod는 Elastic LoadBalancer 서비스에 접근가능한 IAM Role을 가져야 한다.
+- `Controller 설치 후 클러스터 내 실제 Pod 형태로 확인가능`하며, 해당 Pod는 Elastic LoadBalancer 서비스에 접근가능한 IAM Role을 가져야 한다.
 - 따라서 설치과정에 `IAM Role(Policy)설정`과 `Pod배포 과정`이 포함된다.
   - IAM Role을 생성하기 위해 awscli를 쓰는데, 이 때 awscli의 액세스키에는 IAMFullAccess 권한이 있어야 한다.
   - Pod 배포엔 eksctl, Helm 등 여러 방법이 사용될 수 있다. namespace kube-system에 한 번 설치후 업데이트전 까지 영구사용한다.
 - [설치방법 문서](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/aws-load-balancer-controller.html)를 따라하면 어렵지 않다.
 
-### Cloud Controller Manager vs. AWS Load Balancer Controller
+### 참고: Cloud Controller Manager vs. AWS Load Balancer Controller
 
-- [참고](https://baptistout.net/posts/two-kubernetes-controllers-for-managing-aws-nlb/)
+- [잘 정리된 글](https://baptistout.net/posts/two-kubernetes-controllers-for-managing-aws-nlb/)
 - `Cloud Controller Manager(kube-controller-manager)`
   - Legacy
   - 클라우드 기능(AWS, GCP, Azure 등)을 제공하기 위해 업스트림 쿠버네티스에 포함된 도구라서, `in-tree` controller라고 칭해짐
@@ -25,16 +25,20 @@
 
 ## Service(Type: LoadBalancer)로 배포
 
-- annotations에 두 줄 추가
+- annotations 추가
 
 ```yaml
-# Helm values.yaml 기준
-service:
+apiVersion: xxxxxxxxx
+kind: Service
+spec:
   type: LoadBalancer
+metadata:
   annotations: 
-    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"                # Network Load Balancer
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"  # 버전마다 입력값 종종 다름
+    # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance"  # default
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  # default: internal(VPC)
     service.beta.kubernetes.io/load-balancer-source-ranges: "10.0.0.1/24, 198.168.0.1/24"  # NLB의 보안그룹 inbound를 cidr로 설정. 미설정시 0.0.0.0/0
+    # service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-xxxxx"  # 직접보안그룹 등록시 source-ranges 무시
 ```
 
 ## Ingress로 배포
@@ -46,7 +50,7 @@ service:
 
 ### 방법1 (target-type: instance)
 
-- 아래 예시처럼 ingress의 annotation 최소설정 필요
+- annotations 추가
 - ingress로 접근할 Pod는 NodePort 서비스로 배포되어있어야 함
 - 로드밸런서가 자동생성된 후, 할당된 Public DNS를 ingress 속성에 등록(helm upgrade)
 
@@ -61,9 +65,8 @@ apiVersion: xxxxxxxxxxxxxx
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: alb  # Application Load Balancer. "spec.ingressClassName: alb" 불가
+    kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb" 불가
     alb.ingress.kubernetes.io/scheme: internet-facing  # default: internal
-    alb.ingress.kubernetes.io/target-type: instance    # default
     alb.ingress.kubernetes.io/inbound-cidrs: "10.0.0.1/24, 198.168.0.1/24" # ALB의 보안그룹 Inbound를 cidr로 설정. 미설정시 0.0.0.0/0
     (...)
 
@@ -89,9 +92,9 @@ apiVersion: xxxxxxxxxxxxxx
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.class: alb  # Application Load Balancer. "spec.ingressClassName: alb" 불가
+    kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb"
     alb.ingress.kubernetes.io/scheme: internet-facing    # default: internal
-    alb.ingress.kubernetes.io/target-type: ip            
+    alb.ingress.kubernetes.io/target-type: ip            # default: instance
     (...)
 
 spec:
