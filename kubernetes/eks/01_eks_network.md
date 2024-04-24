@@ -33,12 +33,17 @@ kind: Service
 spec:
   type: LoadBalancer
 metadata:
-  annotations: 
+  annotations:
+    # ALB 최소 필수설정
     service.beta.kubernetes.io/aws-load-balancer-type: "external"  # 버전마다 입력값 종종 다름
     # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance"  # default
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  # default: internal(VPC)
-    service.beta.kubernetes.io/load-balancer-source-ranges: "10.0.0.1/24, 198.168.0.1/24"  # NLB의 보안그룹 inbound를 cidr로 설정. 미설정시 0.0.0.0/0
-    # service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-xxxxx"  # 직접보안그룹 등록시 source-ranges 무시
+
+    # 전용 Managed 보안그룹(inbound) 설정
+    service.beta.kubernetes.io/load-balancer-source-ranges: "10.0.0.1/24, 198.168.0.1/24"
+    # 특정 보안그룹 추가 (다른 Managed 보안그룹 무시됨)
+    # service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-xxxxx"
+    (...)
 ```
 
 ## Ingress로 배포
@@ -65,9 +70,14 @@ apiVersion: xxxxxxxxxxxxxx
 kind: Ingress
 metadata:
   annotations:
+    # ALB 최소 필수설정
     kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb" 불가
     alb.ingress.kubernetes.io/scheme: internet-facing  # default: internal
-    alb.ingress.kubernetes.io/inbound-cidrs: "10.0.0.1/24, 198.168.0.1/24" # ALB의 보안그룹 Inbound를 cidr로 설정. 미설정시 0.0.0.0/0
+
+    # 전용 Managed 보안그룹(inbound) 설정
+    alb.ingress.kubernetes.io/inbound-cidrs: "10.0.0.1/24, 198.168.0.1/24"
+    # 특정 보안그룹 추가 (다른 Managed 보안그룹 무시됨)
+    # service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-xxx,sg-xxx2"  
     (...)
 
 spec:
@@ -92,9 +102,15 @@ apiVersion: xxxxxxxxxxxxxx
 kind: Ingress
 metadata:
   annotations:
+    # ALB 최소 필수설정
     kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb"
     alb.ingress.kubernetes.io/scheme: internet-facing    # default: internal
     alb.ingress.kubernetes.io/target-type: ip            # default: instance
+
+    # 전용 Managed 보안그룹(inbound) 설정
+    alb.ingress.kubernetes.io/inbound-cidrs: "10.0.0.1/24, 198.168.0.1/24" 
+    # 특정 보안그룹 추가 (다른 Managed 보안그룹 무시됨)
+    # alb.ingress.kubernetes.io/security-groups: "sg-xxxx, nameOfSg1, nameOfSg2"
     (...)
 
 spec:
@@ -109,6 +125,8 @@ spec:
     (...)
 ```
 
-## (중요) 라이브용 로드밸런서 개별 보안그룹 설정 필수
+## (중요) 보안그룹
 
-- default: 전체 개방
+- default는 0.0.0.0/0 전체 개방이기 때문에 `라이브시 반드시 보안그룹 설정` 필요
+- 콘솔에서 직접 보안그룹을 설정시 신규 그룹을 생성하여 등록하는 방식이 좋음
+- EKS 각 요소 간 공유되는 보안그룹이 많기 때문에, `기존 Managed 보안그룹에 보안 rule을 추가하는 방식은 다른 App.에 영향을 미치거나 삭제 위험성`이 있음
