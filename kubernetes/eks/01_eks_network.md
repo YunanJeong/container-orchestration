@@ -3,21 +3,25 @@
 ## AWS Load Balancer Controller 사전 설치 필요
 
 - AWS 서비스 중 하나인 Elastic LoadBalancer를 생성하기 위한 Controller
+- EKS에서 LoadBalancer Service 및 Ingress 기능을 실제 구현하기 위해 사용된다.
 - `Controller 설치 후 클러스터 내 실제 Pod 형태로 확인`가능하며, 해당 Pod는 Elastic LoadBalancer 서비스에 접근가능한 IAM Role을 가져야 한다.
 - 따라서 설치과정에 `IAM Role(Policy)설정`과 `Pod배포 과정`이 포함된다.
   - IAM Role을 생성하기 위해 awscli를 쓰는데, 이 때 awscli의 액세스키에는 IAMFullAccess 권한이 있어야 한다.
   - Pod 배포엔 eksctl, Helm 등 여러 방법이 사용될 수 있다. namespace kube-system에 한 번 설치후 업데이트전 까지 영구사용한다.
 - [설치방법 문서](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/aws-load-balancer-controller.html)를 따라하면 어렵지 않다.
 
-### kube-controller-manager(in-tree) vs. AWS Load Balancer Controller
+### Cloud Controller Manager vs. AWS Load Balancer Controller
 
-- `kube-controller-manager`
+- [참고](https://baptistout.net/posts/two-kubernetes-controllers-for-managing-aws-nlb/)
+- `Cloud Controller Manager(kube-controller-manager)`
+  - Legacy
   - 클라우드 기능(AWS, GCP, Azure 등)을 제공하기 위해 업스트림 쿠버네티스에 포함된 도구라서, `in-tree` controller라고 칭해짐
 - `AWS Load Balancer Controller`
+  - Latest
   - AWS 특화기능 제공
-  - in-tree controller 대신 이를 쓰는 것이 더 최신 권장사양
   - 쿠버네티스 입장에선 별도 툴이기 때문에 `out-of-tree` controller라고 칭해짐
-  - helm,kubectl 등을 사용하여 클러스터 내 Pod로 배포되는 형태
+  - helm,kubectl,eksctl 등으로 클러스터 내 Pod로 배포됨
+  - 구 버전 이름: AWS Ingress Controller
 
 ## Service(Type: LoadBalancer)로 배포
 
