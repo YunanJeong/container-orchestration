@@ -34,7 +34,7 @@ spec:
   type: LoadBalancer
 metadata:
   annotations:
-    # ALB 최소 필수설정
+    # Controller v2.7 기준 최소 설정
     service.beta.kubernetes.io/aws-load-balancer-type: "external"  # 버전마다 입력값 종종 다름
     # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance"  # default
     service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  # default: internal(VPC)
@@ -70,7 +70,7 @@ apiVersion: xxxxxxxxxxxxxx
 kind: Ingress
 metadata:
   annotations:
-    # ALB 최소 필수설정
+    # Controller v2.7 기준 최소 설정
     kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb" 불가
     alb.ingress.kubernetes.io/scheme: internet-facing  # default: internal
 
@@ -102,7 +102,7 @@ apiVersion: xxxxxxxxxxxxxx
 kind: Ingress
 metadata:
   annotations:
-    # ALB 최소 필수설정
+    # Controller v2.7 기준 최소 설정
     kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb"
     alb.ingress.kubernetes.io/scheme: internet-facing    # default: internal
     alb.ingress.kubernetes.io/target-type: ip            # default: instance
