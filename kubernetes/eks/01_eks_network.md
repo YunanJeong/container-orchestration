@@ -35,9 +35,9 @@ spec:
 metadata:
   annotations:
     # Controller v2.7 기준 최소 설정
-    service.beta.kubernetes.io/aws-load-balancer-type: "external"  # 버전마다 입력값 종종 다름
-    # service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance"  # default
-    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"  # default: internal(VPC)
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"             # 버전마다 입력값 종종 다름
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance"  # default
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"    # default: internal(VPC)
 
     # 전용 Managed 보안그룹(inbound) 설정
     service.beta.kubernetes.io/load-balancer-source-ranges: "10.0.0.1/24, 198.168.0.1/24"
@@ -71,7 +71,7 @@ kind: Ingress
 metadata:
   annotations:
     # Controller v2.7 기준 최소 설정
-    kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb"
+    kubernetes.io/ingress.class: alb                   # 또는 "spec.ingressClassName: alb"
     alb.ingress.kubernetes.io/scheme: internet-facing  # default: internal
 
     # 전용 Managed 보안그룹(inbound) 설정
@@ -103,9 +103,9 @@ kind: Ingress
 metadata:
   annotations:
     # Controller v2.7 기준 최소 설정
-    kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb"
-    alb.ingress.kubernetes.io/scheme: internet-facing    # default: internal
-    alb.ingress.kubernetes.io/target-type: ip            # default: instance
+    kubernetes.io/ingress.class: alb                   # 또는 "spec.ingressClassName: alb"
+    alb.ingress.kubernetes.io/scheme: internet-facing  # default: internal
+    alb.ingress.kubernetes.io/target-type: ip          # default: instance
 
     # 전용 Managed 보안그룹(inbound) 설정
     alb.ingress.kubernetes.io/inbound-cidrs: "10.0.0.1/24, 198.168.0.1/24" 
