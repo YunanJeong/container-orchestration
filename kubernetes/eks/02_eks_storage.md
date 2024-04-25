@@ -35,3 +35,18 @@ helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver -n kube-sy
   - `eks 1.23버전 부터는 ebs.csi.aws.com(Amazon EBS CSI driver)가 강제`되므로 비권장
   - storageClass의 provisioner 참조가 kubernetes.io/aws-ebs로 되어 있어도 무시하고 ebs.csi.aws.com를 통해 PV 프로비저닝을 시도한다.
 - 이 provisioner는 Pod 형태로는 보이지 않는다.
+
+## EKS에서 PV 배포하기 (EBS연동)
+
+### 배포
+
+- 위 Driver 셋업이 완료 후
+- AWS 사양에 맞게 구성된 storageClass가 필요한데, EKS의 경우 default StorageClass로 gp2 등이 클러스터 내 배포되어있을 수 있음
+- 해당 StroageClass를 참조하는 PVC를 통해 일반적인 PV 동적 프로비저닝 과정을 따르면 된다.
+- PV와 EBS가 동일시되어 배포됨
+
+### 삭제
+
+- PVC를 삭제하면 연동된 PV와 EBS가 함께 자동삭제됨
+- 만약, PV를 먼저 삭제시도했을 경우, EBS가 자동삭제되지 않음. 수동삭제 필요.
+  - PV는 Terminating상태에서 멈추고, 이후 PVC를 삭제하더라도 미할당된 EBS가 여전히 남아 있음
