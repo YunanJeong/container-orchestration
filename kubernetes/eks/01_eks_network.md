@@ -130,3 +130,7 @@ spec:
 - default는 0.0.0.0/0 전체 개방이기 때문에 `라이브시 반드시 보안그룹 설정` 필요
 - 콘솔에서 직접 보안그룹을 설정시 신규 그룹을 생성하여 등록하는 방식이 좋음
 - EKS 각 요소 간 공유되는 보안그룹이 많기 때문에, `기존 Managed 보안그룹에 보안 rule을 추가하는 방식은 다른 App.에 영향을 미치거나 삭제 위험성`이 있음
+
+## (참고) LoadBalancer annotations [문서](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.7/guide/service/nlb/)
+
+버전마다 annotations key-value가 꽤나 다르기 때문에 웹 상단에서 controller 버전 체크 필수
