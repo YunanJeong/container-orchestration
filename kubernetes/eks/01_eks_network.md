@@ -71,7 +71,7 @@ kind: Ingress
 metadata:
   annotations:
     # Controller v2.7 기준 최소 설정
-    kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb" 불가
+    kubernetes.io/ingress.class: alb  # 또는 "spec.ingressClassName: alb"
     alb.ingress.kubernetes.io/scheme: internet-facing  # default: internal
 
     # 전용 Managed 보안그룹(inbound) 설정
