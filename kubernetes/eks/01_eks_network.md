@@ -10,18 +10,18 @@
   - Pod 배포엔 eksctl, Helm 등 여러 방법이 사용될 수 있다. namespace kube-system에 한 번 설치후 업데이트전 까지 영구사용한다.
 - [설치방법 문서](https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/aws-load-balancer-controller.html)를 따라하면 어렵지 않다.
 
-### 참고: Cloud Controller Manager vs. AWS Load Balancer Controller
+### 참고: AWS Load Balancer Controller vs. Cloud Controller Manager
 
 - [잘 정리된 글](https://baptistout.net/posts/two-kubernetes-controllers-for-managing-aws-nlb/)
-- `Cloud Controller Manager(kube-controller-manager)`
-  - Legacy
-  - 클라우드 기능(AWS, GCP, Azure 등)을 제공하기 위해 업스트림 쿠버네티스에 포함된 도구라서, `in-tree` controller라고 칭해짐
 - `AWS Load Balancer Controller`
   - Latest
   - AWS 특화기능 제공
   - 쿠버네티스 입장에선 별도 툴이기 때문에 `out-of-tree` controller라고 칭해짐
   - helm,kubectl,eksctl 등으로 클러스터 내 Pod로 배포됨
   - 구 버전 이름: AWS Ingress Controller
+- `Cloud Controller Manager(kube-controller-manager)`
+  - Legacy
+  - 클라우드 기능(AWS, GCP, Azure 등)을 제공하기 위해 업스트림 쿠버네티스에 포함된 도구라서, `in-tree` controller라고 칭해짐
 
 ## Service(Type: LoadBalancer)로 배포
 
@@ -136,7 +136,8 @@ spec:
 
 - 위 방법으로 배포시 대상그룹도 자동생성됨
 - EC2콘솔, 로드밸런서의 리스너 항목에서 확인가능
-- target-type: instance 기준, `모든 EKS Node가 대상그룹에 자동등록되는 것이 정상`이며, 향후 EKS에 신규 Node가 추가될 때에도 대상그룹에 자동반영됨
+- target-type: instance 기준, `모든 EKS Node가 대상그룹에 자동등록되는 것이 정상`
+  - 향후 EKS에 신규 Node가 추가될 때에도 대상그룹에 자동반영됨
 - `대상그룹에 대상이 등록되지 않았다면, 로드밸런서와 대상 간 통신이 비정상`이라는 의미
   - 이 때는 인스턴스의 보안그룹, App. 동작상태 등을 점검 필요
 - 특정 Node로 대상 한정을 원하는 경우, annotations으로 제어 가능하며, 콘솔 설정은 비권장
@@ -161,9 +162,9 @@ Managed 로드밸런서에는 두 개의 보안그룹이 등록된다.
 
 #### Shared Security Group
 
-- 모든 Managed 로드밸런서의 공통 보안그룹
-- (EKS Node의 공통보안그룹)에선 (로드밸런서의 공통보안그룹)을 허용하는 rule이 생성된다.
-  - 이를 통해 모든 로드밸런서는 모든 EKS Node에 접근가능하게 된다.
+- 모든 Managed 로드밸런서들의 공통 보안그룹
+- 기본적으로 비어있으며, 공통적용할 rule을 수동등록가능
+- "EKS Node의 공통보안그룹"에선 "로드밸런서의 공통보안그룹"을 허용하는 rule이 생성된다.
+  - 이를 통해 모든 로드밸런서는 모든 EKS Node에 접근가능
   - 이 rule에서 허용 포트범위는 배포된 Service의 NodePort에 따라 계속 변경된다.
-
-
+  
