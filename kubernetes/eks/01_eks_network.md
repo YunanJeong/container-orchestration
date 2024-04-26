@@ -50,13 +50,13 @@ metadata:
 
 두 가지 방법이 있음. 장단점이 다양. 용도에 따른 선택
 
-- instance type이 default라서 좀 더 보편적으로 쓰이고, AWS 각 서비스와 호환성이 좋다고 함. 단, 배포된 서비스 많으면 클러스터 내부의 iptables 부하 이슈 등 가능성...
+- `instance type이 default라서 좀 더 보편적`으로 쓰이고, AWS 각 서비스와 호환성이 좋다고 함. 단, 배포된 서비스 많으면 클러스터 내부의 iptables 부하 이슈 등 가능성...
 - ip type은 속도가 빠르고, 보안 이슈 있음
 
 ### 방법1 (target-type: instance)
 
 - annotations 추가
-- ingress로 접근할 Pod는 NodePort 서비스로 배포되어있어야 함
+- `ingress로 접근할 Pod는 NodePort 서비스로 배포되어있어야` 함
 - 로드밸런서가 자동생성된 후, 할당된 Public DNS를 ingress 속성에 등록(helm upgrade)
 
 ```yaml
@@ -125,12 +125,26 @@ spec:
     (...)
 ```
 
+## [기타 annotations 문서](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.7/guide/service/nlb/)
+
+- 참고시 웹 상단에서 controller 버전 체크 필수
+- 버전마다 annotations key-value가 꽤나 다름
+
+## 대상 그룹 (Target Group)
+
+로드밸런서가 트래픽을 전달할 실제 대상(인스턴스, Lambda, App.)을 정의하는 그룹
+
+- 위 방법으로 배포시 대상그룹도 자동생성됨
+- AWS콘솔에서 로드밸런서의 리스너항목에서 확인가능
+- target-type: instance 기준,`모든 EKS Node가 대상으로 자동등록되는 것이 정상`이며, 신규 Node 추가시, 기존 대상그룹에도 자동반영됨
+- `대상그룹 내 항목이 등록되지 않았다면, 로드밸런서와 대상 간 통신이 비정상이라는 의미`
+  - 이 때는 인스턴스의 보안그룹, App. 동작상태 등 확인필요
+- 특정 Node로 대상 한정을 원하는 경우, annotations으로 제어 가능하며, 콘솔 설정은 비권장
+  - 콘솔에서 수동설정이 많을수록 EKS 스케일링이 번거롭고, 쿠버네티스의 장점이 퇴색됨
+
 ## (중요) 보안그룹
 
-- default는 0.0.0.0/0 전체 개방이기 때문에 `라이브시 반드시 보안그룹 설정` 필요
-- 콘솔에서 직접 보안그룹을 설정시 신규 그룹을 생성하여 등록하는 방식이 좋음
-- EKS 각 요소 간 공유되는 보안그룹이 많기 때문에, `기존 Managed 보안그룹에 보안 rule을 추가하는 방식은 다른 App.에 영향을 미치거나 삭제 위험성`이 있음
-
-## (참고) LoadBalancer annotations [문서](https://kubernetes-sigs.github.io/aws-load-balancer-controller/v2.7/guide/service/nlb/)
-
-버전마다 annotations key-value가 꽤나 다르기 때문에 웹 상단에서 controller 버전 체크 필수
+- LoadBalancer default 보안그룹은 0.0.0.0/0 개방이므로 `라이브시 반드시 보안그룹 설정`
+- 앞선 예시처럼 매니페스트 annotations로 `Managed 방식 권장`
+- `AWS콘솔에서 직접 보안설정시` 기존 보안그룹에 rule을 추가하기보다는 `신규그룹 생성하여 작업 권장`
+  - EKS 리소스 간 공유되는 Managed 보안그룹이 많기 때문에 기존그룹 활용시 삭제위험 or 다른 App.과 상호영향 가능성
