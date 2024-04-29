@@ -109,7 +109,10 @@ EKS의 리소스임을 식별하기 위해 다음 tag가 사용된다.
 
 이 tag들은 "오토스케일링", "보안그룹 자동등록&수정" 등 Managed 기능이 수행될 때에도 대상 리소스 식별을 위해 사용된다.
 
-이런 맥락에서 다음 EC2NodeClass의 `spec.securityGroupSelectorTerms`는 Karpenter Node가 기본으로 가질 보안그룹을 정의하는 것이다.
+EC2NodeClass의 `spec.securityGroupSelectorTerms` 섹션도 비슷한 맥락으로 사용된다.
+
+- 앞서 LoadBalancer 이슈방지방법으로 EKS기본그룹에 karpenter 리소스의 태그를 붙이는 방법을 소개했으나,
+- spec.securityGroupSelectorTerms에 EKS tag(`kubernetes.io/cluster/<cluster-name>: owned`)를 지정해도 동일한 효과를 얻을 수 있다. 관리하기 편한 방식으로 사용하면 된다.
 
 ```yaml
 apiVersion: karpenter.k8s.aws/v1beta1
