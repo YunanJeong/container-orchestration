@@ -1,0 +1,84 @@
+# EKS 초기설정 관련 기록
+
+## Karpenter
+
+EKS에서 노드 프로비저닝을 자동화하는 오픈소스 도구
+
+- EKS노드는 EC2인스턴스로 구현된다.
+- `클라우드 기반 쿠버네티스에서 원칙상 실제 물리 리소스를 고려하지 않아도 되지만, 현실적으로 다음과 같은 노드 관리 요구사항이 있음`
+  - EKS에서 한 인스턴스(노드)의 사양은 어느 수준으로 해야할까?
+    - 오토스케일링 시 한 인스턴스의 사양은 어떻게 제어할까?
+    - 4core짜리 1개가 필요할수도, 2core짜리 2개가 필요할 수도 있다.
+  - 비용 효율화를 할 수 있을까?
+  - 특정 앱(Pod)이, 노드 몇 개를 오롯이 점유하게 할 수는 없을까?
+  - EKS 내 용도 별로 노드 그룹(Node Group)을 분류할 수 있나?
+- Karpenter가 없어도 EKS 운영가능하나, 인스턴스 관리 효율성, 편의성을 위해 사용
+- Karpenter 설치 후, EC2NodeClass와 NodePool이라는 리소스로 노드 분류를 정의 가능. 이후 앱 배포시 Node Selector로 특정 NodePool을 지정하면 그에 맞게 노드가 세팅됨
+
+### EC2NodeClass와 NodePool 예시
+
+```yaml
+apiVersion: karpenter.k8s.aws/v1beta1
+kind: EC2NodeClass
+metadata:
+  # 서비스와 용도에 맞는 이름
+  name: eks-platform-common
+spec:
+  amiFamily: AL2 # Amazon Linux 2
+  role: "KarpenterNodeRole-${EKS_CLUSTER}"       # replace with your cluster name
+
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "${EKS_CLUSTER}" # replace with your cluster name
+  
+  # 신규 생성 Node에서 사용될 보안그룹(보안그룹의 tag로 지정가능)
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "${EKS_CLUSTER}" # replace with your cluster name
+  tags:
+    # EC2 인스턴스에 등록할 태그
+    Service: MY-PLATFORM-SERVICE
+    Owner: my@gmail.com
+
+---
+apiVersion: karpenter.sh/v1beta1
+kind: NodePool
+metadata:
+  # 서비스와 용도에 맞는 이름
+  name: eks-platform-common
+spec:
+  template:
+    metadata:
+      labels:
+        # 향후 신규 앱 배포시 Node Selector로 이 Label을 지정하면, NodePool사양대로 Node가 할당된다.
+        my.app.com/name: eks-platform-common
+    spec:
+      # 노드 사양 설정 (아래 값은 공식문서에 있는 무난한 설정)
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          # values: ["spot", "on-demand"]
+          values: ["on-demand"]
+        - key: karpenter.k8s.aws/instance-category
+          operator: In
+          values: ["c", "m", "r"]
+        - key: karpenter.k8s.aws/instance-generation
+          operator: Gt
+          values: ["2"]
+      # 노드 클래스 참조
+      nodeClassRef:
+        name: eks-platform-common
+  limits:
+    cpu: 240       # 8코어 x 30 대
+    memory: 480Gi  # 16GiB x 30 대
+  disruption:
+    consolidationPolicy: WhenUnderutilized
+    # 보안을 위해, 특정시간 지나면 노드삭제
+    # expireAfter: 720h # 30 * 24h = 720h
+```
