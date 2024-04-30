@@ -15,7 +15,7 @@
 - StorageClass
   - PVC를 참조하여 스토리지 유형을 정의하는 리소스
 - Provisioner
-  - StorageClass를 참조하여 PV를 자동생성하는 `Pod(kube-system)`
+  - StorageClass를 참조하여 `PV를 자동생성하는 Pod(kube-system)`
   - 배포판 마다 다름. 기본내장되어있거나 추가설치 필요
 
 ## Persistent Volume (PV)
