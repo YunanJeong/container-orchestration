@@ -6,7 +6,7 @@
 
 ## 설치 (공식 K8s, 업스트림 쿠버네티스)
 
-- **공식버전보다는 목적에 맞게 후술할 배포판 설치 권장**
+- **공식버전보다는 후술할 배포판을 목적에 맞게 설치 권장**
 - [설치하기 전 쿠버네티스 컴포넌트 관련 설명 참고](https://kubernetes.io/ko/docs/setup/)
 
 - 배포도구
@@ -148,7 +148,11 @@
 
 ### Deployment
 
-- Container 배포&관리 방법에 대한 설정을 가진 Object
+- Container, Pod 배포&관리 방법에 대한 설정을 가진 Object
 - 컨트롤 플레인이 Deployment 설정을 참조하여 App 및 Container를 배포&관리한다.
 - 머신의 장애나 정비에 대응할 수 있는 자동 복구(self-healing) 메커니즘을 제공
 - kubectl로 Deployment를 생성 및 관리 가능
+
+### Service
+
+- Container, Pod의 네트워크 노출 방법에 대한 설정을 가진 Object
