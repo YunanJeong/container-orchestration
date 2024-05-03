@@ -68,14 +68,14 @@ PV를 프로비저닝하고 관리하는 방식을 정의하는 템플릿 역할
 
 ### 스토리지 유형 관리
 
-- 다양한 스토리지 백엔드 지원가능
+- 각 스토리지 유형에 맞는 Provisioner들이 있음
   - local: 배포판마다 다름
   - NFS: 원격 스토리지 유형에 따라 다름
   - AWS EBS: kubernetes.io/aws-ebs
   - Google Cloud Persistent Disk: kubernetes.io/gce-pd
   - Azure Disk: kubernetes.io/azure-disk
-- 위 예시 Provisioner들은 각 스토리지 유형에 맞는 로직을 가지고 있음
 - StorageClass에서는 이러한 백엔드 유형을 provisioner 필드를 통해 지정가능
+- 유형에 맞는 Provisioner를 클러스터에 사전배포해둬야 함
 
 ### 효과: 자동화 및 효율성 증대
 
