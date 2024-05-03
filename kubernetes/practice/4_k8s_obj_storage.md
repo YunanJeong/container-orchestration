@@ -16,8 +16,11 @@
   - PV 매니페스트를 관리자가 직접 작성하여 배포&할당
 - StorageClass
   - 스토리지 유형을 정의하는 리소스
+  - 동적 프로비저닝에 사용됨
 - Provisioner
-  - StorageClass를 참조하여 `PV를 자동생성하는 Pod(kube-system)`
+  - 동적 프로비저닝을 수행하는 주체
+  - StorageClass를 기반으로 `PV를 자동생성하는 Pod(kube-system)`
+    - StorageClass 매니페스트에서 Provisioner를 지정
   - 배포판 마다 다름. 기본내장되어있거나 추가설치 필요
 
 ## Persistent Volume (PV)
@@ -53,3 +56,34 @@ PV를 프로비저닝하고 관리하는 방식을 정의하는 템플릿 역할
 사용자가 PVC를 생성시 원하는 StorageClass를 선택하면, K8s는 해당 StorageClass에 정의된 요구사항(용량, 성능, 스토리지 유형 등)에 맞는 PV를 자동으로 프로비저닝
 
 ## Provisioner
+
+스토리지 볼륨을 자동으로 생성하고 관리(동적프로비저닝)하는 역할을 하는 쿠버네티스 컴포넌트
+
+보통 클러스터 내 kube-system의 Pod로 실행된다. 배포판, 스토리지 유형에 따라 필요한 Provisioner가 다르며, 기본내장되어있거나 추가설치 필요
+
+### 동적 프로비저닝
+
+- 사용자가 PVC 생성시, 해당 PVC의 요구사항에 맞는 PV를 자동생성
+- 이 과정은 수동으로 PV를 미리 생성하고 관리할 필요 없이, 필요에 따라 자동으로 스토리지 리소스를 할당하고 관리할 수 있게 해줌
+
+### 스토리지 유형 관리
+
+- 다양한 스토리지 백엔드 지원가능
+  - local: 배포판마다 다름
+  - NFS: 원격 스토리지 유형에 따라 다름
+  - AWS EBS: kubernetes.io/aws-ebs
+  - Google Cloud Persistent Disk: kubernetes.io/gce-pd
+  - Azure Disk: kubernetes.io/azure-disk
+- 위 예시 Provisioner들은 각 스토리지 유형에 맞는 로직을 가지고 있음
+- StorageClass에서는 이러한 백엔드 유형을 provisioner 필드를 통해 지정가능
+
+### 효과: 자동화 및 효율성 증대
+
+- Provisioner를 사용함으로써 스토리지 관리 자동화
+- 사용자는 스토리지의 물리적인 세부사항을 신경 쓸 필요 없이 필요한 리소스를 쉽게 요청하고 사용가능
+- 특히, 클라우드 기반 스토리지 관리에 효율적
+- e.g.
+  - PVC에서 30GB PV가 필요하다고 설정하고 배포하면,
+  - 30GB짜리 AWS EBS가 자동생성되고 클러스터 내 PV 오브젝트와 동일시됨.
+  - AWS EBS콘솔에서 직접 설정 필요없음.
+  - PVC를 삭제하면 PV 오브젝트가 삭제됨과 동시에 EBS도 자동삭제
