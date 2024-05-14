@@ -87,3 +87,60 @@ PV를 프로비저닝하고 관리하는 방식을 정의하는 템플릿 역할
   - 30GB짜리 AWS EBS가 자동생성되고 클러스터 내 PV 오브젝트와 동일시됨.
   - AWS EBS콘솔에서 직접 설정 필요없음.
   - PVC를 삭제하면 PV 오브젝트가 삭제됨과 동시에 EBS도 자동삭제
+
+
+## Example
+
+```yaml
+##################################################################################
+# 차트에서 자동생성되는 PV대신 별도 PV를 사용하고자할 때,
+# 이 매니페스트로 pv와 pvc를 사전생성한다.
+# 차트 values의 persistence.existingClaim섹션에서는, 사전생성된 pvc이름을 할당해주자. 
+
+# e.g.) pv의 로컬저장경로 변경해서 사용하는 경우
+##################################################################################
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: kafka-pv-0
+  labels:
+    name: kafka-pv-0    # PVC가 이 PV를 selector로 참조할 수 있도록 레이블 설정
+spec:
+  capacity:
+    storage: 480Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/data"       # PV 데이터가 실제 저장되는 로컬호스트의 경로
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-pv-claim-0   # 헬름values의 existingClaim섹션에서 이 이름을 참조시켜 준다.
+spec:
+  accessModes:
+    - ReadWriteOnce     # 사용할 pv 설정과 일치시켜 준다.
+  resources:
+    requests:
+      storage: 480Gi    # 사용할 pv 설정과 일치시켜 준다.
+  
+  selector:
+    matchLabels:
+      name: kafka-pv-0  # pvc가 특정 pv를 참조하도록 설정
+
+  storageClassName: ""
+                        # 빈 문자열 => storageClass 미지정 (동적 프로비저닝 비활성화)
+                        # 빈 값 or 섹션생략 => default storageClass 지정됨 (default provisioner에 의한 동적 프로비저닝 활성화)
+
+```
+
+- 커스텀 PVC, PV 적용시 Pod 배포가 실패하는 경우가 있다.
+  - 매니페스트, 헬름차트 등에서 `mkdir로 필요한 경로를 자동생성하려다 권한문제로 실패`하기 때문
+  - 다음과 같이 해결가능
+
+```sh
+# 777보다는 더 fit한 권한부여가 바람직
+sudo chmod 777 {pv의 실제로컬경로}
+```
