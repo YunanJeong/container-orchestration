@@ -124,9 +124,9 @@ kubectl get all -n {namespace_name}
 
 ## StatefulSet
 
-- 상태 유지가 필요한 Stateful App. 을 배포할 때 유용한 오브젝트
-- 이를테면 껐다켜도 정보를 보존해야하는 메시지큐, DB 등이 Stateful App.에 해당
-- 특히 `동일한 종류의 여러 Pod(Replica)를 관리하는데 최적화`되어 있으며, Kafka, Elasticsearch와 같은 `클러스터 시스템 배포에 특화`되었다고 볼 수 있음`
+- `상태 유지가 필요한 Stateful App. 을 배포할 때 유용`한 오브젝트
+- 이를테면 껐다켜도 정보를 보존해야하는 `메시지큐, DB` 등이 Stateful App.에 해당
+- 특히 `동일한 종류의 여러 Pod(Replica)를 관리하는데 최적화`되어 있으며, `Kafka, Elasticsearch와 같은 클러스터 시스템 배포에 특화`되었다고 볼 수 있음`
 - Deployment처럼 Pod 배포를 위한 상위 계층 오브젝트이지만, ReplicaSet을 하위 오브젝트로 가지진 않는다.
 
 ### StatefulSet vs. Deployment
