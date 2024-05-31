@@ -126,21 +126,21 @@ kubectl get all -n {namespace_name}
 
 - `상태 유지가 필요한 Stateful App. 을 배포할 때 유용`한 오브젝트
 - 이를테면 껐다켜도 정보를 보존해야하는 `메시지큐, DB` 등이 Stateful App.에 해당
-- 특히 `동일한 종류의 여러 Pod(Replica)를 관리하는데 최적화`되어 있으며, `Kafka, Elasticsearch와 같은 클러스터 시스템 배포에 특화`되었다고 볼 수 있음`
+- 특히 `동일한 종류의 여러 Pod(Replica)를 관리하는데 최적화`되어 있으며, `Kafka, Elasticsearch와 같은 클러스터 시스템 배포에 특화`
 - Deployment처럼 Pod 배포를 위한 상위 계층 오브젝트이지만, ReplicaSet을 하위 오브젝트로 가지진 않는다.
 
 ### StatefulSet vs. Deployment
 
 - Deployment와 역할, 매니페스트 구성이 거의 유사하나 일부 차이점이 있는데 이것이 StatefulSet의 특징이라 볼 수 있음
 - 고유한 네트워크 ID
-  - 매니페스트에서 ServiceName 지정
+  - 매니페스트에서 `serviceName` 필드 지정
 - Pod 생성,삭제,업데이트시 순차적 동작 보장
   - Deployment배포에선, Pod는 동시 생성, 동시 삭제된다. 업데이트시엔 개별 정책 설정대로 동작한다.
   - StatefulSet은 "0번, 1번, 2번, ..." Pod 순대로 실행되고 "..., 2번, 1번, 0번" Pod 순으로 삭제된다.
 - 안정적인 스토리지
-  - PVC 자동 생성 기능
+  - PVC 자동 생성 기능 (`volumeClaimTemplates` 필드)
+  - StatefulSet은 `Pod가 재실행되어도 처음 바인딩된 특정 번호의 Pod, 특정 번호의 PV, 자동생성된 PVC가 고정적으로 서로 바인딩되어 지속성`을 가지도록 해줌
   - 참고: 동적&정적 프로비저닝과는 다른 개념이다. 프로비저닝 방식은 PV를 어떻게 생성하냐에 대한 것이고, 여기서는 PVC를 자동생성하느냐에 대한 것임
-- Pod 실행 순서 보장
 
 ## 네트워크 설정에 필요한 K8s Object
 
