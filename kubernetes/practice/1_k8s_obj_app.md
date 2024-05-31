@@ -122,6 +122,26 @@ kubectl get all -n {namespace_name}
   - `도커 네트워크 호스트 모드 or Native 앱 설치와 비슷한 효과`
 - K8s에서 일반적인 네트워크 노출방식은 후술할 Service 또는 Ingress 방식이 적절하지만, 로그수집기처럼 DaemonSet으로 Node마다 배포되어야 하는 앱들은 hostPort 방식이 편리
 
+## StatefulSet
+
+- 상태 유지가 필요한 Stateful App. 을 배포할 때 유용한 오브젝트
+- 이를테면 껐다켜도 정보를 보존해야하는 메시지큐, DB 등이 Stateful App.에 해당
+- 특히 `동일한 종류의 여러 Pod(Replica)를 관리하는데 최적화`되어 있으며, Kafka, Elasticsearch와 같은 `클러스터 시스템 배포에 특화`되었다고 볼 수 있음`
+- Deployment처럼 Pod 배포를 위한 상위 계층 오브젝트이지만, ReplicaSet을 하위 오브젝트로 가지진 않는다.
+
+### StatefulSet vs. Deployment
+
+- Deployment와 역할, 매니페스트 구성이 거의 유사하나 일부 차이점이 있는데 이것이 StatefulSet의 특징이라 볼 수 있음
+- 고유한 네트워크 ID
+  - 매니페스트에서 ServiceName 지정
+- Pod 생성,삭제,업데이트시 순차적 동작 보장
+  - Deployment배포에선, Pod는 동시 생성, 동시 삭제된다. 업데이트시엔 개별 정책 설정대로 동작한다.
+  - StatefulSet은 "0번, 1번, 2번, ..." Pod 순대로 실행되고 "..., 2번, 1번, 0번" Pod 순으로 삭제된다.
+- 안정적인 스토리지
+  - PVC 자동 생성 기능
+  - 참고: 동적&정적 프로비저닝과는 다른 개념이다. 프로비저닝 방식은 PV를 어떻게 생성하냐에 대한 것이고, 여기서는 PVC를 자동생성하느냐에 대한 것임
+- Pod 실행 순서 보장
+
 ## 네트워크 설정에 필요한 K8s Object
 
 분량이 많으므로 별도 파일에 정리
