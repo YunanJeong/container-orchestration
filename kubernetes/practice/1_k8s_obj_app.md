@@ -75,7 +75,7 @@
 - Deployment는 ReplicaSet기능 + 이미지 변경 등 업데이트 적용
   - e.g. Pod 정보 변경 후 새로 apply하면, 기존 실행중인 Pod에 변경사항이 적용된다.
 
-## Deployment처럼 앱 배포에 쓰일 수 있는 Pod의 상위 레이어 리소스 유형
+## Deployment처럼 앱 배포에 이용되는, Pod의 상위 레이어 리소스 유형
 
 - StatefulSet
   - 상태 유지가 필요한 애플리케이션을 관리
