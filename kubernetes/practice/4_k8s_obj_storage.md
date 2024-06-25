@@ -31,6 +31,31 @@
 
 PV 데이터의 실제 저장장소는 보통 쿠버네티스 노드의 로컬호스트(Local Storage)에 있다.클라우드 서비스에 따라서 해당 노드가 아닌 별도 스토리지(Network Storage)에 저장될 수 있다.
 
+### PV Type
+
+- 일반 볼륨에 타입이 있는 것처럼, PV에도 타입이 있음
+- PV를 정의하는 `yaml의 spec 섹션 아래`에 기술됨 (하단 Example 참고)
+- kubectl describe로 실행중인 PV의 타입 확인가능
+- hostPath
+  - 특정 노드의 파일 시스템 경로를 파드에 마운트
+  - 테스트 환경이나 간단한 개발 환경
+  - `hostPath의 경우 PV size를 지정해도 호스트 머신의 디스크가 충분하다면 용량을 초과해도 상관없다.` 단순 선언적 의미이고 용량제한 옵션은 별도 존재
+- local
+  - 특정 노드의 로컬 디스크를 사용하며, 고급 스케줄링과 내구성을 제공
+  - 프로덕션 환경에서 로컬 스토리지를 사용할 때
+- awsElasticBlockStore (AWS EBS)
+  - AWS Elastic Block Store (EBS) 볼륨을 사용
+  - AWS 환경에서 고성능과 내구성이 필요한 경우
+- nfs (Network File System)
+  - NFS 서버를 통해 네트워크 파일 시스템을 사용합니다.
+  - 여러 노드에서 동시에 접근해야 하는 경우
+- gcePersistentDisk (GCE PD)
+  - Google Cloud Platform의 Persistent Disk를 사용
+  - GCP 환경에서 고성능과 내구성이 필요한 경우
+- azureDisk (Azure Disk)
+  - Microsoft Azure의 Managed Disk를 사용
+  - Azure 환경에서 고성능과 내구성이 필요한 경우
+
 ## Persistent Volume Claim (PVC)
 
 PVC는 `앱을 배포하려는 사용자에게 스토리지의 물리적인 세부 사항을 숨기고, 단순히 필요한 리소스를 요청하는 인터페이스를 제공`하는 Object
@@ -59,17 +84,17 @@ PV를 프로비저닝하고 관리하는 방식을 정의하는 템플릿 역할
 
 스토리지 볼륨을 자동으로 생성하고 관리(동적프로비저닝)하는 역할을 하는 쿠버네티스 컴포넌트
 
-보통 클러스터 내 kube-system의 Pod로 실행된다. 배포판, 스토리지 유형에 따라 필요한 Provisioner가 다르며, 기본내장되어있거나 추가설치 필요
+보통 클러스터 내 `kube-system의 Pod로 실행`된다. 배포판, 스토리지 유형에 따라 필요한 Provisioner가 다르며, 기본내장되어있거나 추가설치 필요
 
 ### 동적 프로비저닝
 
 - 사용자가 PVC 생성시, 해당 PVC의 요구사항에 맞는 PV를 자동생성
 - 이 과정은 수동으로 PV를 미리 생성하고 관리할 필요 없이, 필요에 따라 자동으로 스토리지 리소스를 할당하고 관리할 수 있게 해줌
 
-### 스토리지 유형 관리
+### 스토리지 유형에 따른 관리
 
 - 각 스토리지 유형에 맞는 Provisioner들이 있음
-  - local: 배포판마다 다름
+  - 로컬디스크: 배포판마다 다름. k3s는 local-path-provisioner.
   - NFS: 원격 스토리지 유형에 따라 다름
   - AWS EBS: kubernetes.io/aws-ebs
   - Google Cloud Persistent Disk: kubernetes.io/gce-pd
@@ -87,7 +112,6 @@ PV를 프로비저닝하고 관리하는 방식을 정의하는 템플릿 역할
   - 30GB짜리 AWS EBS가 자동생성되고 클러스터 내 PV 오브젝트와 동일시됨.
   - AWS EBS콘솔에서 직접 설정 필요없음.
   - PVC를 삭제하면 PV 오브젝트가 삭제됨과 동시에 EBS도 자동삭제
-
 
 ## Example
 
