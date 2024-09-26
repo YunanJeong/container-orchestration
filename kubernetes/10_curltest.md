@@ -20,3 +20,33 @@ kubectl exec -it curltest -- sh
 # pod 삭제
 kubectl delete pod curltest
 ```
+
+## Deployment로 실행
+
+- 위 방법은 일시적 실행시 유용하나, Pod만 띄우는거라 잘 꺼짐
+- 영구적으로 실행해놓으려면 deployment를 써주는게 낫다.
+
+```yaml
+# kubcetl apply -f curltest.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: curltest
+  namespace: platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: curltest
+  template:
+    metadata:
+      labels:
+        app: curltest
+    spec:
+      nodeSelector:
+        myapp.com/name: eks-platform-common  # nodeSelector 설정
+      containers:
+      - name: curl
+        image: curlimages/curl
+        command: [ "sh", "-c", "while true; do sleep 3600; done" ]
+```
