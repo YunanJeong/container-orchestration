@@ -134,7 +134,7 @@ spec:
           operator: Gt
           values: ["2"]
       nodeClassRef:
-        name: eks-platform-common
+        name: eks-monitor
   limits:
     cpu: 24
     memory: 80Gi
