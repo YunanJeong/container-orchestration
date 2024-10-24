@@ -63,7 +63,7 @@ spec:
     memory: 480Gi  # 16GiB x 30 대
   disruption:
     # 다른 노드와의 통합정책 (비용절감 목적)
-    ## WhenUnderutilized: 저활용 상황시 노드 삭제(cpu, ram, pod 수로 판단=>커스텀 불가)
+    ## WhenUnderutilized: 저활용 상황시 노드 삭제(cpu, ram, pod 수로 판단=>커스텀 불가=>https://github.com/kubernetes-sigs/karpenter/issues/735)
     ## WhenEmpty: 미사용 상황시 노드 삭제(daemonset에 의한 pod 1개만 있어도 empty가 아님)
     consolidationPolicy: WhenUnderutilized
     
