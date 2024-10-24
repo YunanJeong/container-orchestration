@@ -44,9 +44,36 @@ spec:
         app: curltest
     spec:
       nodeSelector:
-        myapp.com/name: eks-platform-common  # nodeSelector 설정
+        myapp.com/name: eks-monitor  # nodeSelector 설정
       containers:
       - name: curl
         image: curlimages/curl
         command: [ "sh", "-c", "while true; do sleep 3600; done" ]
+```
+
+```sh
+# 바로 입력하기
+echo "
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: curltest
+  namespace: platform
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: curltest
+  template:
+    metadata:
+      labels:
+        app: curltest
+    spec:
+      nodeSelector:
+        myapp.com/name: eks-monitor  # nodeSelector 설정
+      containers:
+      - name: curl
+        image: curlimages/curl
+        command: [ \"sh\", \"-c\", \"while true; do sleep 3600; done\" ]
+" | kubectl apply -f -
 ```
