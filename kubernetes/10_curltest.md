@@ -44,7 +44,7 @@ spec:
         app: curltest
     spec:
       nodeSelector:
-        myapp.com/name: eks-monitor  # nodeSelector 설정
+        eks.amazonaws.com/nodegroup: A-ng  # nodegroup or nodepool 지정
       containers:
       - name: curl
         image: curlimages/curl
@@ -70,7 +70,7 @@ spec:
         app: curltest
     spec:
       nodeSelector:
-        myapp.com/name: eks-monitor  # nodeSelector 설정
+        eks.amazonaws.com/nodegroup: A-ng  # nodegroup or nodepool 지정
       containers:
       - name: curl
         image: curlimages/curl
