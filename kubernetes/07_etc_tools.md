@@ -54,9 +54,13 @@ k9s:
 
 [Quick Start](https://krew.sigs.k8s.io/docs/user-guide/quickstart/)
 
+- krew는 kubectl 사용시 편리한 추가 플러그인을 설치할 수 있게 해주는 도구
+- 설치된 플러그인들은 kubectl의 서브커맨드 형태로 사용
+- ctx는 꼭 설치하자. 여러 클러스터 관리시 컨텍스트 전환을 쉽게 할 수 있다.
+
 ```sh
-kubctl ctx
-kubctl ns
+kubectl ctx
+kubectl ns
 ```
 
 ## fzf
