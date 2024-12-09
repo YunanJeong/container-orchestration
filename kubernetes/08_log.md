@@ -4,16 +4,22 @@
 
 ## 간단한 로그 조회
 
+- **pod 로그 조회**
+- pod에 container가 여러 개면, -c옵션으로 특정 container 지정가능
+
 ```sh
 # kubectl logs {POD_NAME}
 kubectl logs podname-xxxxxxxxxxx-xxxx
 ```
 
-- **pod 내 stdout, stderr 조회**
-- pod에 container가 여러 개면, -c옵션으로 특정 container 지정가능
-- 일반적으로 별도 설정없이 Pod 로그 조회만으로 앱 로그 확인가능
-  - 요즘 대부분 상용툴은 로거가 포함되어 있고, 파일로 로그를 저장
-  - But, 이런 툴들의 이미지 배포판에선 로거에서 파일대신 stdout, stderr로 처리하도록 설정되어 있음
+### `Pod로그 = Container로그 = App.표준출력(stdout/stderr)`을 의미
+
+- K8s에선 별도 설정이 없더라도 컨테이너 내부의 stdout/stderr이 Pod 로그로 연계됨
+- 직접 개발 앱: `K8s에 배포할 앱은 로그출력을 stdout/stderr로 설정하는 것이 정석`
+- 범용 이미지 (DB, Elasticsearch, Kafka, ... )
+  - 네이티브 앱에선 기본 로그출력이 file인 경우가 많으나,
+  - 이들의 이미지 배포판에선 대부분 기본 로그출력이 stdout/stderr으로 설정되어 있음
+  - 따라서, 범용 이미지에선 사용자가 로그출력을 고려하지 않아도 Pod,Container로그 조회시 대상 앱의 로그를 확인가능
 
 ## 장기 로그 조회
 
@@ -48,20 +54,34 @@ kubectl logs podname-xxxxxxxxxxx-xxxx
 
 - Docker의 default 정책은 없기 때문에, 로그가 무한정 남을 수 있다.
 - production 배포시, Docker 로깅드라이버 설정에서 rotation 정책을 설정해주도록 한다.
-- `/etc/docker/daemon.json`에서 별도 설정 가능
+- `/etc/docker/daemon.json`에서 설정 가능
+  - max-size: 한 파일의 최대 크기
+  - max-file: 총 허용 파일 개수. 초과시 오래된 것 삭제.
+  - 시간 기반 설정은 없음
+
+```json
+{
+  "log-driver": "json-file",
+  "log-opts": {
+    "max-size": "10m",
+    "max-file": "3"
+  }
+}
+```
 
 ## 고도화된 로그 조회
 
-K8s 노드(로컬호스트)에 저장되는 로그는 기본적으로 K8s 앱 개발시 최근 로그를 터미널에서 쉽게 조회하는 정도의 목적임
+- K8s 노드(로컬호스트)에 저장되는 로그는 최근 로그를 터미널에서 간단히 조회하는 정도로 사용됨
+- 장기보관이나 고도화된 운영로그 조회가 필요하다면 결국은 별도 백엔드 구축 필요
 
-장기보관이나 고도화된 운영로그 조회가 필요하다면 결국은 별도 백엔드 구축 필요
+### 앱 로그
 
-- 앱 로그:
-  - Elastic Stack (ELK), EFK Stack (fluentd)
-  - PLG Stack
-- 노드의 시스템로그(metric)
-  - Exporter-Prometheus-Grafana: Pull방식
-  - telgraf-influxDB: Push방식
+- ELK, EFK, PLG Stack (Elasticsearch, fluentd, Loki, ...)
+
+### 노드의 시스템로그(metric)
+
+- Exporter-Prometheus-Grafana: Pull방식
+- telgraf-influxDB: Push방식
 
 ## 참고 자료
 
