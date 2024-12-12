@@ -63,9 +63,10 @@ kubectl describe pod my-pod-xxxxx
 
 ### 컨테이너 런타임으로 Docker 사용시 Rotation 정책
 
-- `Docker의 default 정책은 없기 때문에, 미설정시 로그가 무한정 남을 수 있다.`
-- production 배포시, Docker 로깅드라이버 설정에서 rotation 정책을 설정해주도록 한다.
-- `/etc/docker/daemon.json`에서 설정 가능
+- Container 삭제시 로그도 함께 삭제
+- 이 외에 `Docker의 Default 정책이 없으므로 미설정시 로그가 무한정 남을 수 있음`
+- production 배포시, 반드시 정책 설정 필요
+- `/etc/docker/daemon.json`에서 설정 가능 (Docker 로깅드라이버 설정)
   - max-size: 한 파일의 최대 크기
   - max-file: 총 허용 파일 개수. 초과시 오래된 것 삭제.
   - 시간 기반 설정은 없음
