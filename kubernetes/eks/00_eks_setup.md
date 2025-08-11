@@ -3,14 +3,43 @@
 ## 운영 기본 체크리스트
 
 - 사용자/팀 권한: Access Entries로 역할·정책·네임스페이스 범위 지정 ①②
-- 워크로드 IAM: Pod Identity 선호(Agent 필요, 노드 역할에 AssumeRoleForPodIdentity 허용)
-- 스토리지: aws-ebs-csi-driver(EKS Add-on)
+- 워크로드 IAM (둘 중 택1하여 설정)
+  - Pod Identity(애드온으로 Agent 필요, 노드 역할에 AssumeRoleForPodIdentity 허용)
+  - IRSA: 쿠버네티스 표준에 맞음
+- 스토리지: aws-ebs-csi-driver(EKS Add-on으로 설치)
 - 노드 자동화: Karpenter (Provisioner 정책으로 인스턴스·용량타입 제한)
   - v1 정식 출시부터 Auto Mode 활성화시 karpenter가 기본탑재된다. (pod는 안보임)
   - nodepool, nodeclass CRD를 `kubectl get crd`에서 확인가능
-- 외부노출: AWS Load Balancer Controller(Helm)
-- 모니터링: metrics-server(EKS 커뮤니티 Add-on)
+  - Auto mode에서 필요한 nodepool이 자동 생성/삭제/관리됨
+  - 커스텀 생성한 nodepool은 삭제되지 않음
+- 외부노출: AWS Load Balancer Controller(Helm으로 설치)
+- 모니터링: metrics-server(EKS Add-on으로 설치)
 - 애드온 호환성/버전 확인: `describe-addon-versions` API로 확인
+
+## 기본 추가기능(Add-on)
+
+- `eksctl create addon` 또는 AWS콘솔에서 설치가능
+- 클러스터 관리를 위해 자주 쓰이는 앱을 즉시 설치/제어할 수 있도록 AWS에서 지원하는 것이며, 애드온 설치시 실제론 클러스터 내부에서 deployment, daemonset 등으로 배포되는 것을 확인가능
+- 꼭 애드온으로 설치하지 않아도 된다.
+- daemonset으로 배포되는 애드온의 경우, 설치 후 pod가 안뜰수도 있는데 기본 노드에 taint가 아무앱이나 설치되지 않도록 NoSchedule로 걸려있고, 애드온 daemonset엔 toleration이 없어서 그렇다. EKS의 기본철학이 최초 기본노드는 아무거나 설치되지 않도록 막고, 실제 앱은 별도 워커노드를 하나 더 생성한다는 기조이기 때문. 필요에 따라 적절히 바꿔주자.
+- 필수급 애드온
+  - Amazon EBS CSI Driver
+    - Pod identity or IRSA로 IAM Role 연동 필요
+    - Role에 필요한 정책: AmazonEBSCSIDriverPolicy
+  - kube-proxy
+  - metrics-server(지표서버)
+  - CoreDNS
+- 기타 애드온
+  - Node Monitoring Agent
+    - 별도 추가설정없이 설치만해도 CloudWatch에서 모니터링 가능
+    - 비용발생
+    - 미설치시 Cloudwatch에서 EKS 리소스항목은 표기되지만, 값이 존재하지 않음
+  - node-exporter(애드온으로 설치 비권장)
+    - prometheus 미포함
+    - ServiceMonitor활용을 위해선 kube-prometheus-stack 헬름차트로 별도 설치하는게 나음
+  - kube-state-metrics(애드온으로 설치 비권장)
+    - node-exporter와 동일한 이유로 kube-prometheus-stack으로 설치 권장
+  - fluent-bit (필요시 설치)
 
 ## 접근제어 (액세스)
 
