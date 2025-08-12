@@ -3,9 +3,14 @@
 ## 운영 기본 체크리스트
 
 - 사용자/팀 권한: Access Entries로 역할·정책·네임스페이스 범위 지정 ①②
-- 워크로드 IAM (둘 중 택1하여 설정)
-  - Pod Identity(애드온으로 Agent 필요, 노드 역할에 AssumeRoleForPodIdentity 허용)
-  - IRSA: 쿠버네티스 표준에 맞음
+- 워크로드 IAM 권한부여방식(둘 중 택1하여 설정)
+  - Pod Identity
+    - 애드온으로 Agent 필요
+    - 노드 역할에 AssumeRoleForPodIdentity 권한필요 (AmazonEKSWorkerNodePolicy 등에 포함됨)
+  - IRSA
+    - AWS 외 쿠버네티스 표준에 맞음
+    - OIDC Provider 설치절차 필요
+    - 전반적으로 더 번거로운 방식
 - 스토리지: aws-ebs-csi-driver(EKS Add-on으로 설치)
 - 노드 자동화: Karpenter (Provisioner 정책으로 인스턴스·용량타입 제한)
   - v1 정식 출시부터 Auto Mode 활성화시 karpenter가 기본탑재된다. (pod는 안보임)
@@ -16,6 +21,12 @@
 - 모니터링: metrics-server(EKS Add-on으로 설치)
 - 애드온 호환성/버전 확인: `describe-addon-versions` API로 확인
 
+## IAM User 및 IAM Role의 권한 Policy를 고르는 방법
+
+- 채택한 리소스 구성 및 옵션에 따라 필요한 권한정책이 다를 수 있음
+- 콘솔에서 리소스 생성시 IAM Role 선택메뉴에서 `"권장 역할 생성"`기능을 사용하는게 좋다. 자동으로 필요한 Policy가 이미 선택되어 있음
+- cli 기반 작업을 하더라도 신규버전 구축시에는 위 과정을 통해 권장 역할을 확인하는 것이 좋음. `레거시 자료를 참고할 경우 미묘하게 요구되는 Policy가 다를 수 있음`
+
 ## 기본 추가기능(Add-on)
 
 - `eksctl create addon` 또는 AWS콘솔에서 설치가능
@@ -23,6 +34,9 @@
 - 꼭 애드온으로 설치하지 않아도 된다.
 - daemonset으로 배포되는 애드온의 경우, 설치 후 pod가 안뜰수도 있는데 기본 노드에 taint가 아무앱이나 설치되지 않도록 NoSchedule로 걸려있고, 애드온 daemonset엔 toleration이 없어서 그렇다. EKS의 기본철학이 최초 기본노드는 아무거나 설치되지 않도록 막고, 실제 앱은 별도 워커노드를 하나 더 생성한다는 기조이기 때문. 필요에 따라 적절히 바꿔주자.
 - 필수급 애드온
+  - Amazon VPC CNI(aws-node)
+    - Pod identity or IRSA로 IAM Role 연동 필요
+    - Role에 필요한 정책: AmazonEKS_CNI_Policy, AmazonEKSClusterPolicy
   - Amazon EBS CSI Driver
     - Pod identity or IRSA로 IAM Role 연동 필요
     - Role에 필요한 정책: AmazonEBSCSIDriverPolicy
