@@ -7,16 +7,29 @@
   - Pod Identity
     - 애드온으로 Agent 필요
     - 노드 역할에 AssumeRoleForPodIdentity 권한필요 (AmazonEKSWorkerNodePolicy 등에 포함됨)
+    - AWS 최신 방식
   - IRSA
-    - AWS 외 쿠버네티스 표준에 맞음
+    - AWS 외 쿠버네티스 표준에 맞음 => AWS에서 지속 지원 예정
     - OIDC Provider 설치절차 필요
     - 전반적으로 더 번거로운 방식
-- 스토리지: aws-ebs-csi-driver(EKS Add-on으로 설치)
-- 노드 자동화: Karpenter (Provisioner 정책으로 인스턴스·용량타입 제한)
-  - v1 정식 출시부터 Auto Mode 활성화시 karpenter가 기본탑재된다. (pod는 안보임)
-  - nodepool, nodeclass CRD를 `kubectl get crd`에서 확인가능
-  - Auto mode에서 필요한 nodepool이 자동 생성/삭제/관리됨
-  - 커스텀 생성한 nodepool은 삭제되지 않음
+- 스토리지: aws-ebs-csi-driver(EKS Add-on으로 설치, 권한 필요. 하단 참조)
+- 노드 자동화(Karpenter 및 AutoMode 활성화 여부 선택)
+  - Karpenter (Provisioner 정책으로 인스턴스·용량타입 제한)
+  - Auto Mode 활성화시
+    - **전반적으로 자동화 Up, 비용 Up, 자유도 Down**
+    - 인스턴스 비용 12% 비쌈
+    - DevOps 전문가가 없거나, K8s에 대한 지식이 거의 없다면 써도 좋음
+    - karpenter가 v1 정식 출시부터 Auto Mode EKS의 controlplane 영역에 기본 내장됨
+      - aws managed 영역이라 pod는 안보이지만, nodepool, nodeclass CRD를 `kubectl get crd`에서 확인가능
+    - 이미 Karpenter 구성을 쓰는 조직이라면 아직 좀 애매한듯
+    - 상황에 따라 요구되는 nodepool이 자동 생성/삭제/관리되며, 커스텀 생성한 nodepool은 삭제되지 않음
+    - 사용가능한 AMI 고정(BottleRocket)
+      - 클러스터 필수 애드온은 해당 AMI 내 systemd 서비스로 구현됨
+    - K8s, EKS, Karpenter, 필수 애드온의 버전 호환성 자동관리
+      - 21일마다 노드 재시작 강제 업데이트
+      - 노드 고정 필요시, nodegroup 혼합 사용 가능
+      - nodegroup 인스턴스쪽에는 종전과 같이 필수 애드온이 K8s 리소스로 배포됨
+  - Auto Mode 비활성화시, Helm Chart로 Karpenter 수동설치
 - 외부노출: AWS Load Balancer Controller(Helm으로 설치)
 - 모니터링: metrics-server(EKS Add-on으로 설치)
 - 애드온 호환성/버전 확인: `describe-addon-versions` API로 확인
@@ -60,7 +73,7 @@
 - AWS콘솔의 클러스터 설정에서 '액세스' 메뉴
 - 인증모드 선택
   - EKS API(Access Entry): AWS콘솔에서 중앙집중식 관리가능
-  - ConfigMap: deprecated. 
+  - ConfigMap: deprecated.
   - 동시 사용 가능. 둘 중에 하나만 등록되면 접근가능.
 - 클러스터에 IAM User를 등록하여 접근권한을 부여하는 방식
 - EKS API가 좀 더 편리하므로 EKS API 기준으로 기술
@@ -69,4 +82,3 @@
 ## 쿠버네티스 RBAC 설정
 
 - EKS 인증모드를 EKS API로 해도 실제 쿠버네티스 RBAC은 그대로 적용되기 때문에, 특정 유저에게 RBAC 권한을 부여해야 함
-- 
