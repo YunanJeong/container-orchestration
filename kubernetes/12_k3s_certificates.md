@@ -7,7 +7,8 @@
 - 1년짜리 leaf 인증서 만료시 쿠버네티스 Pod앱은 유지되나, 클러스터 및 컨테이너 관리 기능 동작 중지
 - leaf 인증서는 만료우회 & 쉬운 갱신 방법이 다양하게 있으나, 무슨 수를 써도 Root CA의 만료기한을 넘길 수 없음
 - Root CA 갱신은 운영자의 인증서 수동 생성 및 교체가 필요하며, 클러스터 서비스 중단이 발생. server 뿐아니라 agent(worker노드)에서도 작업 필수
-- `이 구조는 K3s와 업스트림 쿠버네티스 모두 동일`
+- `위 구조는 K3s와 업스트림 쿠버네티스 모두 동일`
+- 후술할 인증서 갱신 및 관리방법은 K3s 기준으로 서술
 
 ## 해결방법
 
@@ -20,6 +21,10 @@ sudo systemctl restart k3s.service
 
 # 완전히 만료된 상태라면 k3s-server 재시작 후 각각 워커(k3s-agent)도 재시작 필요
 sudo systemctl restart k3s-agent.service
+
+# 90일 이상일 때 갱신방법(rotate 서브커맨드 실행 후 재시작)
+sudo k3s certificate rotate
+sudo systemctl restart k3s.service
 ```
 
 - Root CA(10년)
