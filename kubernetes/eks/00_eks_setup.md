@@ -2,7 +2,10 @@
 
 ## 운영 기본 체크리스트
 
-- 사용자/팀 권한: Access Entries로 역할·정책·네임스페이스 범위 지정 ①②
+- 사용자/팀 권한 부여 방식(아래 별도후술할 "접근제어" 참고하여 택1)
+  - EKS API(Access Entries)
+  - ConfigMap(aws-auth)
+  - EKS API 및 ConfigMap
 - 워크로드 IAM 권한부여방식(둘 중 택1하여 설정)
   - Pod Identity
     - 애드온으로 Agent 필요
@@ -10,7 +13,7 @@
     - AWS 최신 방식
   - IRSA
     - AWS 외 쿠버네티스 표준에 맞음 => AWS에서 지속 지원 예정
-    - OIDC Provider 설치절차 필요
+    - OIDC Provider 필요(요즘은 신규 EKS 생성시 기본포함됨)
     - 전반적으로 더 번거로운 방식
 - 스토리지: aws-ebs-csi-driver(EKS Add-on으로 설치, 권한 필요. 하단 참조)
 - 노드 관리 자동화(Karpenter 및 AutoMode 활성화 여부 선택)
