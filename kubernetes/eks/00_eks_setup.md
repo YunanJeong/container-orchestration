@@ -68,7 +68,7 @@
 - EKS API 방식의 경우 각 IAM User(EKS 실 사용자)에 다음 최소 권한만 똑같이 할당해놓으면 된다. 이후 세부 권한은 해당 EKS의 콘솔 메뉴에서 중앙제어하면 됨
 
 ```yaml
-# EKS API로 관리시 IAM User에 등록해놓을 최소 권한
+# EKS API로 권한관리시 실사용자 IAM User에 등록해놓을 최소 권한
 {
   "Effect": "Allow",
   "Action": [
