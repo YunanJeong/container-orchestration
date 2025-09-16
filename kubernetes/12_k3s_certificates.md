@@ -46,8 +46,8 @@ sudo systemctl restart k3s-agent.service
 # k3s-server: 매월 1일 03:17에 rotate + restart
 SERVER_CMD="17 3 1 * * $(command -v k3s) certificate rotate && $(command -v systemctl) restart k3s"
 
-# k3s-agent: 매월 1일 03:47에 restart
-AGENT_CMD="47 3 1 * * $(command -v systemctl) restart k3s-agent"
+# k3s-agent: 매월 1일 03:27에 restart # 반드시 server작업 후 실행
+AGENT_CMD="27 3 1 * * $(command -v systemctl) restart k3s-agent"
 
 # 여기가 k3s-server 노드인지, k3s-agent 노드인지 판단
 if systemctl is-active --quiet k3s; then
