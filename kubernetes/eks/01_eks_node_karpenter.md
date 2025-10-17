@@ -18,30 +18,39 @@ EKS에서 노드 프로비저닝을 자동화하는 오픈소스 도구
 ### EC2NodeClass와 NodePool 예시
 
 ```yaml
-apiVersion: karpenter.k8s.aws/v1beta1
+apiVersion: karpenter.k8s.aws/v1   ### CHANGED: v1beta1 → v1
 kind: EC2NodeClass
 metadata:
   # 서비스와 용도에 맞는 이름
   name: eks-platform-common
 spec:
-  amiFamily: AL2 # Amazon Linux 2
-  role: "KarpenterNodeRole-${EKS_CLUSTER}"       # replace with your cluster name
+  amiFamily: AL2023 # AL2023 or bottlerocket 권장  # AL2는 Deprecated 
+  ### CHANGED: amiSelectorTerms가 v1에서 필수 필드가 됨
+  amiSelectorTerms:
+    - alias: al2023@v20250807 # Amazon EKS optimized AMI alias 사용
+  role: "KarpenterNodeRole-B" # replace with your cluster name
 
+  # NodeClass에 의한 신규 Node 생성시, 여기 기술된 tag를 가지고있는 기존 서브넷이 신규Node에 등록된다.
   subnetSelectorTerms:
     - tags:
-        karpenter.sh/discovery: "${EKS_CLUSTER}" # replace with your cluster name
+        karpenter.sh/discovery: "A" # 기존 클러스터 A와 동일한 서브넷을 씁니다.
   
-  # 신규 생성 Node에서 사용될 보안그룹(보안그룹의 tag로 지정가능)
+  # NodeClass에 의한 신규 Node 생성시, 여기 기술된 tag를 가지고있는 기존 보안그룹이 신규Node에 등록된다.
   securityGroupSelectorTerms:
     - tags:
-        karpenter.sh/discovery: "${EKS_CLUSTER}" # replace with your cluster name
+        karpenter.sh/discovery: "B" # 클러스터 B 내부통신을 위한 전체 공통 보안 그룹을 가리킵니다.
+
+  # NodeClass에 의한 신규 AWS 리소스 생성시, 첨부할 태그 설정 (EC2,EBS 등등)
   tags:
-    # EC2 인스턴스에 등록할 태그
-    Service: MY-PLATFORM-SERVICE
-    Owner: my@gmail.com
+    Service: ALL-COMMON-RNDAI
+    Owner: yunanjeong.github.com
+    Description: platform-node-controlled-by-karpenter
+    Name: platform-nodepool-resource
+    # Name도 써줘야 나중에 관리하기 편합니다.
+    # => K8s 리소스 삭제시 연동된 AWS 리소스도 삭제되는 것이 정석이지만, 설정에 따라 삭제되지 않고 미사용 AWS리소스가 지저분하게 남는 경우가 종종 있습니다.
 
 ---
-apiVersion: karpenter.sh/v1beta1
+apiVersion: karpenter.sh/v1   ### CHANGED: v1beta1 → v1
 kind: NodePool
 metadata:
   # 서비스와 용도에 맞는 이름
@@ -50,11 +59,13 @@ spec:
   template:
     metadata:
       labels:
-        # 향후 신규 앱 배포시 Node Selector로 이 Label을 지정하면, NodePool사양대로 Node가 할당된다.
-        my.app.com/name: eks-platform-common
+        # 용도별 노드 라벨 # 헬름차트의 nodeSelector에서 이 라벨을 가리키면 노드가 자동 생성 및 스케일링됨.
+        app.myservice.com/name: eks-platform-common
     spec:
-      # 노드 사양 설정 (아래 값은 공식문서에 있는 무난한 설정)
       requirements:
+        # - key: topology.kubernetes.io/zone
+        #   operator: In
+        #   values: ["ap-northeast-2d"]  # EBS PV 사용시 AZ 맞추기
         - key: kubernetes.io/arch
           operator: In
           values: ["amd64"]
@@ -71,16 +82,33 @@ spec:
         - key: karpenter.k8s.aws/instance-generation
           operator: Gt
           values: ["2"]
-      # 노드 클래스 참조
       nodeClassRef:
+        ### CHANGED: v1에서 group과 kind가 필수가 됨
+        group: karpenter.k8s.aws  # apiVersion 대신 group 사용
+        kind: EC2NodeClass        # kind 필드 명시적으로 추가
         name: eks-platform-common
+      
+      ### CHANGED: expireAfter가 spec.disruption에서 spec.template.spec으로 이동
+      expireAfter: 720h # 1m  # 720h  # Never  # 미할당시 default 720h
+
   limits:
-    cpu: 240       # 8코어 x 30 대
+    cpu: 240  # 8 코어 x 30 대
     memory: 480Gi  # 16GiB x 30 대
   disruption:
-    consolidationPolicy: WhenUnderutilized
-    # 보안을 위해, 특정시간 지나면 노드삭제
-    # expireAfter: 720h # 30 * 24h = 720h
+    # 다른 노드와의 통합정책 (비용절감 목적)
+    ## WhenUnderutilized: 저활용 상황시 노드 삭제(cpu, ram, pod 수로 판단=>커스텀 불가https://github.com/kubernetes-sigs/karpenter/issues/735)
+    ## WhenEmpty: 미사용 상황시 노드 삭제(daemonset에 의한 pod 1개만 있어도 empty가 아님)
+    ### CHANGED: WhenUnderutilized → WhenEmptyOrUnderutilized로 이름 변경
+    consolidationPolicy: WhenEmptyOrUnderutilized  # 기존: WhenUnderutilized
+    
+    ### CHANGED: consolidateAfter가 v1에서 필수 필드가 됨[1][31]
+    # 노드가 비었을 때 지정 대기 시간 후 통합 작업 시작(노드 삭제)
+    ## consolidationPolicy가 WhenEmpty일 때만 사용가능한 속성
+    ## Never: 통합(consolidation) 비활성화
+    consolidateAfter: 0s  # v1에서 필수, 0s로 설정하면 기존 v1beta1과 동일한 동작
+
+    # NodePool 업데이트시 현재 대상 노드에도 즉시 적용되는 것 같음. 노드 재부팅 불필요
+    # 꺼지면 안되는 앱=> 앱 자체에서 retry나 HA구성을 잘 해놓던가 아니면 WhenEmpty에 consolidateAfter와 expireAfter를 Never로 설정해야 함
 ```
 
 ### Karpenter 셋업 후 보안그룹 설정(LoadBalancer 이슈방지)

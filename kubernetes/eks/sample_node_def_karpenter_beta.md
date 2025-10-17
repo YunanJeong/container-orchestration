@@ -37,7 +37,7 @@ spec:
     metadata:
       labels:
         # 용도별 노드 라벨 
-        app.webzen.com/name: eks-platform-common
+        app.mysvc.com/name: eks-platform-common
     spec:
       requirements:
         - key: kubernetes.io/arch
@@ -114,7 +114,7 @@ spec:
     metadata:
       labels:
         # 용도별 노드 라벨 
-        app.webzen.com/name: eks-monitor
+        app.mysvc.com/name: eks-monitor
     spec:
       requirements:
         - key: kubernetes.io/arch
