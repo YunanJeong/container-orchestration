@@ -18,7 +18,7 @@
 ACCOUNT_ID=000000000000
 REGION=ap-northeast-2
 
-# 1. 이미지 pull
+# 1. 샘플 이미지 pull(quay.io/prometheus/node-exporter) 
 docker pull quay.io/prometheus/node-exporter:v1.8.2
 
 # 2. ECR 로그인(AWS CLI로 임시토큰 발급받아 그대로 넘기기)
@@ -26,6 +26,7 @@ aws ecr get-login-password --region ${REGION} \
 | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
 
 # 3. ECR 리포지토리 생성 (처음만 하면 됨, push할 때 자동생성안됨)
+# ECR은 슬래시 2개 안됨. 표준규칙에 따라 RegistryDNS/Repository/imagename:tag로 써야하기 때문
 aws ecr create-repository --repository-name quay-prometheus/node-exporter
 
 # 4. 태그 변경
