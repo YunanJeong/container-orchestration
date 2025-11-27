@@ -95,16 +95,16 @@ spec:
     cpu: 240  # 8 코어 x 30 대
     memory: 480Gi  # 16GiB x 30 대
   disruption:
-    # 다른 노드와의 통합정책 (비용절감 목적)
-    ## WhenUnderutilized: 저활용 상황시 노드 삭제(cpu, ram, pod 수로 판단=>커스텀 불가https://github.com/kubernetes-sigs/karpenter/issues/735)
+    # 다른 노드와의 통합정책 (비용절감 목적) # https://karpenter.sh/docs/concepts/nodepools/
+    # karpenter v1 기준
     ## WhenEmpty: 미사용 상황시 노드 삭제(daemonset에 의한 pod 1개만 있어도 empty가 아님)
-    ### CHANGED: WhenUnderutilized → WhenEmptyOrUnderutilized로 이름 변경
-    consolidationPolicy: WhenEmptyOrUnderutilized  # 기존: WhenUnderutilized
+    ## WhenEmptyOrUnderutilized(구 WhenUnderutilized): 노드가 비었거나, 저활용 상황시 노드 삭제(cpu, ram, pod 수로 판단=>커스텀 불가https://github.com/kubernetes-sigs/karpenter/issues/735)
+    consolidationPolicy: WhenEmptyOrUnderutilized
     
-    ### CHANGED: consolidateAfter가 v1에서 필수 필드가 됨[1][31]
-    # 노드가 비었을 때 지정 대기 시간 후 통합 작업 시작(노드 삭제)
-    ## consolidationPolicy가 WhenEmpty일 때만 사용가능한 속성
-    ## Never: 통합(consolidation) 비활성화
+    # Pod가 노드에서 추가되거나 제거된 후 Karpenter가 노드를 통합(consolidation)하기 전 대기시간
+    ## Never: 통합 비활성화(Policy무시)
+    ## 0s (v1beta1 버전 기본동작과 동일)
+    ### CHANGED: consolidateAfter가 v1에서 필수 필드가 됨
     consolidateAfter: 0s  # v1에서 필수, 0s로 설정하면 기존 v1beta1과 동일한 동작
 
     # NodePool 업데이트시 현재 대상 노드에도 즉시 적용되는 것 같음. 노드 재부팅 불필요
