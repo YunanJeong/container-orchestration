@@ -76,7 +76,7 @@ spec:
     expireAfter: 720h # 1m  # 720h  # Never  # 미할당시 default 720h
 
     # NodePool 업데이트시 현재 대상 노드에도 즉시 적용되는 것 같음. 노드 재부팅 불필요
-    # 꺼지면 안되는 앱=> 앱 자체에서 retry나 HA구성을 잘 해놓던가 아니면 WhenEmpty에 consolidateAfter와 expireAfter를 Never로 설정해야 함
+    # 꺼지면 안되는 앱=> 앱 자체에서 retry나 HA구성을 잘 해놓던가 consolidateAfter와 expireAfter를 Never로 설정해서 노드 안꺼지게 해야 함
 ```
 
 ## 꺼지면 안되는 노드
@@ -146,5 +146,5 @@ spec:
 
 
     # NodePool 업데이트시 현재 대상 노드에도 즉시 적용되는 것 같음. 노드 재부팅 불필요
-    # 꺼지면 안되는 앱=> 앱 자체에서 retry나 HA구성을 잘 해놓던가 아니면 WhenEmpty에 consolidateAfter와 expireAfter를 Never로 설정해야 함
+    # 꺼지면 안되는 앱=> 앱 자체에서 retry나 HA구성을 잘 해놓던가 consolidateAfter와 expireAfter를 Never로 설정해서 노드 안꺼지게 해야 함
 ```

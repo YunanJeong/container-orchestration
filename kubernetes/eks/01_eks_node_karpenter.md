@@ -108,7 +108,7 @@ spec:
     consolidateAfter: 0s  # v1에서 필수, 0s로 설정하면 기존 v1beta1과 동일한 동작
 
     # NodePool 업데이트시 현재 대상 노드에도 즉시 적용되는 것 같음. 노드 재부팅 불필요
-    # 꺼지면 안되는 앱=> 앱 자체에서 retry나 HA구성을 잘 해놓던가 아니면 WhenEmpty에 consolidateAfter와 expireAfter를 Never로 설정해야 함
+    # 꺼지면 안되는 앱=> 앱 자체에서 retry나 HA구성을 잘 해놓던가 consolidateAfter와 expireAfter를 Never로 설정해서 노드 안꺼지게 해야 함
 ```
 
 ### Karpenter 셋업 후 보안그룹 설정(LoadBalancer 이슈방지)
