@@ -12,8 +12,11 @@ echo 'export KUBECONFIG=/etc/rancher/k3s/k3s.yaml' >> ~/.bashrc
 echo 'alias k="kubectl"' >> ~/.bashrc
 source ~/.bashrc
 
-# helm
-curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+# helm 3
+# curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+# helm 4 (스크립트 보안 유의, apt 설치도 가능)
+curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash
 
 # k9s
 sudo apt install -y jq
